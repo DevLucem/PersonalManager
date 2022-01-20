@@ -3,4 +3,3 @@ export const config = {
     authDomain: "prowealthmanager.firebaseapp.com",
     projectId: "prowealthmanager"
 }
-//github: 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
