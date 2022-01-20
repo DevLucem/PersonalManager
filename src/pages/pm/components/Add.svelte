@@ -4,6 +4,7 @@
     onMount(() => window.scrollTo(0, 0));
     import Cancel from "../../../assets/Cancel.svelte";
     import {firestore, PROJECT, TASK} from "../../../firebase";
+    import showdown from "showdown";
     export let user;
     export let editProject;
 
@@ -32,7 +33,9 @@
 
     const addTodo = () => {
         if (todo.length<0) return
-        let fTags = []; let tags = todo.split(" ").filter(n => /:/.test(n));
+        let fTags = [];
+        todo = new showdown.Converter().makeHtml(todo)
+        let tags = todo.split(" ").filter(n => /:/.test(n));
         let expiry = null;
         tags.forEach(tag => {
             todo = todo.replace(tag, "")

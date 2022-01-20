@@ -4,22 +4,23 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && firebase deploy",
+    "build": "vite build",
     "serve": "vite preview"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^1.0.0-next.11",
+    "@tailwindcss/forms": "^0.3.4",
     "autoprefixer": "^10.4.0",
     "postcss": "^8.4.4",
     "svelte": "^3.37.0",
     "tailwindcss": "^2.2.19",
-    "vite": "^2.6.4",
-    "@tailwindcss/forms": "^0.3.4"
+    "vite": "^2.6.4"
   },
   "dependencies": {
-    "firebase": "^8.2.4",
     "@google-pay/button-element": "^3.0.0",
+    "firebase": "^8.2.4",
     "page": "^1.11.6",
+    "showdown": "^1.9.1",
     "source-map-js": "^1.0.1"
   }
 }

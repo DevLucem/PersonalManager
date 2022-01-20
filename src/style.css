@@ -1,4 +1,6 @@
-
+a {
+    @apply text-primary font-bold;
+}
 .contain {
     @apply container mx-auto px-4;
 }

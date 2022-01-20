@@ -2,6 +2,7 @@
     import {TASK, FIELD_VALUE} from "../../../firebase";
     import Cancel from "../../../assets/Cancel.svelte";
     import Todo from "./Todo.svelte";
+    import showdown from "showdown";
 
     export let todo;
     export let user;
@@ -31,6 +32,7 @@
             done: null
         }
         let fTags = [];
+        quickTodo = new showdown.Converter().makeHtml(quickTodo)
         let tags = quickTodo.split(" ").filter(n => /:/.test(n));
         let expiry = null;
         tags.forEach(tag => {
