@@ -6,7 +6,18 @@
 
     export let user;
     let totals = {}; let amount = 0;
-    let balances = [];
+    let balances = []; const convert = (value, currency) => {
+        if (currency==="btc") return value*42800;
+        if (currency==="shib") return value*0.00003;
+        if (currency==="axs") return value*82;
+        if (currency==="eth") return value*3276.31;
+        if (currency==="bit") return value*2;
+        if (currency==="bch") return value*382.27;
+        if (currency==="doge") return value*0.17;
+        if (currency==="ltc") return value*148.58;
+        if (currency==="ksh") return value*0.0088;
+        return value;
+    }
     MONEY.where("user", "==", user.uid).onSnapshot(snapshot => {
         balances = []; totals = {}; amount = 0;
         snapshot.docs.forEach(doc => {
@@ -14,16 +25,7 @@
             balances = [bal, ...balances]
             Object.keys(bal.amount).forEach(key => {
                 totals[key] = (totals[key] || 0) + bal.amount[key]
-                if (key==="btc") amount += bal.amount[key]*42800;
-                if (key==="usdt" || key==="usd" || key==="dai") amount += bal.amount[key];
-                if (key==="shib") amount += bal.amount[key]*0.00003;
-                if (key==="axs") amount += bal.amount[key]*82;
-                if (key==="eth") amount += bal.amount[key]*3276.31;
-                if (key==="bit") amount += bal.amount[key]*2;
-                if (key==="bch") amount += bal.amount[key]*382.27;
-                if (key==="doge") amount += bal.amount[key]*0.17;
-                if (key==="ltc") amount += bal.amount[key]*148.58;
-                if (key==="ksh") amount += bal.amount[key]*0.0088;
+                amount += convert(bal.amount[key], key)
             })
         })
         amount = Math.round(amount)
@@ -57,7 +59,8 @@
                         <span class="tag">{bal.amount[amount]} {amount}</span>
                     {/each}
                 </div>
-                <button on:click={()=>editBalance=bal} class="border border-gray rounded-xl p-2 font-bold uppercase mt-4">Edit</button>
+                <div class="flex-1"></div>
+                <button on:click={()=>editBalance=bal} class="border border-gray rounded-xl p-2 font-bold uppercase mt-4">(<span class="text-primary">{Math.round(Object.keys(bal.amount).reduce((a, b) => a + convert(bal.amount[b], b), 0)*100)/100}</span> USD) Edit</button>
             </div>
         {/each}
     </div>
