@@ -58,7 +58,7 @@
 </script>
 
 <div class="card mt-12 pb-1">
-    <input type="text" aria-label="none" class="input m-2" placeholder="Quick TODO" on:keypress={e=>{if (e.charCode===13) addTodo()}} bind:value={quickTodo}>
+    <input type="text" aria-label="none" class="input m-2 border border-primary" placeholder="Quick TODO" on:keypress={e=>{if (e.charCode===13) addTodo()}} bind:value={quickTodo}>
     {#if schedule.length>0}
         <div class="text-primary text-center mb-1">
             {#each schedule as td}

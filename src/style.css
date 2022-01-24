@@ -21,6 +21,12 @@ a {
     @apply bg-transparent border border-gray rounded rounded-2xl p-2;
 }
 
+.input:focus{
+    @apply border border-primary;
+    border-color: #00c97e;
+    box-shadow: 0 0 10px #51ccda, 0 -2px 10px -5px #51ccda;
+}
+
 .icon {
     @apply rounded-full bg-fore flex justify-center items-center text-primary hover:bg-white hover:text-fore;
 }
