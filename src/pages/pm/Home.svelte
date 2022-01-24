@@ -38,8 +38,10 @@
 <div class="space-y-4 my-16 bg-gray p-8 rounded rounded-xl shadow shadow-2xl">
     <div class="flex justify-between title">
         <div>{project.filter(p => !p.done).length} Ongoing</div>
-        <div class="icon">
-            <AddButton dark={true} on:clicked={()=>addProject=true}/>
+        <div class="h-12">
+            <div class="icon">
+                <AddButton dark={true} on:clicked={()=>addProject=true}/>
+            </div>
         </div>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2">
