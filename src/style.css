@@ -27,7 +27,7 @@ a {
 svg {
     @apply rounded-full;
 }
-.input:focus, .button:hover, .icon:hover, svg:hover{
+.input:focus, .button:hover, .icon:hover, svg:hover, select:hover, select:focus{
     @apply border border-primary;
     border-color: #00c97e;
     box-shadow: 0 0 10px #51ccda;

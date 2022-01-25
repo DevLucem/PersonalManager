@@ -145,7 +145,7 @@
                                     {td.expiry.getDate()} - {td.expiry.getHours()}
                                 </span>
                                 {/if}
-                                {td.name}
+                                {@html td.name}
                                 {#each td.tags as tag}
                                     <span class="tag text-sm">{tag}</span>
                                 {/each}

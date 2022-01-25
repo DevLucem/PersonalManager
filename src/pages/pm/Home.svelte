@@ -81,7 +81,6 @@
     {/if}
 </div>
 
-
 {#if addProject || viewProject || editProject}
     <div class="bg-gray overflow-auto overscroll-none h-screen z-10 absolute left-0 top-0 opacity-95 w-full" style="backdrop-filter: blur(20px);">
         <div class="contain pt-8 text-center">

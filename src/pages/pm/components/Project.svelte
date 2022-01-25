@@ -17,6 +17,7 @@
             batch.commit().then(() => dispatch('close', {}))
         })
     }
+    const complete = () => {if (confirm("Mark This Project As Complete?")) PROJECT.doc(project.id).update({done: new Date()}).then(()=>dispatch('close', {}))}
 
 </script>
 
@@ -52,7 +53,7 @@
         <button on:click={()=>{if (confirm("Delete This Project Permanently?")) deleteProject()}}
                 class="bg-red-300 flex-1 mx-4 rounded rounded-2xl text-white font-bold p-4 text-2xl">Delete Project
         </button>
-        <button on:click={()=>{if (confirm("Mark This Project As Complete?")) PROJECT.doc(project.id).update({done: new Date()}).then(()=>dispatch('close', {}))}}
+        <button on:click={()=>complete()}
                 class="button bg-green-300 mx-4 flex-1 rounded rounded-full text-white font-bold p-4 text-2xl">Mark Complete
         </button>
     </div>
