@@ -7,14 +7,14 @@
     export let user;
     let totals = {}; let amount = 0;
     let balances = []; const convert = (value, currency) => {
-        if (currency==="btc") return value*42800;
-        if (currency==="shib") return value*0.00003;
-        if (currency==="axs") return value*82;
-        if (currency==="eth") return value*3276.31;
-        if (currency==="bit") return value*2;
-        if (currency==="bch") return value*382.27;
-        if (currency==="doge") return value*0.17;
-        if (currency==="ltc") return value*148.58;
+        if (currency==="btc") return value*35000;
+        if (currency==="shib") return value*0.000021;
+        if (currency==="axs") return value*51;
+        if (currency==="eth") return value*2467.31;
+        if (currency==="bit") return value*1.5;
+        if (currency==="bch") return value*295.27;
+        if (currency==="doge") return value*0.14;
+        if (currency==="ltc") return value*109.58;
         if (currency==="ksh") return value*0.0088;
         return value;
     }
