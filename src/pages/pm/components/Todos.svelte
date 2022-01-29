@@ -63,8 +63,8 @@
         <div class="text-primary text-center mb-1">
             {#each schedule as td}
                 <div class="flex justify-between bg-gray p-2 {td.expiry.toDate().getHours()!==(new Date).getHours()?'opacity-70':''}">
-                    <p class="flex-1 text-center">
-                        {td.expiry.toDate().getHours()} - {td.name}
+                    <p class="flex-1 flex justify-center">
+                        {td.expiry.toDate().getHours()} - {@html td.name}
                         {#each td.tags as tag}
                             <span class="tag text-xs">{tag}</span>
                         {/each}
@@ -74,7 +74,7 @@
             {/each}
         </div>
     {/if}
-    {#each todo.filter(td=>!td.repeat) as td, x}
+    {#each todo.filter(td=>!td.repeat).sort((a, b) => a.created.toDate()-b.created.toDate()) as td, x}
         <Todo {td} checking={true}/>
     {/each}
     <p class="text-center m-2 font-bold text-primary">{new Date().toLocaleDateString('en-US',  { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>

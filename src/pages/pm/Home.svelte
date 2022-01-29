@@ -33,25 +33,29 @@
     <title>Professional Wealth Manager</title>
 </svelte:head>
 
-<Todos todo={current} {user}/>
+<div class="lg:flex lg:space-x-8">
+    <div class="flex-1">
+        <Todos todo={current} {user}/>
+    </div>
 
-<div class="space-y-4 my-16 bg-gray p-8 rounded rounded-xl shadow shadow-2xl">
-    <div class="flex justify-between title">
-        <div>{project.filter(p => !p.done).length} Ongoing</div>
-        <div class="h-12">
-            <div class="icon">
-                <AddButton dark={true} on:clicked={()=>addProject=true}/>
+    <div class="space-y-4 my-16 lg:mb-0 lg:mt-12 bg-gray p-8 rounded rounded-xl shadow shadow-2xl flex-1">
+        <div class="flex justify-between title">
+            <div>{project.filter(p => !p.done).length} Ongoing</div>
+            <div class="h-12">
+                <div class="icon">
+                    <AddButton dark={true} on:clicked={()=>addProject=true}/>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="grid grid-cols-1 md:grid-cols-2">
-        {#each project.filter(p => !p.done) as project}
-            <div class="card p-4 m-2 cursor-pointer">
-                <h3 class="sub-title" on:click={()=>viewProject=project}>{project.name}</h3>
-                <p class="flex-1" on:click={()=>viewProject=project}>{project.overview}</p>
-                <button on:click={()=>editProject=project} class="border border-gray rounded-xl p-2 font-bold uppercase mt-4">Edit</button>
-            </div>
-        {/each}
+        <div class="grid grid-cols-1 md:grid-cols-2">
+            {#each project.filter(p => !p.done) as project}
+                <div class="card p-4 m-2 cursor-pointer">
+                    <h3 class="sub-title" on:click={()=>viewProject=project}>{project.name}</h3>
+                    <p class="flex-1" on:click={()=>viewProject=project}>{project.overview}</p>
+                    <button on:click={()=>editProject=project} class="border border-gray rounded-xl p-2 font-bold uppercase mt-4">Edit</button>
+                </div>
+            {/each}
+        </div>
     </div>
 </div>
 
