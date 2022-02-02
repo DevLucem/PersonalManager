@@ -22,3 +22,19 @@ Built with `vite` and `svelte` ♥
 3. Reminders that are recurring and also with date and time
 4. Manage what is important with tags
 
+
+<center>
+
+## Made with ♥
+```
+(                   (                            
+)\ )                )\ )                         
+(()/(     (    )    (()/(   (          (     )    
+/(_))   ))\  /((    /(_)) ))\   (    ))\   (     
+(_))_   /((_)(_))\  (_))  /((_)  )\  /((_)  )\  '
+|   \ (_))  _)((_) | |  (_))(  ((_)(_))  _((_))  
+| |) |/ -_) \ V /  | |__| || |/ _| / -_)| '  \()
+|___/ \___|  \_/   |____|\_,_|\__| \___||_|_|_|  
+```
+
+</center>

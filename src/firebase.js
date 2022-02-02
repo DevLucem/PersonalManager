@@ -7,6 +7,7 @@ firebase.initializeApp(config);
 export const firestore = firebase.firestore();
 export const FIELD_VALUE = firebase.firestore.FieldValue;
 export const PROJECT = firestore.collection("project")
+export const NOTE = firestore.collection("note")
 export const TASK = firestore.collection("task")
 export const MONEY = firestore.collection("money")
 

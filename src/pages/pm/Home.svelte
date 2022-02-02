@@ -2,7 +2,7 @@
     import Todos from "./components/Todos.svelte";
     import Project from "./components/Project.svelte";
     import Add from "./components/Add.svelte";
-    import {PROJECT, TASK} from "../../firebase";
+    import {PROJECT, TASK, NOTE} from "../../firebase";
     import Cancel from "../../assets/Cancel.svelte";
     import AddButton from "../../assets/AddButton.svelte";
 
@@ -20,6 +20,12 @@
         snapshot.docs.forEach(doc => project = [doc.data(), ...project])
     })
 
+    let notes = [];
+    NOTE.where("user", "==", user.uid).onSnapshot(snapshot => {
+        notes = [];
+        snapshot.docs.forEach(doc => notes = [doc.data(), ...notes])
+    })
+
     $: current = todo.filter(td => !td.project)
     // $: project.forEach(pj => current = [...current, todo.filter(td => td.project === pj.id)[0]])
 
@@ -33,12 +39,12 @@
     <title>Professional Wealth Manager</title>
 </svelte:head>
 
-<div class="lg:flex lg:space-x-8">
-    <div class="flex-1">
+<div class="lg:flex lg:space-x-4">
+    <div class="flex-1 flex">
         <Todos todo={current} {user}/>
     </div>
 
-    <div class="space-y-4 my-16 lg:mb-0 lg:mt-12 bg-gray p-8 rounded rounded-xl shadow shadow-2xl flex-1">
+    <div class="space-y-4 mt-16 lg:mb-0 lg:mt-12 bg-gray p-8 rounded rounded-3xl shadow shadow-2xl flex-1">
         <div class="flex justify-between title">
             <div>{project.filter(p => !p.done).length} Ongoing</div>
             <div class="h-12">
@@ -59,7 +65,7 @@
     </div>
 </div>
 
-<div class="space-y-4 mt-4">
+<div class="mt-4">
     <div on:click={()=>completed=!completed} class="text-primary p-6 cursor-pointer flex items-center justify-between text-4xl font-bold bg-fore rounded rounded-xl">
         <div class="flex justify-between border border-gray rounded-xl p-4 w-full">
             <h3 class="text-2xl">{project.filter(p => p.done).length} Completed</h3>
@@ -73,7 +79,7 @@
     {#if completed}
         <div class="grid grid-cols-2 md:grid-cols-3">
             {#each project.filter(p => p.done) as project}
-                <div class="card p-4 m-2">
+                <div class="card p-4 mt-4 m-2">
                     <h3 class="sub-title">{project.name}</h3>
                     <p>{project.done.toDate()}</p>
                     <button on:click={()=>{if (confirm("UnMark This Project As Complete?")) PROJECT.doc(project.id).update({done: null})}}
@@ -84,6 +90,26 @@
         </div>
     {/if}
 </div>
+
+<div class="mt-4 bg-gray p-8 rounded rounded-3xl shadow shadow-2xl flex-1">
+    <div class="flex justify-between title">
+        <div>Notes</div>
+        <div class="h-12">
+            <div class="icon">
+                <AddButton dark={true} on:clicked={()=>addProject=true}/>
+            </div>
+        </div>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2">
+        {#each notes as note}
+            <div class="card p-4 m-2 cursor-pointer">
+                <div>{note.title}</div>
+                <div>{note.content}</div>
+            </div>
+        {/each}
+    </div>
+</div>
+
 
 {#if addProject || viewProject || editProject}
     <div class="bg-gray overflow-auto overscroll-none h-screen z-10 absolute left-0 top-0 opacity-95 w-full" style="backdrop-filter: blur(20px);">
