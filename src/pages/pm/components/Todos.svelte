@@ -27,7 +27,7 @@
         if (quickTodo.length < 3) return
         let newTodo = {
             id: TASK.doc().id,
-            created: FIELD_VALUE.serverTimestamp(),
+            created: new Date(),
             user: user.uid,
             done: null
         }
