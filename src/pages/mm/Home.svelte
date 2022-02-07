@@ -22,11 +22,12 @@
         balances = []; totals = {}; amount = 0;
         snapshot.docs.forEach(doc => {
             let bal = doc.data();
-            balances = [bal, ...balances]
             Object.keys(bal.amount).forEach(key => {
                 totals[key] = (totals[key] || 0) + bal.amount[key]
                 amount += convert(bal.amount[key], key)
+                bal.total = Math.round(((bal.total || 0) + convert(bal.amount[key], key))*100)/100
             })
+            balances = [bal, ...balances]
         })
         amount = Math.round(amount)
     })
@@ -48,7 +49,7 @@
         </div>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2">
-        {#each balances as bal}
+        {#each balances.sort((a, b) => {return b.total-a.total}) as bal}
             <div class="card p-4 m-2">
                 <div class="flex justify-between">
                     <h3 class="font-bold text-2xl uppercase">{bal.name}</h3>
@@ -60,7 +61,7 @@
                     {/each}
                 </div>
                 <div class="flex-1"></div>
-                <button on:click={()=>editBalance=bal} class="border border-gray rounded-xl p-2 font-bold uppercase mt-4">(<span class="text-primary">{Math.round(Object.keys(bal.amount).reduce((a, b) => a + convert(bal.amount[b], b), 0)*100)/100}</span> USD) Edit</button>
+                <button on:click={()=>editBalance=bal} class="border border-gray rounded-xl p-2 font-bold uppercase mt-4">(<span class="text-primary">{bal.total}</span> USD) Edit</button>
             </div>
         {/each}
     </div>
