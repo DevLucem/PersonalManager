@@ -18,6 +18,7 @@
         })
     }
     const complete = () => {if (confirm("Mark This Project As Complete?")) PROJECT.doc(project.id).update({done: new Date()}).then(()=>dispatch('close', {}))}
+    $: if (todo && todo.length<1) complete();
 
 </script>
 

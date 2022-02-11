@@ -56,8 +56,11 @@
         <div class="grid grid-cols-1 md:grid-cols-2">
             {#each project.filter(p => !p.done) as project}
                 <div class="card p-4 m-2 cursor-pointer">
-                    <h3 class="sub-title" on:click={()=>viewProject=project}>{project.name}</h3>
+                    <h3 class="sub-title truncate" on:click={()=>viewProject=project}>{project.name}</h3>
                     <p class="flex-1" on:click={()=>viewProject=project}>{project.overview}</p>
+                    {#if todo.filter(t=>t.project===project.id).length>0}
+                        <p class="text-sm truncate text-primary flex">{@html todo.filter(t=>t.project===project.id)[0].name}</p>
+                    {/if}
                     <button on:click={()=>editProject=project} class="border border-gray rounded-xl p-2 font-bold uppercase mt-4">Edit</button>
                 </div>
             {/each}
@@ -116,7 +119,7 @@
         <div class="contain pt-8 text-center">
             <Cancel on:clicked={()=>{viewProject=addProject=editProject=null}}/>
             {#if addProject || editProject}
-                <Add {user} {editProject} on:close={()=>addProject=editProject=null}/>
+                <Add {user} {editProject} tasks={todo.filter(td => td.project===editProject.id)} on:close={()=>addProject=editProject=null}/>
             {/if}
             {#if viewProject}
                 <Project project={viewProject} todo={todo.filter(td => td.project===viewProject.id)} on:close={()=>viewProject=false}/>

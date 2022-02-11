@@ -7,6 +7,7 @@
     import showdown from "showdown";
     export let user;
     export let editProject;
+    export let tasks;
 
     let project = editProject ? editProject : {
         name: "",
@@ -17,6 +18,17 @@
         user: user.uid,
         milestones: []
     };
+    if (editProject) {
+        tasks.forEach( tsk => {
+            let task = Object.assign(tsk, {});
+            if (!project.milestones[task.milestone].todos)
+                project.milestones[task.milestone].todos = []
+            if (task.expiry) task.expiry = new Date(task.expiry.seconds*1000)
+            project.milestones[task.milestone].todos.push(task);
+            if (task.expiry!==null)
+                console.log(task.expiry.getDate())
+        })
+    }
 
     let todo = ""
     let milestone = {
@@ -132,7 +144,7 @@
                                 <path d="M5 3a2 2 0 00-2 2v6a2 2 0 002 2V5h8a2 2 0 00-2-2H5z" />
                             </svg>
                         </button>
-                        <Cancel on:clicked={()=>{project.milestones.splice(x, 1); project.milestones=project.milestones}}/>
+                        <Cancel on:clicked={()=>{project.milestones[x].todos.forEach( todo => TASK.doc(todo.id).delete()); project.milestones.splice(x, 1); project.milestones=project.milestones}}/>
                     </div>
                 </div>
                 <p class="text-gray mx-4">{m.overview}</p>
@@ -140,10 +152,10 @@
                     {#each m.todos as td, x}
                         <div class="text-sm rounded rounded-2xl flex items-center justify-between mx-4 bg-gray px-2 duration-300 my-1 transform hover:text-primary">
                             <p class="text-left">
-                                {#if td.expiry}
-                                <span class="font-bold {new Date().getDate()===td.expiry.getDate()?'text-primary':''} mr-4">
-                                    {td.expiry.getDate()} - {td.expiry.getHours()}
-                                </span>
+                                {#if td.expiry && td.expiry!==null}
+                                    <span class="font-bold {new Date().getDate()===td.expiry.getDate()?'text-primary':''} mr-4">
+                                        {td.expiry.getDate()} - {td.expiry.getHours()}
+                                    </span>
                                 {/if}
                                 {@html td.name}
                                 {#each td.tags as tag}
