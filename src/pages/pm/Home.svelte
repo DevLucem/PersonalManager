@@ -20,7 +20,7 @@
         snapshot.docs.forEach(doc => project = [doc.data(), ...project])
     })
 
-    let notes = [];
+    let notes = []; let note = false;
     NOTE.where("user", "==", user.uid).onSnapshot(snapshot => {
         notes = [];
         snapshot.docs.forEach(doc => notes = [doc.data(), ...notes])
@@ -68,8 +68,8 @@
     </div>
 </div>
 
-<div class="mt-4">
-    <div on:click={()=>completed=!completed} class="text-primary p-6 cursor-pointer flex items-center justify-between text-4xl font-bold bg-fore rounded rounded-xl">
+<div class="mt-4 bg-fore rounded rounded-xl">
+    <div on:click={()=>completed=!completed} class="text-primary p-6 cursor-pointer flex items-center justify-between text-4xl font-bold">
         <div class="flex justify-between border border-gray rounded-xl p-4 w-full">
             <h3 class="text-2xl">{project.filter(p => p.done).length} Completed</h3>
             <button class="icon w-8 h-8 border border-gray">
@@ -80,9 +80,9 @@
         </div>
     </div>
     {#if completed}
-        <div class="grid grid-cols-2 md:grid-cols-3">
+        <div class="grid grid-cols-2 lg:grid-cols-3 mx-8">
             {#each project.filter(p => p.done) as project}
-                <div class="card p-4 mt-4 m-2">
+                <div class="card p-4 mt-4 mx-2 my-4 border-2 border-gray">
                     <h3 class="sub-title">{project.name}</h3>
                     <p>{project.done.toDate()}</p>
                     <button on:click={()=>{if (confirm("UnMark This Project As Complete?")) PROJECT.doc(project.id).update({done: null})}}
@@ -99,14 +99,14 @@
         <div>Notes</div>
         <div class="h-12">
             <div class="icon">
-                <AddButton dark={true} on:clicked={()=>addProject=true}/>
+                <AddButton dark={true} on:clicked={()=>{note=true; addProject=true;}}/>
             </div>
         </div>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2">
         {#each notes as note}
             <div class="card p-4 m-2 cursor-pointer">
-                <div>{note.title}</div>
+                <div>{note.name}</div>
                 <div>{note.content}</div>
             </div>
         {/each}
@@ -119,7 +119,7 @@
         <div class="contain pt-8 text-center">
             <Cancel on:clicked={()=>{viewProject=addProject=editProject=null}}/>
             {#if addProject || editProject}
-                <Add {user} {editProject} tasks={todo.filter(td => td.project===editProject.id)} on:close={()=>addProject=editProject=null}/>
+                <Add {note} {user} {editProject} tasks={editProject ? todo.filter(td => td.project===editProject.id).reverse() : null} on:close={()=>note=addProject=editProject=null}/>
             {/if}
             {#if viewProject}
                 <Project project={viewProject} todo={todo.filter(td => td.project===viewProject.id)} on:close={()=>viewProject=false}/>

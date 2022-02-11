@@ -3,11 +3,12 @@
     const dispatch = createEventDispatcher();
     onMount(() => window.scrollTo(0, 0));
     import Cancel from "../../../assets/Cancel.svelte";
-    import {firestore, PROJECT, TASK} from "../../../firebase";
+    import {firestore, PROJECT, TASK, FIELD_VALUE, NOTE} from "../../../firebase";
     import showdown from "showdown";
     export let user;
     export let editProject;
     export let tasks;
+    export let note;
 
     let project = editProject ? editProject : {
         name: "",
@@ -88,6 +89,19 @@
         }, 50)
     }
     const save = () => {
+        if (note) {
+            if (project.name.length>1 && project.overview.length>1) {
+                let nt = {
+                    name: project.name,
+                    content: project.overview,
+                    id: NOTE.doc().id,
+                    user: user.uid,
+                    created: new Date(),
+                }
+                NOTE.doc(nt.id).set(nt).then(()=>dispatch('close', {})).catch(e=>console.log(e))
+            }
+            return
+        }
         let batch = firestore.batch();
         let mss = []
         project.milestones.forEach(milestone => {
@@ -108,10 +122,6 @@
     }
 </script>
 
-<svelte:head>
-    <title>Add New Project</title>
-</svelte:head>
-
 <div class="text-center py-8">
 
     {#if steps===0}
@@ -119,14 +129,14 @@
     {/if}
 
     {#if steps===0}
-        <form class="card" on:submit|preventDefault={()=>steps=1}>
+        <form class="card" on:submit|preventDefault={()=>note?save():steps=1}>
             <input required aria-label="none" type="text" class="input m-4" placeholder="Give Your Project A Title" bind:value={project.name}>
             <textarea required aria-label="none" type="text" class="input m-4" placeholder="A short description of what this project is about" bind:value={project.overview}></textarea>
-            <div class="flex justify-between mx-4 space-x-4">
+            <div class="flex justify-between mx-4 space-x-4 {note?'hidden':''}">
                 <input type="datetime-local" aria-label="none" class="input flex-1" bind:value={project.starting}>
                 <input type="datetime-local" aria-label="none" class="input flex-1" bind:value={project.ending}>
             </div>
-            <button type="submit" class="button m-4">Next</button>
+            <button type="submit" class="button m-4">{note?"Save":"Next"}</button>
         </form>
     {/if}
 
@@ -144,7 +154,7 @@
                                 <path d="M5 3a2 2 0 00-2 2v6a2 2 0 002 2V5h8a2 2 0 00-2-2H5z" />
                             </svg>
                         </button>
-                        <Cancel on:clicked={()=>{project.milestones[x].todos.forEach( todo => TASK.doc(todo.id).delete()); project.milestones.splice(x, 1); project.milestones=project.milestones}}/>
+                        <Cancel on:clicked={()=>{project.milestones[x].todos?project.milestones[x].todos.forEach( todo => TASK.doc(todo.id).delete()):''; PROJECT.doc(project.id).update({milestones: FIELD_VALUE.arrayRemove(m)}); project.milestones.splice(x, 1); project.milestones=project.milestones}}/>
                     </div>
                 </div>
                 <p class="text-gray mx-4">{m.overview}</p>
