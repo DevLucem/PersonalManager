@@ -75,7 +75,7 @@
             expiry: expiry,
             project: project.id,
             milestone: project.milestones.length,
-            user: user.uid,
+            user: [user.uid],
             done: null
         })
         milestone.todos = milestone.todos

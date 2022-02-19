@@ -9,7 +9,7 @@
     export let user;
 
     let todo = [];
-    TASK.where("user", "==", user.uid).where("done", "==", null).onSnapshot(snapshot => {
+    TASK.where("user", "array-contains-any", [user.uid]).onSnapshot(snapshot => {
         todo = [];
         snapshot.docs.forEach(doc => todo = [doc.data(), ...todo])
     })
@@ -105,9 +105,14 @@
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2">
         {#each notes as note}
-            <div class="card p-4 m-2 cursor-pointer">
-                <div>{note.name}</div>
-                <div>{note.content}</div>
+            <div class="card p-4 m-4">
+                <div class="flex justify-between">
+                    <h3 class="font-bold text-lg cursor-pointer" on:click={()=>note.show=!note.show}>{note.name}</h3>
+                    <Cancel on:clicked={()=>NOTE.doc(note.id).delete()}/>
+                </div>
+                {#if note.show}
+                    <div class="border border-gray rounded rounded-2xl p-4 m-2">{note.content}</div>
+                {/if}
             </div>
         {/each}
     </div>
@@ -119,7 +124,7 @@
         <div class="contain pt-8 text-center">
             <Cancel on:clicked={()=>{viewProject=addProject=editProject=null}}/>
             {#if addProject || editProject}
-                <Add {note} {user} {editProject} tasks={editProject ? todo.filter(td => td.project===editProject.id).reverse() : null} on:close={()=>note=addProject=editProject=null}/>
+                <Add {note} {user} {editProject} tasks={editProject ? todo.filter(td => td.project===editProject.id && !td.done).reverse() : null} on:close={()=>note=addProject=editProject=null}/>
             {/if}
             {#if viewProject}
                 <Project project={viewProject} todo={todo.filter(td => td.project===viewProject.id)} on:close={()=>viewProject=false}/>

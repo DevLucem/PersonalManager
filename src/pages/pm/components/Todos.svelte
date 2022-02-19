@@ -28,7 +28,7 @@
         let newTodo = {
             id: TASK.doc().id,
             created: new Date(),
-            user: user.uid,
+            user: [user.uid],
             done: null
         }
         let fTags = [];
@@ -47,8 +47,12 @@
                 if (cmd === ':r') newTodo.repeat = val;
                 if (expiry < new Date()) expiry.setDate(expiry.getDate() + 1);
                 console.log(expiry.getDate(), expiry.getHours())
-            } else fTags.push(tag.replace(":", ""))
+            } else if ([":u"].includes(cmd)){
+                console.log(tag)
+                newTodo.user = [...newTodo.user, ...tag.substring(2, tag.length).split(",")]
+            }else fTags.push(tag.replace(":", ""))
         })
+        console.log(newTodo)
         newTodo.tags = fTags;
         newTodo.expiry = expiry;
         newTodo.name = quickTodo;
@@ -74,7 +78,7 @@
             {/each}
         </div>
     {/if}
-    {#each todo.filter(td=>!td.repeat).sort((a, b) => a.created.toDate()-b.created.toDate()) as td, x}
+    {#each todo.filter(td=>!td.repeat&&!td.done).sort((a, b) => a.created.toDate()-b.created.toDate()) as td, x}
         <Todo {td} checking={true}/>
     {/each}
     <div class="flex justify-center items-end flex-1">
