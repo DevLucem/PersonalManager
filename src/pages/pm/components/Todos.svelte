@@ -79,7 +79,7 @@
         </div>
     {/if}
     {#each todo.filter(td=>!td.repeat&&!td.done).sort((a, b) => a.created.toDate()-b.created.toDate()) as td, x}
-        <Todo {td} checking={true}/>
+        <Todo {td} {user} checking={true}/>
     {/each}
     <div class="flex justify-center items-end flex-1">
         <p class="text-center m-2 font-bold text-primary">{new Date().toLocaleDateString('en-US',  { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>

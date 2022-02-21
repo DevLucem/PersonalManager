@@ -3,6 +3,7 @@
     import {TASK} from "../../../firebase";
     export let td;
     export let checking;
+    export let user;
 </script>
 <div class="rounded rounded-2xl flex items-center justify-between mx-2 bg-gray p-2 duration-300 my-1 transform hover:text-primary {td.done?'opacity-50 hover:opacity-100':''}">
     <p class="flex flex-wrap items-center">
@@ -24,7 +25,7 @@
                 </svg>
             </button>
         {/if}
-        {#if !td.done}
+        {#if !td.done && td.user[0]===user.uid}
             <Cancel on:clicked={()=>td.done?TASK.doc(td.id).update({done: null}):TASK.doc(td.id).delete()}/>
         {/if}
     </div>
