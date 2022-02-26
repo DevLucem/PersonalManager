@@ -1,9 +1,16 @@
 <script>
     import Cancel from "../../../assets/Cancel.svelte";
-    import {TASK} from "../../../firebase";
+    import {TASK, FIELD_VALUE} from "../../../firebase";
     export let td;
     export let checking;
     export let user;
+    const completed = () => {
+        let updates = {}
+        if (td.user[0]===user.uid)
+            TASK.doc(td.id).update({done: td.done ? null : new Date()})
+        else
+            TASK.doc(td.id).update({tags: FIELD_VALUE[td.tags.includes("done")?'arrayRemove':'arrayUnion']("done") })
+    }
 </script>
 <div class="rounded rounded-2xl flex items-center justify-between mx-2 bg-gray p-2 duration-300 my-1 transform hover:text-primary {td.done?'opacity-50 hover:opacity-100':''}">
     <p class="flex flex-wrap items-center">
@@ -12,14 +19,14 @@
                 {td.expiry.toDate().getDate()} - {td.expiry.toDate().getHours()}
             </span>
         {/if}
-        <span>{@html td.name}</span>
+        <span>{@html td.name}</span> {td.id}
         {#each td.tags as tag}
-            <span class="tag text-sm">{tag}</span>
+            <span class="text-sm {tag==='done' && td.user[0]===user.uid?'rounded-full font-bold uppercase bg-red-500 px-2 mx-2':'tag'}">{tag}</span>
         {/each}
     </p>
     <div class="flex items-center space-x-4">
         {#if checking}
-            <button on:click={()=>TASK.doc(td.id).update({done: td.done?null:new Date()})} class="icon w-6 h-6">
+            <button on:click={()=>completed()} class="icon w-6 h-6">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-full p-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                 </svg>

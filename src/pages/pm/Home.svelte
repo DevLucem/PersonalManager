@@ -131,7 +131,7 @@
                 <Add {note} {user} {editProject} tasks={editProject ? todo.filter(td => td.project===editProject.id && !td.done).reverse() : null} on:close={()=>note=addProject=editProject=null}/>
             {/if}
             {#if viewProject}
-                <Project project={viewProject} todo={todo.filter(td => td.project===viewProject.id)} on:close={()=>viewProject=false}/>
+                <Project {user} project={viewProject} todo={todo.filter(td => td.project===viewProject.id)} on:close={()=>viewProject=false}/>
             {/if}
         </div>
     </div>

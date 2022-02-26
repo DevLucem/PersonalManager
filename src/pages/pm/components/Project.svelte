@@ -9,6 +9,7 @@
 
     export let project;
     export let todo;
+    export let user;
     const deleteProject = () => {
         let batch = firestore.batch();
         batch.delete(PROJECT.doc(project.id));
@@ -46,7 +47,7 @@
                     {/if}
                 </p>
                 {#each todo.filter(tf => tf.milestone===x) as td, x}
-                    <Todo {td} checking={true}/>
+                    <Todo {td} {user} checking={true}/>
                 {/each}
             </div>
         {/each}
