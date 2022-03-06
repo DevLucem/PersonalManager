@@ -50,7 +50,7 @@ svg {
 }
 
 .button {
-    @apply text-2xl uppercase rounded-2xl px-6 pb-1 pt-0.5 text-center font-bold;
+    @apply text-xl uppercase rounded-2xl px-6 pb-1 pt-0.5 text-center font-bold;
     background: linear-gradient(45deg, #51ccda, #00c97e);
 }
 

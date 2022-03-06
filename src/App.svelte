@@ -19,7 +19,7 @@
     router.exit("**", (context, next) => {manager = router.current; next()})
 </script>
 
-<main class="backy min-h-screen py-4">
+<main class="backy h-screen py-4 overflow-y-scroll">
     {#await getUser()}
         <div class="flex h-screen text-gray -my-4 justify-center items-center">
             <div class="w-32 h-32">
@@ -95,11 +95,11 @@
             </div>
         </div>
     {:then user}
-        <div class="contain">
+        <div class="contain h-full flex flex-col">
             <div class="flex justify-between">
-                <button class="button opacity-70 hover:opacity-100" on:click={()=>user.email?firebase.auth().signOut().then(()=>window.location.reload()):firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider()).then(()=>window.location.reload()).catch( e => console.log(e))}>{user.email ? 'logout' : 'login'}</button>
+                <p class="text-center m-2 font-bold text-primary">{new Date().toLocaleDateString('en-US',  { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
                 <div class="inline-block relative flex items-center mr-4">
-                    <select class="-mr-10 bg-fore text-2xl uppercase rounded-2xl px-6 pb-1 pt-0.5 text-center font-bold gradient pr-12" bind:value={manager} aria-label="none" name="Feature" id="feature" on:change={()=>router(manager)}>
+                    <select class="-mr-10 bg-fore text-lg uppercase rounded-2xl px-6 pb-1 pt-0.5 text-center font-bold gradient pr-12" bind:value={manager} aria-label="none" name="Feature" id="feature" on:change={()=>router(manager)}>
                         <option class="bg-fore text-white font-bold" value="/pm">Project</option>
                         <option class="bg-fore text-white font-bold" value="/mm">Money</option>
                     </select>
@@ -109,6 +109,9 @@
                 </div>
             </div>
             <svelte:component this={routing} {params} {user}/>
+            <div class="flex-1 flex items-end justify-center pt-4 pb-8">
+                <button class="button opacity-70 hover:opacity-100" on:click={()=>user.email?firebase.auth().signOut().then(()=>window.location.reload()):firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider()).then(()=>window.location.reload()).catch( e => console.log(e))}>{user.email ? 'logout ' + user.displayName : 'login'}</button>
+            </div>
         </div>
     {/await}
 </main>

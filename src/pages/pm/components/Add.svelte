@@ -16,10 +16,12 @@
         id: PROJECT.doc().id,
         overview: "",
         tag: [],
-        user: user.uid,
+        user: [user.uid],
         milestones: []
     };
     if (editProject) {
+        project.milestones.forEach((m, i) => project.milestones[i].todos = [])
+        project.name = new showdown.Converter().makeMarkdown(project.name)
         tasks.forEach( tsk => {
             let task = Object.assign(tsk, {});
             if (!project.milestones[task.milestone].todos)
@@ -89,36 +91,53 @@
         }, 50)
     }
     const save = () => {
+
+        let fTags = [];
+        project.name = new showdown.Converter().makeHtml(" "+project.name.trim()+" ")
+        let tags = project.name.split(" ").filter(n => /:/.test(n));
+        tags.forEach(tag => {
+            project.name = project.name.replace(tag, "")
+            let cmd = tag.substring(0, 2);
+            if ([":u"].includes(cmd)){
+                console.log(tag)
+                project.user = [...project.user, ...tag.substring(2, tag.length).split(",")]
+            }else fTags.push(tag.replace(":", ""))
+        })
+
         if (note) {
             if (project.name.length>1 && project.overview.length>1) {
                 let nt = {
                     name: project.name,
                     content: project.overview,
                     id: NOTE.doc().id,
-                    user: user.uid,
+                    user: project.user,
+                    tag: fTags,
                     created: new Date(),
                 }
                 NOTE.doc(nt.id).set(nt).then(()=>dispatch('close', {})).catch(e=>console.log(e))
             }
-            return
-        }
-        let batch = firestore.batch();
-        let mss = []
-        project.milestones.forEach(milestone => {
-            let pml = Object.assign(milestone, {});
-            if (milestone.todos) {
-                for (let i=0; i<milestone.todos.length; i++){
-                    batch.set(TASK.doc(milestone.todos[i].id), milestone.todos[i])
+        }else{
+            project.tag = fTags
+            let batch = firestore.batch();
+            let mss = []
+            project.milestones.forEach(milestone => {
+                let pml = Object.assign(milestone, {});
+                if (milestone.todos) {
+                    for (let i=0; i<milestone.todos.length; i++){
+                        let td = milestone.todos[i]
+                        td.user = project.user
+                        batch.set(TASK.doc(td.id), td)
+                    }
+                    delete pml.todos;
                 }
-                delete pml.todos;
-            }
-            mss.push(pml)
-        })
-        project.milestones = mss;
-        batch.set(PROJECT.doc(project.id), project)
-        batch.commit().then( () => {
-            dispatch('close', {})
-        })
+                mss.push(pml)
+            })
+            project.milestones = mss;
+            batch.set(PROJECT.doc(project.id), project)
+            batch.commit().then( () => {
+                dispatch('close', {})
+            })
+        }
     }
 </script>
 
@@ -141,7 +160,7 @@
     {/if}
 
     {#if steps===1}
-        <h1 class="card sub-title text-center p-4 uppercase cursor-pointer mb-8" on:click={()=>steps=0}>{project.name}</h1>
+        <h1 class="card sub-title text-center p-4 uppercase cursor-pointer mb-8" on:click={()=>steps=0}>{@html project.name}</h1>
 
         {#each project.milestones as m, x}
             <div class="card p-4 my-2">

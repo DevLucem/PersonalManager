@@ -36,7 +36,7 @@
     let editBalance = null;
 </script>
 
-<div class="space-y-4 my-16 bg-gray p-8 rounded rounded-xl shadow shadow-2xl">
+<div class="space-y-4 my-6 bg-gray p-8 rounded rounded-xl shadow shadow-2xl">
     <div class="flex justify-between">
         <div class="flex flex-nowrap overflow-x-auto mr-4">
             <div class="whitespace-nowrap font-bold text-white flex items-center text-2xl mr-4">About ${amount} USD </div>

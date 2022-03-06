@@ -19,7 +19,7 @@
                 {td.expiry.toDate().getDate()} - {td.expiry.toDate().getHours()}
             </span>
         {/if}
-        <span>{@html td.name}</span> {td.id}
+        <span>{@html td.name}</span>
         {#each td.tags as tag}
             <span class="text-sm {tag==='done' && td.user[0]===user.uid?'rounded-full font-bold uppercase bg-red-500 px-2 mx-2':'tag'}">{tag}</span>
         {/each}

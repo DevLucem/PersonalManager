@@ -32,7 +32,7 @@
             done: null
         }
         let fTags = [];
-        quickTodo = new showdown.Converter().makeHtml(quickTodo)
+        quickTodo = new showdown.Converter().makeHtml(" "+quickTodo.trim()+" ")
         let tags = quickTodo.split(" ").filter(n => /:/.test(n));
         let expiry = null;
         tags.forEach(tag => {
@@ -61,7 +61,7 @@
     }
 </script>
 
-<div class="card mt-12 pb-1 flex-1">
+<div class="card mt-4 pb-1 flex-1">
     <input type="text" aria-label="none" class="input m-2 border border-primary" placeholder="Quick TODO" on:keypress={e=>{if (e.charCode===13) addTodo()}} bind:value={quickTodo}>
     {#if schedule.length>0}
         <div class="text-primary text-center mb-1">
@@ -81,7 +81,4 @@
     {#each todo.filter(td=>!td.repeat&&!td.done).sort((a, b) => a.created.toDate()-b.created.toDate()) as td, x}
         <Todo {td} {user} checking={true}/>
     {/each}
-    <div class="flex justify-center items-end flex-1">
-        <p class="text-center m-2 font-bold text-primary">{new Date().toLocaleDateString('en-US',  { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
-    </div>
 </div>

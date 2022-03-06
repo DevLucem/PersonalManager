@@ -26,7 +26,7 @@
 
 
 <div class="py-8 flex flex-col justify-center">
-    <h1 class="text-center p-4 font-bold text-primary title">{project.name}</h1>
+    <h1 class="text-center p-4 font-bold text-primary title">{@html project.name}</h1>
     <div class="card p-4 text-gray my-4">
         <p>{project.overview}</p>
         <p class="text-center">{project.id}  ~  Created {project.created.toDate()}</p>
