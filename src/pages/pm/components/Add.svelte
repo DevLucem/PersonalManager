@@ -3,7 +3,7 @@
     const dispatch = createEventDispatcher();
     onMount(() => window.scrollTo(0, 0));
     import Cancel from "../../../assets/Cancel.svelte";
-    import {firestore, PROJECT, TASK, FIELD_VALUE, NOTE} from "../../../firebase";
+    import {firestore, PROJECTS, TASKS, FIELD_VALUE, NOTE} from "../../../firebase";
     import showdown from "showdown";
     export let user;
     export let editProject;
@@ -13,11 +13,10 @@
     let project = editProject ? editProject : {
         name: "",
         created: new Date(),
-        id: PROJECT.doc().id,
-        overview: "",
-        tag: [],
-        user: [user.uid],
-        milestones: []
+        id: PROJECTS.doc().id,
+        description: "",
+        tags: [],
+        users: [user.uid],
     };
     if (editProject) {
         project.milestones.forEach((m, i) => project.milestones[i].todos = [])
@@ -36,11 +35,11 @@
     let todo = ""
     let milestone = {
         name: "",
-        overview: "",
+        description: "",
         tag: [],
         users: [],
         budget: "",
-        ending: "",
+        expiry: "",
         todos: []
     }
 
@@ -70,14 +69,14 @@
         })
         if (!milestone.todos) milestone.todos = [];
         milestone.todos.push({
-            id: TASK.doc().id,
+            id: TASKS.doc().id,
             created: new Date(),
             name: todo,
             tags: fTags,
             expiry: expiry,
             project: project.id,
             milestone: project.milestones.length,
-            user: [user.uid],
+            users: [user.uid],
             done: null
         })
         milestone.todos = milestone.todos
@@ -87,7 +86,7 @@
         project.milestones = [...project.milestones, Object.assign({}, milestone)];
         setTimeout(()=>{
             milestone.tag = milestone.users = milestone.todos = [];
-            milestone.name = milestone.overview = milestone.budget = "";
+            milestone.name = milestone.description = milestone.budget = "";
         }, 50)
     }
     const save = () => {
@@ -105,10 +104,10 @@
         })
 
         if (note) {
-            if (project.name.length>1 && project.overview.length>1) {
+            if (project.name.length>1 && project.description.length>1) {
                 let nt = {
                     name: project.name,
-                    content: project.overview,
+                    content: project.description,
                     id: NOTE.doc().id,
                     user: project.user,
                     tag: fTags,
@@ -126,14 +125,14 @@
                     for (let i=0; i<milestone.todos.length; i++){
                         let td = milestone.todos[i]
                         td.user = project.user
-                        batch.set(TASK.doc(td.id), td)
+                        batch.set(TASKS.doc(td.id), td)
                     }
                     delete pml.todos;
                 }
                 mss.push(pml)
             })
             project.milestones = mss;
-            batch.set(PROJECT.doc(project.id), project)
+            batch.set(PROJECTS.doc(project.id), project)
             batch.commit().then( () => {
                 dispatch('close', {})
             })
@@ -145,15 +144,12 @@
 
     {#if steps===0}
         <h1 class="flex-1 title text-center mb-8">Add A Project</h1>
-    {/if}
-
-    {#if steps===0}
         <form class="card" on:submit|preventDefault={()=>note?save():steps=1}>
             <input required aria-label="none" type="text" class="input m-4" placeholder="Give Your Project A Title" bind:value={project.name}>
-            <textarea required aria-label="none" type="text" class="input m-4" placeholder="A short description of what this project is about" bind:value={project.overview}></textarea>
+            <textarea required aria-label="none" type="text" class="input m-4" placeholder="A short description of what this project is about" bind:value={project.description}></textarea>
             <div class="flex justify-between mx-4 space-x-4 {note?'hidden':''}">
                 <input type="datetime-local" aria-label="none" class="input flex-1" bind:value={project.starting}>
-                <input type="datetime-local" aria-label="none" class="input flex-1" bind:value={project.ending}>
+                <input type="datetime-local" aria-label="none" class="input flex-1" bind:value={project.expiry}>
             </div>
             <button type="submit" class="button m-4">{note?"Save":"Next"}</button>
         </form>
@@ -173,10 +169,10 @@
                                 <path d="M5 3a2 2 0 00-2 2v6a2 2 0 002 2V5h8a2 2 0 00-2-2H5z" />
                             </svg>
                         </button>
-                        <Cancel on:clicked={()=>{project.milestones[x].todos?project.milestones[x].todos.forEach( todo => TASK.doc(todo.id).delete()):''; PROJECT.doc(project.id).update({milestones: FIELD_VALUE.arrayRemove(m)}); project.milestones.splice(x, 1); project.milestones=project.milestones}}/>
+                        <Cancel on:clicked={()=>{project.milestones[x].todos?project.milestones[x].todos.forEach( todo => TASKS.doc(todo.id).delete()):''; PROJECTS.doc(project.id).update({milestones: FIELD_VALUE.arrayRemove(m)}); project.milestones.splice(x, 1); project.milestones=project.milestones}}/>
                     </div>
                 </div>
-                <p class="text-gray mx-4">{m.overview}</p>
+                <p class="text-gray mx-4">{m.description}</p>
                 {#if m.todos}
                     {#each m.todos as td, x}
                         <div class="text-sm rounded rounded-2xl flex items-center justify-between mx-4 bg-gray px-2 duration-300 my-1 transform hover:text-primary">
@@ -201,7 +197,7 @@
             <h3 class="sub-title text-center my-4 uppercase">Add Milestones</h3>
             <div class="flex flex-col">
                 <input required aria-label="none" type="text" class="input m-4" placeholder="Milestone Name" bind:value={milestone.name}>
-                <textarea aria-label="none" type="text" class="input m-4" placeholder="Additional Details For the Milestone" bind:value={milestone.overview}></textarea>
+                <textarea aria-label="none" type="text" class="input m-4" placeholder="Additional Details For the Milestone" bind:value={milestone.description}></textarea>
                 {#if milestone.todos}
                     {#each milestone.todos as td, x}
                         <div class="rounded rounded-2xl flex items-center justify-between mx-4 bg-gray p-2 duration-300 my-1 transform hover:text-primary">
@@ -225,7 +221,7 @@
                 <input type="text" aria-label="none" class="input m-4" placeholder="Type milestone task" on:keypress={e=>{if (e.charCode===13) addTodo()}} bind:value={todo}>
                 <div class="flex mx-4 space-x-2">
                     <input type="number" aria-label="none" class="input flex-1" placeholder="Budget" bind:value={milestone.budget}>
-                    <input type="datetime-local" aria-label="none" class="input flex-1" bind:value={milestone.ending}>
+                    <input type="datetime-local" aria-label="none" class="input flex-1" bind:value={milestone.expiry}>
                 </div>
                 <div class="flex justify-center">
                     <button class="icon m-8" on:click={()=>addMilestone()}>
