@@ -1,8 +1,7 @@
 <script>
     import Tasks from "./components/Tasks.svelte";
-    import firebase, {PROJECTS, TASKS, NOTE, MILESTONES, firestore} from "../../firebase";
+    import {PROJECTS, TASKS, NOTE, MILESTONES} from "../../firebase";
     import Project from "./components/Project.svelte";
-    import Add from "./components/Add.svelte";
     import Cancel from "../../assets/Cancel.svelte";
     import AddButton from "../../assets/AddButton.svelte";
     import Projects from "./components/Projects.svelte";
@@ -88,7 +87,7 @@
         <div class="w-full h-screen bg-gray opacity-60"></div>
         <div class="absolute top-0 bottom-0 left-0 right-0 flex justify-center items-center p-8 overflow-auto">
             {#if addProject || editProject}
-                <AddProject {user} {editProject} milestones={milestones.filter(milestone => milestone.project===editProject.id)} tasks={tasks.filter(task => task.project===editProject.id)} on:exit={()=>editProject=addProject=false}/>
+                <AddProject {user} {editProject} milestones={milestones.filter(milestone => editProject && milestone.project===editProject.id)} tasks={tasks.filter(task => editProject && task.project===editProject.id)} on:exit={()=>editProject=addProject=false}/>
             {/if}
             {#if viewProject}
                 <Project {user} project={viewProject} milestones={milestones.filter(milestone => milestone.project===viewProject.id)} tasks={tasks.filter(task => task.project===viewProject.id)} on:exit={()=>viewProject=false}/>

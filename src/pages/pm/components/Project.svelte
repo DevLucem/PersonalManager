@@ -12,7 +12,7 @@
     export let milestones;
     export let user;
 
-    const complete = () => {if (confirm("Mark This Project As Complete?")) PROJECTS.doc(project.id).update({done: new Date()}).then(()=>dispatch('exit', {}))}
+    const complete = () => {if (confirm("Mark This Project As Complete?")) PROJECTS.doc(project.id).update({done: new Date(), pause: null}).then(()=>dispatch('exit', {}))}
     let loaded = tasks && tasks.filter(td=>!td.done).length>0;
     $: if (loaded && tasks && tasks.filter(td=>!td.done).length<1) complete();
 
@@ -33,7 +33,7 @@
     <h1 class="text-center p-4 font-bold text-primary title">{@html project.name}</h1>
     <div class="card p-4 text-gray my-4">
         <p>{project.description}</p>
-        <p class="text-center">{project.id}  ~  Created {project.created.toDate()}</p>
+        <p class="text-center"><span class="select-all">{project.id}</span>  ~  Created {project.created.toDate()}</p>
     </div>
     <div class="my-8">
         {#each milestones as milestone, x}

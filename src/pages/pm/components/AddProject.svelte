@@ -62,6 +62,7 @@
 
         let tags = extractTags(project.name);
         project.name = tags.text;
+        console.log('users', tags.users)
         project.users = project.users.concat(tags.users).unique()
         project.tags = project.tags.concat(tags.tags).unique()
 
@@ -76,7 +77,7 @@
             if (!pml.id) pml.id = MILESTONES.doc().id
             let tags1 = extractTags(pml.name);
             pml.name = tags1.text;
-            pml.users = pml.users.concat(tags1.users).unique()
+            pml.users = [user.uid].concat(tags.users).concat(tags1.users).unique()
             project.users = project.users.concat(tags1.users).unique()
             pml.tags = pml.tags.concat(tags1.tags).unique()
             if (milestone.tasks) {
@@ -84,8 +85,9 @@
                     let tsk = task;
                     tsk.milestone = pml.id;
                     tsk.project = project.id;
+                    tsk.users = tsk.users.concat(tags.users).unique()
                     pml.users = pml.users.concat(tsk.users).unique()
-                    project.users = project.tags.concat(tsk.users).unique()
+                    project.users = project.users.concat(tsk.users).unique()
                     batch.set(TASKS.doc(tsk.id), tsk)
                 })
                 delete pml.tasks;
