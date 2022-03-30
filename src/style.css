@@ -6,7 +6,7 @@ a {
 }
 
 .title {
-    @apply text-white text-4xl font-bold;
+    @apply text-white text-3xl font-bold;
 }
 
 .sub-title {

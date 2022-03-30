@@ -5,7 +5,6 @@
     import PM from "./pages/pm/Home.svelte";
     import MM from "./pages/mm/Home.svelte";
     import firebase from "./firebase";
-
     let routing; let params; [
         ["/mm**", MM],
         ["/pm**", PM],

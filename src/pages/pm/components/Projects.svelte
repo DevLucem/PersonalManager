@@ -12,14 +12,10 @@
     let paused = false;
 </script>
 
-<div class="card mt-4 pb-2 pt-4 px-4 flex-1">
-    <div class="flex justify-between title">
+<div class="card mt-4 pb-2 px-4 flex-1">
+    <div class="flex justify-between title my-2">
         <div>{projects.filter(p => !p.done).length} Projects</div>
-        <div class="h-12">
-            <div class="icon">
-                <AddButton dark={true} on:clicked={()=>dispatch('add', {})}/>
-            </div>
-        </div>
+        <AddButton on:clicked={()=>dispatch('add', {})}/>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2">
         {#each projects.filter(p => !p.done && !p.paused) as project}
