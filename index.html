@@ -4,7 +4,22 @@
     <meta charset="UTF-8" />
     <link rel="icon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Project Manager</title>
+    <title>PWM - Pro Wealth Manager</title>
+    <meta name="apple-mobile-web-app-status-bar" content="#333859" />
+    <meta name="theme-color" content="#333859" />
+    <link rel="apple-touch-icon" href="/icon-192.png" />
+    <link rel="apple-touch-icon" href="/icon-512.png" />
+
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", function() {
+          navigator.serviceWorker
+                  .register("/serviceWorker.js")
+                  .then(() => console.log("service worker registered!"))
+                  .catch(err => console.error("Failed to register service worker", err))
+        })
+      }
+    </script>
   </head>
   <body>
     <div id="app"></div>

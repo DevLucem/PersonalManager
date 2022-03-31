@@ -10,12 +10,12 @@
         ["/pm**", PM],
     ].forEach(route => router(route[0], (context) => {params = context.params; routing = route[1]}))
     router.redirect("**", "/pm")
+    router.exit("**", (context, next) => {manager = router.current; next()})
     router.start();
     async function getUser(){
         return await new Promise(resolve => firebase.auth().onAuthStateChanged(async auth => resolve(auth ? auth : {uid: '_public'})))
     }
     let manager = router.current;
-    router.exit("**", (context, next) => {manager = router.current; next()})
 </script>
 
 <main class="backy h-screen py-4 overflow-y-scroll">
