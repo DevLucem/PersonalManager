@@ -68,7 +68,7 @@
 </div>
 
 <svelte:head>
-    <title>Money Manager</title>
+    <title>Money</title>
 </svelte:head>
 
 {#if addBalance || editBalance}

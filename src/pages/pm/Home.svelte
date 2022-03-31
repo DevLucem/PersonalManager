@@ -45,7 +45,7 @@
 </script>
 
 <svelte:head>
-    <title>Professional Wealth Manager</title>
+    <title>Project</title>
 </svelte:head>
 
 <div class="lg:flex lg:space-x-4">
