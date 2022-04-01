@@ -6,11 +6,11 @@ a {
 }
 
 .title {
-    @apply text-white text-3xl font-bold;
+    @apply text-white text-xl md:text-3xl font-bold;
 }
 
 .sub-title {
-    @apply text-primary text-xl font-bold;
+    @apply text-primary text-sm md:text-xl font-bold;
 }
 
 .card {
@@ -50,7 +50,7 @@ svg {
 }
 
 .button {
-    @apply text-xl uppercase rounded-2xl px-6 pb-1 pt-0.5 text-center font-bold;
+    @apply text-lg md:text-xl uppercase rounded-2xl px-6 pb-1 pt-0.5 text-center font-bold;
     background: linear-gradient(45deg, #51ccda, #00c97e);
 }
 

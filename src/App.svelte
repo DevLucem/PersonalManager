@@ -18,7 +18,7 @@
     let manager = router.current;
 </script>
 
-<main class="backy h-screen py-4 overflow-y-scroll">
+<main class="backy h-screen py-4 overflow-y-scroll text-xs md:text-sm">
     {#await getUser()}
         <div class="flex h-screen text-gray -my-4 justify-center items-center">
             <div class="w-32 h-32">
