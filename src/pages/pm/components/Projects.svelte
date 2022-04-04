@@ -13,8 +13,8 @@
 </script>
 
 <div class="card mt-4 pb-2 px-4 flex-1">
-    <div class="flex justify-between title my-2">
-        <div>{projects.filter(p => !p.done).length} Projects</div>
+    <div class="flex justify-between title my-1 text-center items-center">
+        <p>{projects.filter(p => !p.done).length} Projects</p>
         <AddButton on:clicked={()=>dispatch('add', {})}/>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2">
@@ -34,11 +34,7 @@
             </div>
         {/each}
     </div>
-    <div class="flex flex-col justify-end items-center flex-1">
-        <div class="flex justify-between w-full">
-            <button on:click={()=>paused=!paused} class="{paused?'text-primary':'text-gray'} text-center text-sm px-8 py-1 rounded-lg font-bold border rounded-full border-gray">{projects.filter(p => p.paused).length} Paused</button>
-            <button on:click={()=>completed=!completed} class="{completed?'text-primary':'text-gray'} text-center text-sm px-8 py-1 rounded-lg font-bold border rounded-full border-gray">{projects.filter(p => p.done).length} Completed</button>
-        </div>
+    <div class="flex flex-col justify-end items-center flex-1 mt-4">
         {#if completed}
             <div class="grid grid-cols-1 md:grid-cols-2 w-full">
                 {#each projects.filter(p => p.done) as project}
@@ -59,5 +55,9 @@
                 {/each}
             </div>
         {/if}
+        <div class="flex justify-between w-full">
+            <button on:click={()=>paused=!paused} class="{paused?'text-primary':'text-gray'} text-center text-sm px-8 py-1 rounded-lg font-bold border rounded-full border-gray">{projects.filter(p => p.paused).length} Paused</button>
+            <button on:click={()=>completed=!completed} class="{completed?'text-primary':'text-gray'} text-center text-sm px-8 py-1 rounded-lg font-bold border rounded-full border-gray">{projects.filter(p => p.done).length} Completed</button>
+        </div>
     </div>
 </div>
