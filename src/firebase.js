@@ -10,6 +10,7 @@ export const PROJECTS = firestore.collection("projects")
 export const MILESTONES = firestore.collection("milestones")
 export const NOTE = firestore.collection("note")
 export const TASKS = firestore.collection("tasks")
+export const USERS = firestore.collection("users")
 export const MONEY = firestore.collection("money")
 
 export default firebase;

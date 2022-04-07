@@ -1,38 +1,36 @@
 <script>
     import Tasks from "./components/Tasks.svelte";
-    import {PROJECTS, TASKS, NOTE, MILESTONES} from "../../firebase";
+    import {PROJECTS, TASKS, NOTE, MILESTONES, USERS} from "../../firebase";
     import Project from "./components/Project.svelte";
     import Cancel from "../../assets/Cancel.svelte";
-    import AddButton from "../../assets/AddButton.svelte";
     import Projects from "./components/Projects.svelte";
     import AddProject from "./components/AddProject.svelte";
+    import Notes from "./components/Notes.svelte";
+    import Users from "./components/Users.svelte";
 
     export let user;
 
-
     let projects = [];
-    PROJECTS.where("users", "array-contains-any", [user.uid]).onSnapshot(snapshot => {
-        projects = [];
-        console.log('projects', snapshot.size)
-        snapshot.docs.forEach(doc => projects = [doc.data(), ...projects])
-    })
-
     let milestones = [];
-    MILESTONES.where("users", "array-contains-any", [user.uid]).onSnapshot(snapshot => {
-        milestones = [];
-        console.log('milestones', snapshot.size)
-        snapshot.docs.forEach(doc => milestones = [doc.data(), ...milestones])
-    })
-
     let tasks = [];
-    TASKS.where("users", "array-contains-any", [user.uid]).onSnapshot(snapshot => {
-        tasks = [];
-        console.log('tasks', snapshot.size)
-        snapshot.docs.forEach(doc => tasks = [doc.data(), ...tasks])
-    })
+    let users = [];
+
+    const getData = (source, callback) => {
+        source.where("users", "array-contains-any", [user.uid]).onSnapshot(snapshot => {
+            let target = [];
+            console.log('projects', snapshot.size)
+            snapshot.docs.forEach(doc => target = [doc.data(), ...target])
+            callback(target);
+        })
+    }
+
+    getData(PROJECTS, res => projects = res)
+    getData(MILESTONES, res => milestones = res)
+    getData(TASKS, res => tasks = res)
+    getData(USERS, res => users = res)
+    $: console.log(users)
 
     let notes = [];
-    let note = false;
     NOTE.where("user", "==", user.uid).onSnapshot(snapshot => {
         notes = [];
         snapshot.docs.forEach(doc => notes = [doc.data(), ...notes])
@@ -41,11 +39,10 @@
     let addProject = false;
     let viewProject = null;
     let editProject = null;
-    let showNotes = false;
 </script>
 
 <svelte:head>
-    <title>Project</title>
+    <title>PWM - Project</title>
 </svelte:head>
 
 <div class="lg:flex lg:space-x-4">
@@ -57,33 +54,13 @@
     </div>
 </div>
 
-<div class="mt-8">
-    <div class="flex bg-fore rounded-2xl text-white items-center justify-between px-4">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 cursor-pointer" viewBox="0 0 20 20" fill="currentColor" on:click={()=>showNotes=!showNotes}>
-            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-        </svg>
-        <h2 class="title flex-1 text-center cursor-pointer py-2" on:click={()=>showNotes=!showNotes}>Notes</h2>
-        <AddButton dark={true} on:clicked={()=>{note=true; addProject=true;}}/>
+<div class="lg:flex lg:space-x-4 mt-4">
+    <div class="flex-1">
+        <Notes {user} {notes}/>
     </div>
-    {#if showNotes}
-        <div class="flex flex-wrap">
-            <div class="bg-fore rounded rounded-lg text-white p-4 m-2 flex flex-col justify-center">
-                <p class="text-white">Your User ID</p>
-                <h3 class="font-bold text-sm cursor-pointer text-primary select-all">{user.uid}</h3>
-            </div>
-            {#each notes as note}
-                <div class="bg-fore rounded rounded-lg text-white p-4 m-2">
-                    <div class="flex space-x-8">
-                        <h3 class="font-bold text-lg cursor-pointer" on:click={()=>note.show=!note.show}>{note.name}</h3>
-                        <Cancel on:clicked={()=>NOTE.doc(note.id).delete()}/>
-                    </div>
-                    {#if note.show}
-                        <div class="border border-gray rounded rounded-2xl p-4 m-2">{note.content}</div>
-                    {/if}
-                </div>
-            {/each}
-        </div>
-    {/if}
+    <div class="flex-1">
+        <Users {user} {users}/>
+    </div>
 </div>
 
 {#if addProject || viewProject || editProject}
@@ -106,17 +83,3 @@
     </div>
 {/if}
 
-<!--
-{#if addProject || viewProject || editProject}
-    <div class="bg-gray overflow-auto overscroll-none h-screen z-10 absolute left-0 top-0 opacity-95 w-full" style="backdrop-filter: blur(20px);">
-        <div class="contain pt-8 text-center">
-            <Cancel on:clicked={()=>{viewProject=addProject=editProject=null}}/>
-            {#if addProject || editProject}
-                <Add {note} {user} {editProject} tasks={editProject ? tasks.filter(td => td.project===editProject.id && !td.done).reverse() : null} on:close={()=>note=addProject=editProject=null}/>
-            {/if}
-            {#if viewProject}
-                <Project {user} project={viewProject} tasks={tasks.filter(td => td.project===viewProject.id)} on:close={()=>viewProject=false}/>
-            {/if}
-        </div>
-    </div>
-{/if}-->
