@@ -50,7 +50,7 @@
         <Tasks tasks={tasks.filter(task => !task.project)} {user}/>
     </div>
     <div class="flex-1 flex">
-        <Projects {user} {tasks} {projects} on:add={()=>addProject=true} on:view={e=>viewProject=e.detail} on:edit={e=>editProject=e.detail}/>
+        <Projects {user} {users} {tasks} {projects} on:add={()=>addProject=true} on:view={e=>viewProject=e.detail} on:edit={e=>editProject=e.detail}/>
     </div>
 </div>
 
@@ -71,7 +71,7 @@
                 <AddProject {user} {editProject} milestones={milestones.filter(milestone => editProject && milestone.project===editProject.id)} tasks={tasks.filter(task => editProject && task.project===editProject.id)} on:exit={()=>editProject=addProject=false}/>
             {/if}
             {#if viewProject}
-                <Project {user} project={viewProject} milestones={milestones.filter(milestone => milestone.project===viewProject.id)} tasks={tasks.filter(task => task.project===viewProject.id)} on:exit={()=>viewProject=false}/>
+                <Project {user} {users} project={viewProject} milestones={milestones.filter(milestone => milestone.project===viewProject.id)} tasks={tasks.filter(task => task.project===viewProject.id)} on:exit={()=>viewProject=false}/>
             {/if}
         </div>
         <div class="absolute top-0 left-0 m-8">
