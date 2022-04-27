@@ -1,0 +1,61 @@
+<script>
+    import Tasks from "./task/Tasks.svelte";
+    import Calendar from "./Calendar.svelte";
+    import Projects from "./project/Projects.svelte";
+    import {listenData} from "../../firebase";
+    import Form from "./Form.svelte";
+    import QuickTask from "./task/QuickTask.svelte";
+    import Loader from "../../components/Loader.svelte";
+
+    let data = [];
+    listenData('PM', res => {
+        data = [];
+        res.forEach(snapshot => {
+            let doc = snapshot.data();
+            ['starting', 'ending', 'done'].forEach(val => {
+                if (doc[val]) doc[val] = doc[val].toDate();
+            })
+            data.push(doc)
+        })
+    })
+
+    let doc;
+    let calendar;
+</script>
+
+<div class="w-full p-4 lg:flex overflow-auto pb-24">
+    <div>
+        <QuickTask on:data={e => doc=e.detail}/>
+        <Tasks on:data={e => doc=e.detail} tasks={data.filter(doc => {return doc.type==='task' && !doc.project})}/>
+    </div>
+    <Projects on:data={e => doc=e.detail} data={data.filter(doc => {return doc.type!=='task' || doc.project})}/>
+</div>
+
+<div class="absolute bottom-0 left-0 right-0 flex items-end justify-around py-2 bg-transparent">
+
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 hover:text-primary text-fade hover:cursor-pointer" viewBox="0 0 20 20" fill="currentColor">
+        <title>Manage Account</title>
+        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd" />
+    </svg>
+
+    <button on:click={()=>doc={type: 'project'}} class="-mt-8 hover:text-primary bg-transparent text-fade">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd" />
+        </svg>
+    </button>
+
+    <button on:click={()=>calendar=true} class="hover:text-primary text-fade">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" />
+        </svg>
+    </button>
+
+</div>
+
+{#if doc}
+    <Form {doc} on:close={()=>doc=null}/>
+{/if}
+
+{#if calendar}
+    <Calendar {data} on:close={()=>calendar=false}/>
+{/if}
