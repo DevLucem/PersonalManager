@@ -1,10 +1,10 @@
 {
-  "name": "Progressive Web App",
-  "short_name": "PWA",
+  "name": "Personal Manager",
+  "short_name": "P W M",
   "start_url": "index.html",
   "display": "standalone",
-  "background_color": "#fee2e2",
-  "theme_color": "#db4938",
+  "background_color": "#10162A",
+  "theme_color": "#00c97e",
   "orientation": "portrait-primary",
   "icons": [
     {

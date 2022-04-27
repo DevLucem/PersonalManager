@@ -5,13 +5,16 @@
     import Task from "./Task.svelte";
     export let tasks = [];
     export let show = 10;
+    let showing = show;
 </script>
 
 <div class="card p-1 md:p-2 {tasks.length<1?'invisible':'bg-white'}">
-    {#each tasks.slice(0, show) as task}
+    {#each tasks.slice(0, showing) as task}
         <Task {task} on:data={e=>dispatch('data', e.detail)}/>
     {/each}
-    {#if tasks.length>show}
-        <p class="text-center tag-line text-secondary">...and {tasks.length-show} more</p>
+    {#if tasks.length>showing || showing !== show}
+        <div class="flex justify-center mx-4 md:mx-8">
+            <button on:click={()=>showing=showing===show?tasks.length:show} class="text-center tag-line text-secondary">{show===showing? `...${tasks.length-show} more`: 'minimize'}</button>
+        </div>
     {/if}
 </div>

@@ -7,7 +7,7 @@
     let icons = ['add', 'cancel', 'check', 'edit', 'refresh']
 </script>
 
-<button type="button" on:click={()=>clicked()} class="{classes}">
+<button type="button" on:click={e=>{e.stopPropagation(); clicked()}} class="{classes}">
     <svg xmlns="http://www.w3.org/2000/svg" class="h-full w-full" viewBox="0 0 20 20" fill="currentColor">
 
         <title>{icon}</title>

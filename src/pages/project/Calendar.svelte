@@ -17,7 +17,7 @@
         let valid = true;
         if (doc.type === 'project') valid = false;
         let tasks = data.filter(el => {return el.milestone === doc.id})
-        if (doc.type === 'milestone' && ((!doc.starting && !doc.ending) || tasks.length<1) ) valid = false;
+        if (doc.type === 'milestone' && ((!doc.starting && !doc.ending) || tasks.length<1) && tasks.filter(el => {return el.starting || el.ending}).length<1 ) valid = false;
         let milestone = data.find(el => el.id===doc.milestone)
         if (doc.type === 'task' && !doc.starting && !doc.ending && !milestone?.starting && !milestone?.ending) valid = false;
         if (valid) schedule.push({

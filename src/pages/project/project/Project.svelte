@@ -1,6 +1,7 @@
 <script>
     import {createEventDispatcher} from 'svelte';
     let dispatch = createEventDispatcher();
+
     import Milestone from "../milestone/Milestone.svelte";
     export let project;
     export let data = [];
@@ -9,7 +10,7 @@
 <div class="full-overlay">
 
     <div class="flex justify-between">
-        <h1 class="text-lg font-bold text-primary">{@html project.name}</h1>
+        <h1 class="text-lg font-bold text-primary" style="color: {project.color}">{project.name}</h1>
     </div>
 
     {#each data.filter(doc => {return doc.type==='milestone'}) as milestone}

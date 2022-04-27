@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut } from "firebase/auth"
-import {getFirestore, enableIndexedDbPersistence, onSnapshot, collection, query, where, serverTimestamp, doc, setDoc, deleteDoc, getDoc} from 'firebase/firestore'
+import {getFirestore, enableIndexedDbPersistence, onSnapshot, collection, query, where, serverTimestamp, doc, setDoc, deleteDoc, getDoc, orderBy} from 'firebase/firestore'
 import { FIREBASE_CONFIG } from "./KEYS";
 
 initializeApp(FIREBASE_CONFIG);
@@ -13,7 +13,9 @@ export const logOut = () => {return signOut(AUTH)}
 const FIRESTORE = getFirestore()
 enableIndexedDbPersistence(FIRESTORE).catch(e => console.log(e.code  === 'failed-precondition' ? 'Multiple Tabs Open' : 'Cant Cache ', e))
 
-export const listenData = (path, callback) => {return onSnapshot(query(collection(FIRESTORE, path), where("users", "array-contains", AUTH.currentUser?.uid || "_public")), callback)}
+export const listenData = (path, callback) => {return onSnapshot(query(collection(FIRESTORE, path),
+    where("users", "array-contains", AUTH.currentUser?.uid || "_public"),
+    orderBy('created', 'desc')), callback)}
 export const updateData = (path, data) => {return setDoc(doc(FIRESTORE, path), data, {merge: true})}
 export const getData = path => {return getDoc(doc(FIRESTORE, path))}
 
