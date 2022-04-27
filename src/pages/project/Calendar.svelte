@@ -70,11 +70,17 @@
 <Pop on:close={()=>dispatch('close')}>
     <div class="full-overlay" id="calendar"></div>
     <div class="absolute bottom-0">
-        <button class="font-bold text-primary" on:click={()=>calendar.changeView('day', true)}>D</button>
-        <button class="font-bold text-primary ml-4" on:click={()=>calendar.changeView('week', true)}>W</button>
-        <button class="font-bold text-primary ml-4" on:click={()=>calendar.changeView('month', true)}>M</button>
+        <button on:click={()=>calendar.changeView('day', true)}>D</button>
+        <button on:click={()=>calendar.changeView('week', true)}>W</button>
+        <button on:click={()=>calendar.changeView('month', true)}>M</button>
 
-        <button class="font-bold text-primary ml-8" on:click={()=>calendar.prev()}>P</button>
-        <button class="font-bold text-primary ml-4" on:click={()=>calendar.next()}>N</button>
+        <button on:click={()=>calendar.prev()}>P</button>
+        <button on:click={()=>calendar.next()}>N</button>
     </div>
 </Pop>
+
+<style>
+    button {
+        @apply font-bold text-white m-2 px-2 bg-primary rounded-full w-8 h-8 text-center;
+    }
+</style>

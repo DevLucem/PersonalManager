@@ -22,6 +22,7 @@
         if (doc.ending) ending = new Date(doc.ending.getTime() - doc.ending.getTimezoneOffset() * 60000).toISOString().substring(0, 19);
     }
 
+    structureDate();
     if (!doc.color) setColor();
     if (doc.description) doc.description = new showdown.Converter().makeMarkdown(doc.description)
 
@@ -45,6 +46,8 @@
             }
             timeUpdate('starting', starting)
             timeUpdate('ending', ending)
+
+            console.log('color update', doc.color, doc.name)
             saveData(doc).catch(e => console.error('ERROR:', e))
                 .then(() => console.log('saved doc'))
             dispatch('close')

@@ -15,7 +15,7 @@ enableIndexedDbPersistence(FIRESTORE).catch(e => console.log(e.code  === 'failed
 
 export const listenData = (path, callback) => {return onSnapshot(query(collection(FIRESTORE, path),
     where("users", "array-contains", AUTH.currentUser?.uid || "_public"),
-    orderBy('created', 'desc')), callback)}
+    orderBy('created')), callback)}
 export const updateData = (path, data) => {return setDoc(doc(FIRESTORE, path), data, {merge: true})}
 export const getData = path => {return getDoc(doc(FIRESTORE, path))}
 
