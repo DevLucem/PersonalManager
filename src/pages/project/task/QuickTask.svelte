@@ -10,4 +10,4 @@
 </script>
 
 
-<input bind:value={name} on:keydown={e => e.key === 'Enter' && addTask()} class="input mb-2 w-full" aria-label="Add a quick task" type="text" placeholder="Quick Task or Press Enter For More">
+<input bind:value={name} on:keydown={e => e.key === 'Enter' && addTask()} class="input w-full" aria-label="Add a quick task" type="text" placeholder="Quick Task or Press Enter For More">

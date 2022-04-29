@@ -8,7 +8,7 @@
     let showing = show;
 </script>
 
-<div class="card p-1 md:p-2 {tasks.length<1?'invisible':'bg-white'}">
+<div class="card mt-1 p-1 md:p-2 {tasks.length<1?'hidden':'bg-white'}">
     {#each tasks.slice(0, showing) as task}
         <Task {task} on:data={e=>dispatch('data', e.detail)}/>
     {/each}

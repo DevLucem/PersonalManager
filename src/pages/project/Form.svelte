@@ -18,8 +18,10 @@
     }
 
     const structureDate = () => {
-        if (doc.starting) starting = new Date(doc.starting.getTime() - doc.starting.getTimezoneOffset() * 60000).toISOString().substring(0, 19);
-        if (doc.ending) ending = new Date(doc.ending.getTime() - doc.ending.getTimezoneOffset() * 60000).toISOString().substring(0, 19);
+        let start = starting ? new Date(starting) : doc.starting;
+        if (start) starting = new Date(start.getTime() - start.getTimezoneOffset() * 60000).toISOString().substring(0, 19);
+        let end = ending ? new Date(ending) : doc.ending;
+        if (end) ending = new Date(end.getTime() - end.getTimezoneOffset() * 60000).toISOString().substring(0, 19);
     }
 
     structureDate();
@@ -56,22 +58,23 @@
     }
 
     function duration(hours, minutes){
-        if (!doc.starting && !doc.ending){
-            doc.starting = new Date();
-            if (doc.starting.getMinutes()>30) doc.starting.setHours(doc.starting.getHours()+1)
-            doc.starting.setMinutes(0)
-            doc.starting.setSeconds(0, 0)
-            doc.ending = doc.starting
-            doc.ending.setHours(doc.ending.getHours() + hours)
-            doc.ending.setMinutes(doc.ending.getMinutes() + minutes)
-        }else if (doc.ending) {
-            doc.ending = new Date(doc.ending);
-            doc.ending.setHours(doc.ending.getHours() + hours)
-            doc.ending.setMinutes(doc.ending.getMinutes() + minutes)
+        if (!starting && !ending){
+            starting = new Date();
+            if (starting.getMinutes()>30) starting.setHours(starting.getHours()+1)
+            starting.setMinutes(0)
+            starting.setSeconds(0, 0)
+            ending = new Date(starting)
+            ending.setHours(ending.getHours() + hours)
+            ending.setMinutes(ending.getMinutes() + minutes)
+        }else if (ending) {
+            ending = new Date(ending);
+            ending.setHours(ending.getHours() + hours)
+            ending.setMinutes(ending.getMinutes() + minutes)
         } else {
-            doc.ending = new Date(doc.starting);
-            doc.ending.setHours(doc.ending.getHours() + hours)
-            doc.ending.setMinutes(doc.ending.getMinutes() + minutes)
+            ending = new Date(starting);
+            ending.setHours(ending.getHours() + hours)
+            ending.setMinutes(ending.getMinutes() + minutes)
+            if (ending<starting) ending = new Date(starting);
         }
         structureDate();
     }
@@ -90,17 +93,25 @@
         <form on:submit|preventDefault={save}>
             <input bind:value={doc.name} class="input mb-2 w-full" aria-label="Name" type="text" placeholder="Name" required>
             <textarea bind:value={doc.description} aria-label="Description" cols="30" rows="5" placeholder="A little more optional details" class="w-full input"></textarea>
-            <div class="flex items-center justify-between">
-                <input type="datetime-local" aria-label="Starting" bind:value={starting}>
-                <span class="m-4 font-bold">to</span>
-                <input type="datetime-local" aria-label="Ending" bind:value={ending}>
-            </div>
-            <div class="flex flex-wrap items-center justify-between space-x-2">
-                <button type="button" class="tag" on:click={()=>duration(0, 30)}>+30Min</button>
-                <button type="button" class="tag" on:click={()=>duration(1, 0)}>+1Hr</button>
-                <button type="button" class="tag" on:click={()=>duration(2, 0)}>+2hr</button>
-                <button type="button" class="tag" on:click={()=>duration(0, -30)}>-30Min</button>
-            </div>
+            {#if doc.type === 'task'}
+                <div class="flex flex-wrap items-center justify-between space-x-2 my-2">
+                    <button type="button" class="tag" on:click={()=>duration(0, 30)}>+30Min</button>
+                    <button type="button" class="tag" on:click={()=>duration(1, 0)}>+1Hr</button>
+                    <button type="button" class="tag" on:click={()=>duration(2, 0)}>+2hr</button>
+                    <button type="button" class="tag" on:click={()=>duration(0, -30)}>-30Min</button>
+                </div>
+                <div class="flex flex-col sm:flex-row items-center justify-between">
+                    <input type="datetime-local" aria-label="Starting" bind:value={starting}>
+                    <span class="m-4 font-bold">to</span>
+                    <input type="datetime-local" aria-label="Ending" bind:value={ending}>
+                </div>
+            {:else}
+                <div class="flex items-center justify-between">
+                    <input type="date" aria-label="Starting" bind:value={starting}>
+                    <span class="m-4 font-bold">to</span>
+                    <input type="date" aria-label="Ending" bind:value={ending}>
+                </div>
+            {/if}
             <div class="flex flex-wrap items-center hidden">
                 <span class="px-2 py-1 bg-primary rounded">User</span>
                 <Icon icon="add" classes="h-8 w-8 icon mx-4"/>

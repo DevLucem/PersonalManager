@@ -8,7 +8,7 @@
 
     let content;
     onMount(() => {
-        content.querySelector('input')?.focus()
+        content.querySelector('button')?.focus()
     })
 </script>
 

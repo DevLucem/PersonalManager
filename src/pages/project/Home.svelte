@@ -31,7 +31,7 @@
     let calendar;
 </script>
 
-<div class="w-full p-4 lg:flex overflow-auto pb-24">
+<div class="w-full p-4 lg:flex overflow-auto pb-12">
     <div>
         <QuickTask on:data={e => doc=e.detail}/>
         <Tasks on:data={e => doc=e.detail} tasks={data.filter(doc => {return doc.type==='task' && !doc.project})}/>
@@ -60,10 +60,10 @@
 
 </div>
 
-{#if doc}
-    <Form {doc} on:close={()=>doc=null}/>
+{#if calendar}
+    <Calendar on:data={e => doc=e.detail} {data} on:close={()=>calendar=false}/>
 {/if}
 
-{#if calendar}
-    <Calendar {data} on:close={()=>calendar=false}/>
+{#if doc}
+    <Form {doc} on:close={()=>doc=null}/>
 {/if}

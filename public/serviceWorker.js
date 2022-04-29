@@ -36,6 +36,7 @@ self.addEventListener("fetch", fetchEvent => {
     if (fetchEvent.request.url.indexOf('firestore.googleapis.com') === -1)
         fetchEvent.respondWith(
             fetch(fetchEvent.request).catch(() => {
+                console.log('returning cache', fetchEvent.request.url)
                 return caches.match(fetchEvent.request).then(res => {return res})
             })
         )
