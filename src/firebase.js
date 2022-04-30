@@ -14,9 +14,13 @@ const FIRESTORE = getFirestore()
 enableIndexedDbPersistence(FIRESTORE).catch(e => console.log(e.code  === 'failed-precondition' ? 'Multiple Tabs Open' : 'Cant Cache ', e))
 
 export const listenData = (path, callback) => {return onSnapshot(query(collection(FIRESTORE, path),
-    where("users", "array-contains", AUTH.currentUser?.uid || "_public"),
-    orderBy('created')), callback)}
-export const updateData = (path, data) => {return setDoc(doc(FIRESTORE, path), data, {merge: true})}
+    where("users", "array-contains", AUTH.currentUser?.uid || "_public"), orderBy('created')), callback)}
+export const listenDataFor = (path, entity, callback) => {
+    let user = AUTH.currentUser?.uid || "_public";
+    if (entity.users[0] !== user && entity.users.includes(user))
+        return onSnapshot(query(collection(FIRESTORE, path), where(entity.type, "==", entity.id), orderBy('created')), callback)
+    return null;
+}
 export const getData = path => {return getDoc(doc(FIRESTORE, path))}
 
 
@@ -40,9 +44,10 @@ export const saveData = (data) => {
 
     assign('created', serverTimestamp());
     assign('id', doc(DATA).id);
-
     ['starting', 'ending'].forEach(value => data[value] = data[value] ? new Date(data[value]) : null)
-    if (!data.users.includes(AUTH.currentUser.uid)) data.users = [AUTH.currentUser.uid, ...data.users]
+
+    let user = AUTH?.currentUser?.uid || '_public';
+    if (!data.users.includes(user)) data.users = [user, ...data.users]
     return setDoc(doc(DATA, data.id), data, {merge: true})
 }
 export const deleteData = data => {return deleteDoc(doc(DATA, data.id))}

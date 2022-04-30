@@ -1,8 +1,15 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+
     match /{document=**} {
       allow read, write: if true;
     }
+
+    match /PM/{entity} {
+      allow create, read, update: if true;
+      allow delete: if (request.auth!=null && request.auth.uid==resource.data.users[0]) || resource.data.users[0]=='_public';
+    }
+
   }
 }

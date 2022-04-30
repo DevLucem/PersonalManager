@@ -12,6 +12,7 @@
     export let doc;
     let isTask = doc.type === 'task';
     export let users = [];
+    export let user;
 
     let edit;
     let starting;
@@ -90,13 +91,13 @@
         dispatch('close')
     }
 
-    let user;
+    let addUser;
     function findUser() {
         let id = prompt("Enter User ID:")
         if (id && id.length > 5)
             getData(`users/${id}`).then(res => {
                 let data = res.data();
-                if (res.exists) user = {
+                if (res.exists) addUser = {
                     name: data.name,
                     user: data.id,
                     type: 'user'
@@ -134,26 +135,28 @@
                         <input type="date" aria-label="Ending" bind:value={ending}>
                     </div>
                 {/if}
-                <div class="flex flex-wrap items-center my-2">
-                    {#each doc.users.slice(doc.id?1:0) as user}
+                {#if !doc.id || user?.uid === doc.users[0]}
+                    <div class="flex flex-wrap items-center my-2">
+                        {#each doc.users.slice(doc.id?1:0) as user}
                         <span class="px-2 py-1 bg-primary rounded flex items-center" style="background-color: {users.find(el => el.user===user)?.color}">
                             {users.find(el => el.user===user)?.name}
                             <Icon icon="cancel" classes="h-4 w-4 hover:text-white" on:clicked={()=>doc.users = doc.users.filter(el => el !== user)}/>
                         </span>
-                    {/each}
-                    <div class="flex relative w-28 group mx-4">
-                        <Icon icon="add" classes="h-8 w-8 icon group-hover:border-primary"/>
-                        <div class="w-16 flex flex-col items-start right-0 absolute invisible group-hover:visible">
-                            {#each users.filter(el => {return !doc.users.includes(el.user)}) as user}
-                                <button type="button" on:click={()=>doc.users = [...doc.users, user.user]} class="truncate hover:text-primary">{user.name}</button>
-                            {/each}
-                            <button type="button" on:click={findUser}>Add New</button>
+                        {/each}
+                        <div class="flex relative w-28 group mx-4">
+                            <Icon icon="add" classes="h-8 w-8 icon group-hover:border-primary"/>
+                            <div class="w-16 flex flex-col items-start right-0 absolute invisible group-hover:visible">
+                                {#each users.filter(el => {return !doc.users.includes(el.user)}) as user}
+                                    <button type="button" on:click={()=>doc.users = [...doc.users, user.user]} class="truncate hover:text-primary">{user.name}</button>
+                                {/each}
+                                <button type="button" on:click={findUser}>Add New</button>
+                            </div>
                         </div>
                     </div>
-                </div>
+                {/if}
             {/if}
             <div class="flex justify-between mt-8">
-                {#if doc.id}
+                {#if doc.id && user?.uid === doc.users[0]}
                     <button type="button" class="button-s" on:click={remove}>Delete</button>
                 {/if}
                 <div class="flex items-center">
@@ -164,7 +167,7 @@
             </div>
         </form>
     </Pop>
-    {#if user}
-        <Form doc={user} on:close={()=>user=null}/>
+    {#if addUser}
+        <Form doc={addUser} on:close={()=>addUser=null}/>
     {/if}
 {/if}

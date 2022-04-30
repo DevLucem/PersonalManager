@@ -10,7 +10,7 @@
 
 <div class="flex justify-between items-center hover:bg-back rounded group" in:fade>
     <div class="flex items-center group relative flex-1">
-        <Icon icon="edit" classes={'h-4 w-4 invisible group-hover:visible'} on:clicked={()=>dispatch('data', task)}/>
+        <Icon icon="edit" classes={'h-4 w-4 invisible group-hover:visible hover:text-primary'} on:clicked={()=>dispatch('data', task)}/>
         <div class="py-1">
             <p style="color: {task.color}">
                 {task.name}

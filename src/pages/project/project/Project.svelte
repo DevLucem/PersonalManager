@@ -6,15 +6,30 @@
     import Icon from "../../../components/Icon.svelte";
     import QuickTask from "../task/QuickTask.svelte";
     import Tasks from "../task/Tasks.svelte";
+    import {listenDataFor} from "../../../firebase";
     export let project;
     export let data = [];
+
+    listenDataFor('PM', project, res => {
+        data = [];
+        res.forEach(snapshot => {
+            let doc = snapshot.data();
+            ['starting', 'ending', 'done'].forEach(val => {
+                if (doc[val]) doc[val] = doc[val].toDate();
+            })
+            data.push(doc)
+        })
+    })
+
 </script>
 
 <div class="full-overlay">
 
     <div class="flex justify-between group">
         <h1 class="text-lg font-bold flex items-center" style="color: {project.color}">
-            <Icon on:clicked={()=>dispatch('data', {type: 'milestone', project: project.id, color: project.color, starting: project.starting})} icon="add" classes="h-6 w-6 text-white bg-primary p-0.5 rounded-full m-2"/>
+            {#if project.created}
+                <Icon on:clicked={()=>dispatch('data', {type: 'milestone', project: project.id, color: project.color, starting: project.starting})} icon="add" classes="h-6 w-6 text-white bg-primary p-0.5 rounded-full m-2"/>
+            {/if}
             {project.name}
         </h1>
         {#if project.description}

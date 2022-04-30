@@ -11,14 +11,11 @@
   import "./style.css"
   import router from "page"
   import PM from "./pages/project/Home.svelte";
-  import User from "./pages/User.svelte";
-  import Pop from "./components/Pop.svelte";
   import Loader from "./components/Loader.svelte";
 
   let current;
   let params;
   [
-    ["/user", User],
     ["/pm", PM],
   ].forEach(route => router(route[0], context => {
     params = context.params;
@@ -30,7 +27,7 @@
   let manager = "/pm";
 
   async function checkUser() {
-    return await new Promise((resolve, reject) => listenUser(res => res ? resolve(res) : reject()))
+    return await new Promise((resolve, reject) => listenUser(res => resolve( res || {'uid': '_public'}) ))
   }
 </script>
 
@@ -54,11 +51,13 @@
     {#await checkUser()}
       <Loader/>
     {:then user}
+      {#if user.uid === '_public'}
+        <div class="text-center m-4">
+          <button class="button" on:click={()=>logIn().then(()=>location.reload())}>Sign In</button>
+          <p class="text-secondary m-2">Use a private account by signing in. Your data can be viewed and updated by anyone.</p>
+        </div>
+      {/if}
       <svelte:component this={current} {params} {user}/>
-    {:catch e}
-      <Pop close={false}>
-        <button class="button" on:click={()=>logIn().then(()=>location.reload())}>Sign In</button>
-      </Pop>
     {/await}
   </section>
 

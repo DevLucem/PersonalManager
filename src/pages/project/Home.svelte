@@ -5,7 +5,8 @@
     import {listenData} from "../../firebase";
     import Form from "./Form.svelte";
     import QuickTask from "./task/QuickTask.svelte";
-    import Loader from "../../components/Loader.svelte";
+
+    export let user;
 
     let data = [];
     listenData('PM', res => {
@@ -16,6 +17,21 @@
                 if (doc[val]) doc[val] = doc[val].toDate();
             })
             data.push(doc)
+        })
+        data.filter(el => {return el.users[0] !== user.uid && el.type !== 'project' && el.project}).forEach(doc => {
+            if (!data.find(el => el.id===doc.project)) data.push({
+                name: "Shared Project",
+                id: doc.project,
+                type: "project",
+                users: [],
+            })
+            if (doc.milestone && !data.find(el => el.id===doc.milestone)) data.push({
+                name: "Shared Milestone",
+                id: doc.milestone,
+                project: doc.project,
+                type: "milestone",
+                users: [],
+            })
         })
     })
 
@@ -34,9 +50,9 @@
 <div class="w-full p-4 lg:flex overflow-auto pb-12">
     <div class="max-w-prose">
         <QuickTask on:data={e => doc=e.detail}/>
-        <Tasks on:data={e => doc=e.detail} tasks={data.filter(doc => {return doc.type==='task' && !doc.project})}/>
+        <Tasks on:data={e => doc=e.detail} tasks={data.filter(doc => {return doc.type==='task' && !doc.project && !doc.repeat})}/>
     </div>
-    <Projects on:data={e => doc=e.detail} data={data.filter(doc => {return doc.type!=='task' || doc.project})}/>
+    <Projects on:data={e => doc=e.detail} data={data.filter(doc => {return (doc.type!=='task' || doc.project) && !doc.repeat})}/>
 </div>
 
 <div class="absolute bottom-0 left-0 right-0 flex items-end justify-around py-2 bg-transparent">
@@ -65,5 +81,5 @@
 {/if}
 
 {#if doc}
-    <Form {doc} on:close={()=>doc=null} users={data.filter(doc => {return doc.type === 'user'})}/>
+    <Form {doc} {user} on:close={()=>doc=null} users={data.filter(doc => {return doc.type === 'user'})}/>
 {/if}
