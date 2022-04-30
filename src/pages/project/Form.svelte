@@ -36,7 +36,6 @@
     if (!doc.users) doc.users = [];
 
     function save() {
-        console.log(doc.repeat);
         if (doc.name && doc.name.length > 3) {
 
             if (!doc.tags) doc.tags = []
@@ -136,7 +135,7 @@
                     </div>
                 {/if}
                 <div class="flex flex-wrap items-center my-2">
-                    {#each doc.users.slice(1) as user}
+                    {#each doc.users.slice(doc.id?1:0) as user}
                         <span class="px-2 py-1 bg-primary rounded flex items-center" style="background-color: {users.find(el => el.user===user)?.color}">
                             {users.find(el => el.user===user)?.name}
                             <Icon icon="cancel" classes="h-4 w-4 hover:text-white" on:clicked={()=>doc.users = doc.users.filter(el => el !== user)}/>

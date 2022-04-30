@@ -87,8 +87,8 @@
             disableClick: true,
             week: {
                 narrowWeekend: true,
-                hourStart: 6,
-                hourEnd: 23,
+                hourStart: 0,
+                hourEnd: 24,
             },
             month: {
                 visibleWeeksCount: 4,
