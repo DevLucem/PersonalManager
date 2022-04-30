@@ -1,34 +1,42 @@
 <script>
     import {createEventDispatcher} from 'svelte';
+
     let dispatch = createEventDispatcher();
 
     import showdown from "showdown";
     import Icon from "../../components/Icon.svelte";
-    import {deleteData, saveData} from "../../firebase";
+    import {deleteData, getData, saveData} from "../../firebase";
     import Pop from "../../components/Pop.svelte";
+    import Form from "./Form.svelte";
 
-    export let doc; let edit;
-    let starting; let ending;
+    export let doc;
+    let isTask = doc.type === 'task';
+    export let users = [];
+
+    let edit;
+    let starting;
+    let ending;
 
     const setColor = () => {
         doc.color = '#';
         for (let i = 0; i < 3; i++)
-            doc.color += doc.type === 'task' ? ("0" + Math.floor(Math.random() * Math.pow(16, 2) / 2).toString(16)).slice(-2) :
+            doc.color += isTask ? ("0" + Math.floor(Math.random() * Math.pow(16, 2) / 2).toString(16)).slice(-2) :
                 ("0" + Math.floor(((1 + Math.random()) * Math.pow(16, 2)) / 2).toString(16)).slice(-2);
     }
-
     const structureDate = () => {
         let start = starting ? new Date(starting) : doc.starting;
-        if (start) starting = new Date(start.getTime() - start.getTimezoneOffset() * 60000).toISOString().substring(0, 19);
+        if (start) starting = new Date(start.getTime() - start.getTimezoneOffset() * 60000).toISOString().substring(0, isTask ? 19 : 10);
         let end = ending ? new Date(ending) : doc.ending;
-        if (end) ending = new Date(end.getTime() - end.getTimezoneOffset() * 60000).toISOString().substring(0, 19);
+        if (end) ending = new Date(end.getTime() - end.getTimezoneOffset() * 60000).toISOString().substring(0, isTask ? 19 : 10);
     }
-
     structureDate();
+
     if (!doc.color) setColor();
     if (doc.description) doc.description = new showdown.Converter().makeMarkdown(doc.description)
+    if (!doc.users) doc.users = [];
 
     function save() {
+        console.log(doc.repeat);
         if (doc.name && doc.name.length > 3) {
 
             if (!doc.tags) doc.tags = []
@@ -44,12 +52,11 @@
                 if (value) {
                     doc[field] = new Date(value);
                     doc[field].setSeconds(0);
-                }else doc[field] = null;
+                } else doc[field] = null;
             }
             timeUpdate('starting', starting)
             timeUpdate('ending', ending)
 
-            console.log('color update', doc.color, doc.name)
             saveData(doc).catch(e => console.error('ERROR:', e))
                 .then(() => console.log('saved doc'))
             dispatch('close')
@@ -57,16 +64,16 @@
         } else edit = true;
     }
 
-    function duration(hours, minutes){
-        if (!starting && !ending){
+    function duration(hours, minutes) {
+        if (!starting && !ending) {
             starting = new Date();
-            if (starting.getMinutes()>30) starting.setHours(starting.getHours()+1)
+            if (starting.getMinutes() > 30) starting.setHours(starting.getHours() + 1)
             starting.setMinutes(0)
             starting.setSeconds(0, 0)
             ending = new Date(starting)
             ending.setHours(ending.getHours() + hours)
             ending.setMinutes(ending.getMinutes() + minutes)
-        }else if (ending) {
+        } else if (ending) {
             ending = new Date(ending);
             ending.setHours(ending.getHours() + hours)
             ending.setMinutes(ending.getMinutes() + minutes)
@@ -74,7 +81,7 @@
             ending = new Date(starting);
             ending.setHours(ending.getHours() + hours)
             ending.setMinutes(ending.getMinutes() + minutes)
-            if (ending<starting) ending = new Date(starting);
+            if (ending < starting) ending = new Date(starting);
         }
         structureDate();
     }
@@ -84,7 +91,21 @@
         dispatch('close')
     }
 
-    if (!doc.id) setTimeout(save, 10)
+    let user;
+    function findUser() {
+        let id = prompt("Enter User ID:")
+        if (id && id.length > 5)
+            getData(`users/${id}`).then(res => {
+                let data = res.data();
+                if (res.exists) user = {
+                    name: data.name,
+                    user: data.id,
+                    type: 'user'
+                }
+            })
+    }
+
+    if (!doc.id && isTask) setTimeout(save, 10)
     else edit = true;
 </script>
 
@@ -93,29 +114,45 @@
         <form on:submit|preventDefault={save}>
             <input bind:value={doc.name} class="input mb-2 w-full" aria-label="Name" type="text" placeholder="Name" required>
             <textarea bind:value={doc.description} aria-label="Description" cols="30" rows="5" placeholder="A little more optional details" class="w-full input"></textarea>
-            {#if doc.type === 'task'}
-                <div class="flex flex-wrap items-center justify-between space-x-2 my-2">
-                    <button type="button" class="tag" on:click={()=>duration(0, 30)}>+30Min</button>
-                    <button type="button" class="tag" on:click={()=>duration(1, 0)}>+1Hr</button>
-                    <button type="button" class="tag" on:click={()=>duration(2, 0)}>+2hr</button>
-                    <button type="button" class="tag" on:click={()=>duration(0, -30)}>-30Min</button>
-                </div>
-                <div class="flex flex-col sm:flex-row items-center justify-between">
-                    <input type="datetime-local" aria-label="Starting" bind:value={starting}>
-                    <span class="m-4 font-bold">to</span>
-                    <input type="datetime-local" aria-label="Ending" bind:value={ending}>
-                </div>
-            {:else}
-                <div class="flex items-center justify-between">
-                    <input type="date" aria-label="Starting" bind:value={starting}>
-                    <span class="m-4 font-bold">to</span>
-                    <input type="date" aria-label="Ending" bind:value={ending}>
+            {#if doc.task !== 'user'}
+                {#if isTask}
+                    <div class="flex flex-wrap items-center justify-between space-x-2 my-2">
+                        <button type="button" class="tag" on:click={()=>duration(0, 30)}>+30Min</button>
+                        <button type="button" class="tag" on:click={()=>duration(1, 0)}>+1Hr</button>
+                        <button type="button" class="tag" on:click={()=>duration(2, 0)}>+2hr</button>
+                        <button type="button" class="tag" on:click={()=>duration(0, -30)}>-30Min</button>
+                    </div>
+                    <div class="flex flex-col sm:flex-row items-center justify-between">
+                        <input type="datetime-local" aria-label="Starting" bind:value={starting}>
+                        <span class="m-4 font-bold">to</span>
+                        <input type="datetime-local" aria-label="Ending" bind:value={ending}>
+                    </div>
+                    <label>Repeat Daily: <input type="checkbox" bind:checked={doc.repeat}></label>
+                {:else}
+                    <div class="flex items-center justify-between">
+                        <input type="date" aria-label="Starting" bind:value={starting}>
+                        <span class="m-4 font-bold">to</span>
+                        <input type="date" aria-label="Ending" bind:value={ending}>
+                    </div>
+                {/if}
+                <div class="flex flex-wrap items-center my-2">
+                    {#each doc.users.slice(1) as user}
+                        <span class="px-2 py-1 bg-primary rounded flex items-center" style="background-color: {users.find(el => el.user===user)?.color}">
+                            {users.find(el => el.user===user)?.name}
+                            <Icon icon="cancel" classes="h-4 w-4 hover:text-white" on:clicked={()=>doc.users = doc.users.filter(el => el !== user)}/>
+                        </span>
+                    {/each}
+                    <div class="flex relative w-28 group mx-4">
+                        <Icon icon="add" classes="h-8 w-8 icon group-hover:border-primary"/>
+                        <div class="w-16 flex flex-col items-start right-0 absolute invisible group-hover:visible">
+                            {#each users.filter(el => {return !doc.users.includes(el.user)}) as user}
+                                <button type="button" on:click={()=>doc.users = [...doc.users, user.user]} class="truncate hover:text-primary">{user.name}</button>
+                            {/each}
+                            <button type="button" on:click={findUser}>Add New</button>
+                        </div>
+                    </div>
                 </div>
             {/if}
-            <div class="flex flex-wrap items-center hidden">
-                <span class="px-2 py-1 bg-primary rounded">User</span>
-                <Icon icon="add" classes="h-8 w-8 icon mx-4"/>
-            </div>
             <div class="flex justify-between mt-8">
                 {#if doc.id}
                     <button type="button" class="button-s" on:click={remove}>Delete</button>
@@ -128,4 +165,7 @@
             </div>
         </form>
     </Pop>
+    {#if user}
+        <Form doc={user} on:close={()=>user=null}/>
+    {/if}
 {/if}

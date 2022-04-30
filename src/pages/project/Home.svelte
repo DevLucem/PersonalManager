@@ -65,5 +65,5 @@
 {/if}
 
 {#if doc}
-    <Form {doc} on:close={()=>doc=null}/>
+    <Form {doc} on:close={()=>doc=null} users={data.filter(doc => {return doc.type === 'user'})}/>
 {/if}

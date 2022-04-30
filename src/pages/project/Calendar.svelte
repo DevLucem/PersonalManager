@@ -5,7 +5,6 @@
     import {onMount} from 'svelte'
     import Calendar from 'tui-calendar';
     import "tui-calendar/dist/tui-calendar.css";
-    // import CustomEvents from 'tui-code-snippet/customEvents/customEvents';
     import Pop from "../../components/Pop.svelte";
     import {deleteData, saveData} from "../../firebase";
 
@@ -14,59 +13,68 @@
     let calendar;
     let schedule = [];
 
-    data.forEach(doc => {
+    $: {
+        schedule = [];
+        data.forEach(doc => {
 
-        let starting = doc.starting;
-        let ending = doc.ending;
+            let starting = doc.starting;
+            let ending = doc.ending;
 
-        let valid = doc.type !== 'project';
+            let valid = doc.type !== 'project';
 
-        let tasks = data.filter(el => {return el.milestone === doc.id})
-        if (doc.type === 'milestone') {
-            valid = !(((!doc.starting && !doc.ending) || tasks.length<1) && tasks.filter(el => {return el.starting || el.ending}).length<1 )
-            if (valid) {
-                let starters = tasks.filter(el => {return el.starting}).sort((a, b) => {return a.starting - b.starting})
-                let endings = tasks.filter(el => {return el.ending}).sort((a, b) => {return a.ending - b.ending})
-                if (!starting) {
-                    starting = starters[0].starting
-                    let ender = endings[0].ending
-                    if (!starting || starting>ender) starting = ender
-                    if (!starting || starting>new Date()) starting = new Date();
+            let tasks = data.filter(el => {return el.milestone === doc.id})
+            if (doc.type === 'milestone') {
+                valid = !(((!doc.starting && !doc.ending) || tasks.length<1) && tasks.filter(el => {return el.starting || el.ending}).length<1 )
+                if (valid) {
+                    let starters = tasks.filter(el => {return el.starting}).sort((a, b) => {return a.starting - b.starting})
+                    let endings = tasks.filter(el => {return el.ending}).sort((a, b) => {return a.ending - b.ending})
+                    if (!starting) {
+                        starting = starters[0].starting
+                        let ender = endings[0].ending
+                        if (!starting || starting>ender) starting = ender
+                        if (!starting || starting>new Date()) starting = new Date();
+                    }
+                    if (!ending) {
+                        ending = endings[endings.length-1].ending
+                        let starter = starters[starters.length-1].starting
+                        if (!ending || ending<starter) ending = starter;
+                        if (!ending || ending<new Date()) ending = new Date();
+                    }
                 }
-                if (!ending) {
-                    ending = endings[endings.length-1].ending
-                    let starter = starters[starters.length-1].starting
-                    if (!ending || ending<starter) ending = starter;
-                    if (!ending || ending<new Date()) ending = new Date();
+
+            }
+
+            let milestone = data.find(el => el.id===doc.milestone)
+            if (doc.type === 'task') {
+                valid = !(!doc.starting && !doc.ending && !milestone?.starting && !milestone?.ending)
+                if (valid && doc.repeat){
+                    let current = new Date().getDate();
+                    if (doc.starting) doc.starting.setDate(current)
+                    if (doc.ending) doc.ending.setDate(current)
                 }
             }
 
-        }
 
-        let milestone = data.find(el => el.id===doc.milestone)
-        if (doc.type === 'task' && !doc.starting && !doc.ending && !milestone?.starting && !milestone?.ending) valid = false;
+            if (valid) schedule.push({ // check attendees, recurrence rule
+                id: doc.id,
+                title: doc.name + (doc.type === 'task' ? '' : ' - ' + data.find(el => el.id===doc.project)?.name),
+                calendarId: doc.project,
+                category: doc.type === 'task' ? 'time' : 'allday',
+                isPending: ending && new Date()>ending,
+                body: doc.description,
+                start: starting,
+                end: ending,
+                bgColor: doc.type === 'task' ? data.find(el => el.id===doc.milestone)?.color || '#00c97e' : doc.color,
+                color: doc.type === 'task' ? doc.color : '#10162A',
+                dragBgColor: "#FF5964",
+            })
 
-
-        if (!starting && doc.type === 'milestone') starting = new Date()
-        if (!ending) {
-            ending = new Date(starting)
-            ending
-        }
-
-        if (valid) schedule.push({ // check attendees, recurrence rule
-            id: doc.id,
-            title: doc.name + (doc.type === 'task' ? '' : ' - ' + data.find(el => el.id===doc.project)?.name),
-            calendarId: doc.project,
-            category: doc.type === 'task' ? 'time' : 'allday',
-            isPending: ending && new Date()>ending,
-            body: doc.description,
-            start: starting,
-            end: ending,
-            bgColor: doc.type === 'task' ? data.find(el => el.id===doc.milestone)?.color || '#00c97e' : doc.color,
-            color: doc.type === 'task' ? doc.color : '#10162A',
-            dragBgColor: "#FF5964",
         })
-    })
+        if (calendar) {
+            calendar.clear();
+            calendar.createSchedules(schedule)
+        }
+    }
 
     onMount(() => {
         calendar = new Calendar('#calendar', {
