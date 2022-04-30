@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && firebase deploy --only hosting,firestore && git push origin splitz",
+    "build": "vite build && firebase deploy --only hosting && git push origin splitz",
     "preview": "vite preview"
   },
   "devDependencies": {

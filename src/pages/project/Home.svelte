@@ -48,7 +48,7 @@
 </script>
 
 <div class="w-full p-4 lg:flex overflow-auto pb-12">
-    <div class="max-w-prose">
+    <div class="lg:max-w-prose">
         <QuickTask on:data={e => doc=e.detail}/>
         <Tasks on:data={e => doc=e.detail} tasks={data.filter(doc => {return doc.type==='task' && !doc.project && !doc.repeat})}/>
     </div>
