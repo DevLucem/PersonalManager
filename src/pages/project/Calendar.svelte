@@ -34,7 +34,7 @@
                         if (!starting || starting>ender) starting = ender
                         if (!starting || starting>new Date()) starting = new Date();
                     }
-                    if (!ending) {
+                    if (!ending || ending < new Date()) {
                         ending = endings[endings.length-1].ending
                         let starter = starters[starters.length-1].starting
                         if (!ending || ending<starter) ending = starter;

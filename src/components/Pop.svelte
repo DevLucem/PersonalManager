@@ -16,7 +16,7 @@
 
 <div class="absolute top-0 h-full left-0 right-0 flex items-center justify-center top-0 bottom-0 z-10">
     <div class="absolute h-full w-full blur"></div>
-    <div class="absolute h-full w-full bg-accent opacity-20" in:fade out:fade="{{duration: 200}}" on:click={()=>dispatch('close')}></div>
+    <div class="absolute h-full w-full bg-accent opacity-20" in:fade out:fade="{{duration: 100}}" on:click={()=>dispatch('close')}></div>
     <div class="absolute">
         <div bind:this={content} class="card bg-back p-4 overflow-auto" in:scale="{{duration: 50}}" out:scale="{{duration: 150}}">
             <slot></slot>

@@ -14,12 +14,12 @@
         <div class="py-1">
             <p style="color: {task.color}">
                 {task.name}
-                {#each task.tags as tag}
-                    <span class="tag uppercase font-bold" style="background-color: {tag.split('#').length>1? tag.split('#')[1] : ''}">{tag.split('#')[0]}</span>
-                {/each}
                 {#if task.ending && task.ending < new Date()}
                     <span class="tag uppercase font-bold bg-secondary">late</span>
                 {/if}
+                {#each task.tags as tag}
+                    <span class="tag uppercase font-bold" style="background-color: {tag.split('#').length>1? tag.split('#')[1] : ''}">{tag.split('#')[0]}</span>
+                {/each}
             </p>
         </div>
         <div>
