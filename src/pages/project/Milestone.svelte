@@ -2,12 +2,12 @@
     import {createEventDispatcher} from 'svelte';
 
     let dispatch = createEventDispatcher();
-    import Tasks from "../task/Tasks.svelte";
-    import Icon from "../../../components/Icon.svelte";
-    import QuickTask from "../task/QuickTask.svelte";
+    import Tasks from "./task/Tasks.svelte";
+    import Icon from "../../components/Icon.svelte";
+    import QuickTask from "./task/QuickTask.svelte";
     import Milestone from "./Milestone.svelte";
 
-    import {deleteData, listenDataFor} from "../../../firebase";
+    import {deleteData, listenDataFor} from "../../firebase";
 
     export let milestone;
     export let data = [];

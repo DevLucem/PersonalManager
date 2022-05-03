@@ -2,7 +2,7 @@
     import {createEventDispatcher} from 'svelte';
     let dispatch = createEventDispatcher();
 
-    import Milestone from "../milestone/Milestone.svelte";
+    import Milestone from "../Milestone.svelte";
     import Icon from "../../../components/Icon.svelte";
     import QuickTask from "../task/QuickTask.svelte";
     import Tasks from "../task/Tasks.svelte";

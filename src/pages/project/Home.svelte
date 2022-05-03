@@ -38,7 +38,6 @@
     function refresh(){
         setTimeout(()=> {
             data = data;
-            console.log('refresh')
             refresh();
         }, 60000)
     } refresh()

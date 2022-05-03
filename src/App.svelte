@@ -11,20 +11,21 @@
   import "./style.css"
   import router from "page"
   import PM from "./pages/project/Home.svelte";
+  import MM from "./pages/money/Home.svelte";
   import Loader from "./components/Loader.svelte";
 
   let current;
   let params;
   [
     ["/pm", PM],
+    ["/mm", MM],
   ].forEach(route => router(route[0], context => {
     params = context.params;
     current = route[1]
   }))
   router.redirect("**", "/pm")
   router.start();
-
-  let manager = "/pm";
+  let manager = router.current;
 
   async function checkUser() {
     return await new Promise((resolve, reject) => listenUser(res => resolve( res || {'uid': '_public'}) ))

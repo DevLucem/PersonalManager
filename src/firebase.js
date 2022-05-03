@@ -28,7 +28,6 @@ export const getData = path => {return getDoc(doc(FIRESTORE, path))}
  * Milestone - group your tasks together
  * created, id, name, description, done, tags, paused, starting, expiry, users, project
  * */
-const DATA = collection(FIRESTORE, "PM")
 export const saveData = (data) => {
 
     if (!['type', 'name'].every(r => Object.keys(data).includes(r)))
@@ -42,9 +41,23 @@ export const saveData = (data) => {
             data[property] = option;
     }
 
+    const table = ['milestone', 'task', 'project'].includes(data.type) ? 'PM' : 'MM'
+    const DATA = collection(FIRESTORE, table)
     assign('created', serverTimestamp());
     assign('id', doc(DATA).id);
-    ['starting', 'ending'].forEach(value => data[value] = data[value] ? new Date(data[value]) : null)
+    assign('users', []);
+    assign('tags', []);
+    ['starting', 'ending'].forEach(value => {
+        if (data[value])
+            data[value] = new Date(data[value])
+    })
+
+    let tags = data.name.split(" ").filter(n => /:/.test(n));
+    tags.forEach(sep => {
+        data.name = data.name.replace(sep, "")
+        let tag = sep.replace(":", "")
+        if (!data.tags.includes(tag)) data.tags.push(tag)
+    })
 
     let user = AUTH?.currentUser?.uid || '_public';
     if (!data.users.includes(user)) data.users = [user, ...data.users]

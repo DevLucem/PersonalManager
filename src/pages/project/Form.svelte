@@ -39,14 +39,6 @@
     function save() {
         if (doc.name && doc.name.length > 3) {
 
-            if (!doc.tags) doc.tags = []
-            let tags = doc.name.split(" ").filter(n => /:/.test(n));
-            tags.forEach(sep => {
-                doc.name = doc.name.replace(sep, "")
-                let tag = sep.replace(":", "")
-                if (!doc.tags.includes(tag)) doc.tags.push(tag)
-            })
-
             if (doc.description) doc.description = new showdown.Converter().makeHtml(doc.description.trim())
             const timeUpdate = (field, value) => {
                 if (value) {

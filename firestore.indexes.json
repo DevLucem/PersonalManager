@@ -41,6 +41,20 @@
           "order": "ASCENDING"
         }
       ]
+    },
+    {
+      "collectionGroup": "MM",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "users",
+          "arrayConfig": "CONTAINS"
+        },
+        {
+          "fieldPath": "created",
+          "order": "ASCENDING"
+        }
+      ]
     }
   ],
   "fieldOverrides": []
