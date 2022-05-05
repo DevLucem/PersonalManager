@@ -23,6 +23,7 @@ export const listenDataFor = (path, entity, callback) => {
 }
 export const getData = path => {return getDoc(doc(FIRESTORE, path))}
 
+const table = (type) => {return collection(FIRESTORE,['milestone', 'task', 'project'].includes(type) ? 'PM' : 'MM')}
 
 /** func Save Data
  * Milestone - group your tasks together
@@ -41,8 +42,7 @@ export const saveData = (data) => {
             data[property] = option;
     }
 
-    const table = ['milestone', 'task', 'project'].includes(data.type) ? 'PM' : 'MM'
-    const DATA = collection(FIRESTORE, table)
+    const DATA = table(data.type)
     assign('created', serverTimestamp());
     assign('id', doc(DATA).id);
     assign('users', []);
@@ -63,4 +63,4 @@ export const saveData = (data) => {
     if (!data.users.includes(user)) data.users = [user, ...data.users]
     return setDoc(doc(DATA, data.id), data, {merge: true})
 }
-export const deleteData = data => {return deleteDoc(doc(DATA, data.id))}
+export const deleteData = data => {return deleteDoc(doc(table(data.type), data.id))}

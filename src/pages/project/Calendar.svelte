@@ -20,7 +20,7 @@
             let starting = doc.starting;
             let ending = doc.ending;
 
-            let valid = doc.type !== 'project';
+            let valid = !['project', 'user'].includes(doc.type);
 
             let tasks = data.filter(el => {return el.milestone === doc.id})
             if (doc.type === 'milestone') {
@@ -35,7 +35,7 @@
                         if (!starting || starting>new Date()) starting = new Date();
                     }
                     if (!ending || ending < new Date()) {
-                        ending = endings[endings.length-1].ending
+                        ending = endings[endings.length-1]?.ending
                         let starter = starters[starters.length-1].starting
                         if (!ending || ending<starter) ending = starter;
                         if (!ending || ending<new Date()) ending = new Date();
@@ -64,7 +64,7 @@
                 body: doc.description,
                 start: starting,
                 end: ending,
-                bgColor: doc.type === 'task' ? data.find(el => el.id===doc.milestone)?.color || '#00c97e' : doc.color,
+                bgColor: doc.type === 'task' ? data.find(el => el.id===doc.milestone)?.color || (doc.repeat ? '#10162A' : '#333859') : doc.color,
                 color: doc.type === 'task' ? doc.color : '#10162A',
                 dragBgColor: "#FF5964",
             })
@@ -115,7 +115,7 @@
             },
             'beforeCreateSchedule': function(event) {
                 if (!event.isAllDay)
-                    dispatch('data', {type: 'task', starting: new Date(event.start), ending: new Date(event.end)})
+                    dispatch('data', {type: 'task', starting: new Date(event.start), ending: new Date(event.end), repeat: true})
             },
             'beforeDeleteSchedule': function(event) {
                 let schedule = event.schedule;

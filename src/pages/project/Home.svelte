@@ -33,6 +33,7 @@
                 users: [],
             })
         })
+        data = data.sort((a, b) => b.ending - a.ending)
     })
 
     function refresh(){
@@ -51,7 +52,9 @@
         <QuickTask on:data={e => doc=e.detail}/>
         <Tasks on:data={e => doc=e.detail} tasks={data.filter(doc => {return doc.type==='task' && !doc.project && !doc.repeat})}/>
     </div>
-    <Projects on:data={e => doc=e.detail} data={data.filter(doc => {return (doc.type!=='task' || doc.project) && !doc.repeat})}/>
+    <div>
+        <Projects on:data={e => doc=e.detail} data={data.filter(doc => {return (doc.type!=='task' || doc.project) && !doc.repeat})}/>
+    </div>
 </div>
 
 <div class="absolute bottom-0 left-0 right-0 flex items-end justify-around py-2 bg-transparent">

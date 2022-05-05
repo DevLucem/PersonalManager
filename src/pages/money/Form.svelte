@@ -1,33 +1,42 @@
 <script>
     import {createEventDispatcher} from 'svelte';
-    import {saveData} from "../../firebase";
+    import {deleteData, saveData} from "../../firebase";
     let dispatch = createEventDispatcher();
 
-    export let doc = {type: 'paypal', amount: {}};
-    let amount = 50; let currency = 'USD'
+    const _default = {type: 'transaction', source: 'paypal', amount: 50, currency: 'USD'};
+    export let doc = _default;
 
     function save() {
-        if (doc.name && doc.name.length > 3 && amount !== 0) {
-            if (currency.trim().length<2) currency = 'USD'
-            else currency = currency.trim().toUpperCase();
-            doc.amount[currency] = amount;
+        if (doc.name && doc.name.length > 3 && doc.amount !== 0) {
+            if (doc.currency.trim().length<2) doc.currency = 'USD'
+            else doc.currency = doc.currency.trim().toUpperCase();
             saveData(doc).catch(e => console.error('ERROR:', e))
                 .then(() => console.log('saved doc'))
-
-            doc = {type: 'paypal', amount: {}}
-            amount = 0
+            doc = _default
+            console.log(doc)
         }
+    }
+
+    function remove() {
+        deleteData(doc).then(() => console.log('deleted doc'))
+        doc = _default;
     }
 </script>
 
 <form on:submit|preventDefault={save}>
     <div class="flex">
         <input required bind:value={doc.name} class="input w-full flex-1" aria-label="Transact" type="text" placeholder="Transaction Name">
-        <input required bind:value={amount} class="w-24 input" type="number" aria-label="Amount" placeholder="Amount">
+        <input required bind:value={doc.amount} class="w-24 input" type="number" aria-label="Amount" placeholder="Amount">
     </div>
     <div class="flex justify-between mt-2">
-        <input required bind:value={doc.type} class="w-24 input" type="text" aria-label="Amount" placeholder="Platform">
-        <input required bind:value={currency} class="w-24 input" type="text" aria-label="Amount" placeholder="Currency">
-        <button class="button">Save</button>
+        <input required bind:value={doc.source} class="w-24 input" type="text" aria-label="Amount" placeholder="Platform">
+        <input required bind:value={doc.currency} class="w-24 input" type="text" aria-label="Amount" placeholder="Currency">
+        <div>
+            {#if doc.id}
+                <button type="button" class="button-s" on:click={remove}>Delete</button>
+                <button type="button" class="button-o" on:click={()=>doc = _default}>Cancel</button>
+            {/if}
+            <button type="submit" class="button">Save</button>
+        </div>
     </div>
 </form>

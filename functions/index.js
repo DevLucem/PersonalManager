@@ -6,7 +6,6 @@ const FIELD_VALUE = admin.firestore.FieldValue
 const FIRESTORE = admin.firestore();
 
 const USERS = FIRESTORE.collection('users')
-const MILESTONES = FIRESTORE.collection('milestones')
 
 exports.userCreated = functions.auth.user().onCreate(user => {
     return USERS.doc(user.uid).set({
@@ -22,7 +21,7 @@ exports.projectDeleted = functions.firestore.document("PM/{project}").onDelete( 
     let doc = snapshot.data();
     if (doc.type === 'task') return null;
     console.log('cleaning up', doc.type, doc.id)
-    return PM.where(doc.type, '==', snapshot.id).get().then(docs => {
+    return (doc.type === 'user' ? PM.where('users', 'array-contains', doc.user) : PM.where(doc.type, '==', snapshot.id)).get().then(docs => {
         if (docs.size>0){
             let batch = FIRESTORE.batch();
             docs.forEach(doc => batch.delete(PM.doc(doc.id)))

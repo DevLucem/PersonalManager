@@ -137,7 +137,7 @@
                         {/each}
                         <div class="flex relative w-28 group mx-4">
                             <Icon icon="add" classes="h-8 w-8 icon group-hover:border-primary"/>
-                            <div class="w-16 flex flex-col items-start right-0 absolute invisible group-hover:visible">
+                            <div class="w-20 flex flex-col items-start right-0 absolute invisible group-hover:visible">
                                 {#each users.filter(el => {return !doc.users.includes(el.user)}) as user}
                                     <button type="button" on:click={()=>doc.users = [...doc.users, user.user]} class="truncate hover:text-primary">{user.name}</button>
                                 {/each}

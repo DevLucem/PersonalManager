@@ -25,7 +25,8 @@
   }))
   router.redirect("**", "/pm")
   router.start();
-  let manager = router.current;
+  $: manager = router.current;
+  $: console.log(manager)
 
   async function checkUser() {
     return await new Promise((resolve, reject) => listenUser(res => resolve( res || {'uid': '_public'}) ))
@@ -34,9 +35,7 @@
 
 <main class="flex flex-col h-screen w-screen relative text-xs md:text-sm lg:text-base">
 
-  <div class="absolute left-0 right-0 bg-back top-0 h-16 blur w-full"></div>
-
-  <nav class="flex items-center justify-between px-4 border-b font-bold absolute w-full h-16 text-fade">
+  <nav class="flex items-center justify-between px-4 border-b font-bold absolute w-full h-16 text-fade z-10 backdrop-blur-sm bg-white/30">
     <h1>{moment().format("Do MMM")}</h1>
     <label>
       <select class="bg-transparent highlight border-none focus:ring-0" name="Manager" id="manager" bind:value={manager}  on:change={()=>router(manager)}>
