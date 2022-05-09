@@ -46,7 +46,7 @@
                 </div>
             {/if}
             <div class="flex items-center">
-                <Icon icon="edit" classes="h-5 w-5" on:clicked={()=>dispatch('data', {pin: milestone.id})}/>
+                <Icon icon="pin" classes="h-5 w-5 tag" on:clicked={()=>dispatch('data', {pin: milestone.id})}/>
                 {#if milestone.created}
                     <Icon icon="edit" classes="h-5 w-5 group-hover:visible invisible" on:clicked={()=>dispatch('data', milestone)}/>
                 {/if}

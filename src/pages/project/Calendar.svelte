@@ -51,6 +51,7 @@
                     let current = new Date().getDate();
                     if (doc.starting) doc.starting.setDate(current)
                     if (doc.ending) doc.ending.setDate(current)
+                    valid = doc.ending > new Date()
                 }
             }
 
