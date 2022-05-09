@@ -32,7 +32,7 @@
                         starting = starters[0].starting
                         let ender = endings[0].ending
                         if (!starting || starting>ender) starting = ender
-                        if (!starting || starting>new Date()) starting = new Date();
+                        if (!starting) starting = new Date();
                     }
                     if (!ending || ending < new Date()) {
                         ending = endings[endings.length-1]?.ending
@@ -64,9 +64,10 @@
                 body: doc.description,
                 start: starting,
                 end: ending,
-                bgColor: doc.type === 'task' ? data.find(el => el.id===doc.milestone)?.color || (doc.repeat ? '#10162A' : '#333859') : doc.color,
+                bgColor: doc.type === 'task' ? data.find(el => el.id===doc.milestone)?.color || (doc.repeat ? '#00c97e' : '#f8f8f8') : doc.color,
                 color: doc.type === 'task' ? doc.color : '#10162A',
                 dragBgColor: "#FF5964",
+                borderColor: doc.repeat ? '#FF5964' : doc.color
             })
 
         })

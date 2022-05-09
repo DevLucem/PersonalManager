@@ -9,6 +9,8 @@
     import Pop from "../../components/Pop.svelte";
     import Form from "./Form.svelte";
 
+    export let data;
+
     export let doc;
     let isTask = doc.type === 'task';
     export let users = [];
@@ -48,6 +50,9 @@
             }
             timeUpdate('starting', starting)
             timeUpdate('ending', ending)
+
+            if (!doc.project) delete doc.project
+            if (!doc.milestone) delete doc.milestone
 
             saveData(doc).catch(e => console.error('ERROR:', e))
                 .then(() => console.log('saved doc'))
@@ -106,20 +111,18 @@
         <form on:submit|preventDefault={save}>
             <input bind:value={doc.name} class="input mb-2 w-full" aria-label="Name" type="text" placeholder="Name" required>
             <textarea bind:value={doc.description} aria-label="Description" cols="30" rows="5" placeholder="A little more optional details" class="w-full input"></textarea>
-            {#if doc.task !== 'user'}
+            {#if doc.type !== 'user'}
                 {#if isTask}
-                    <div class="flex flex-wrap items-center justify-between space-x-2 my-2">
-                        <button type="button" class="tag" on:click={()=>duration(0, 30)}>+30Min</button>
-                        <button type="button" class="tag" on:click={()=>duration(1, 0)}>+1Hr</button>
-                        <button type="button" class="tag" on:click={()=>duration(2, 0)}>+2hr</button>
-                        <button type="button" class="tag" on:click={()=>duration(0, -30)}>-30Min</button>
-                    </div>
                     <div class="flex flex-col sm:flex-row items-center justify-between">
                         <input type="datetime-local" aria-label="Starting" bind:value={starting}>
                         <span class="m-4 font-bold">to</span>
                         <input type="datetime-local" aria-label="Ending" bind:value={ending}>
                     </div>
-                    <label>Repeat Daily: <input type="checkbox" bind:checked={doc.repeat}></label>
+                    <div class="flex justify-between my-4">
+                        <button type="button" class="tag bg-primary" on:click={()=>duration(1, 0)}>+1Hr</button>
+                        <button type="button" class="tag bg-primary" on:click={()=>duration(-1, 0)}>-1hr</button>
+                        <label>Repeat Daily: <input type="checkbox" bind:checked={doc.repeat}></label>
+                    </div>
                 {:else}
                     <div class="flex items-center justify-between">
                         <input type="date" aria-label="Starting" bind:value={starting}>
@@ -127,25 +130,45 @@
                         <input type="date" aria-label="Ending" bind:value={ending}>
                     </div>
                 {/if}
-                {#if !doc.id || user?.uid === doc.users[0]}
+                {#if (!doc.id || user?.uid === doc.users[0])}
                     <div class="flex flex-wrap items-center my-2">
                         {#each doc.users.slice(doc.id?1:0) as user}
-                        <span class="px-2 py-1 bg-primary rounded flex items-center" style="background-color: {users.find(el => el.user===user)?.color}">
-                            {users.find(el => el.user===user)?.name}
-                            <Icon icon="cancel" classes="h-4 w-4 hover:text-white" on:clicked={()=>doc.users = doc.users.filter(el => el !== user)}/>
-                        </span>
+                            <span class="px-2 py-1 bg-primary rounded flex items-center" style="background-color: {users.find(el => el.user===user)?.color}">
+                                {users.find(el => el.user===user)?.name}
+                                <Icon icon="cancel" classes="h-4 w-4 hover:text-white" on:clicked={()=>doc.users = doc.users.filter(el => el !== user)}/>
+                            </span>
                         {/each}
-                        <div class="flex relative w-28 group mx-4">
-                            <Icon icon="add" classes="h-8 w-8 icon group-hover:border-primary"/>
-                            <div class="w-20 flex flex-col items-start right-0 absolute invisible group-hover:visible">
-                                {#each users.filter(el => {return !doc.users.includes(el.user)}) as user}
-                                    <button type="button" on:click={()=>doc.users = [...doc.users, user.user]} class="truncate hover:text-primary">{user.name}</button>
-                                {/each}
-                                <button type="button" on:click={findUser}>Add New</button>
+                        <Icon icon="add" classes="h-6 w-6 m-2 icon group-hover:border-primary" on:clicked={findUser}/>
+                        {#each users.filter(el => {return !doc.users.includes(el.user)}) as user}
+                            <div class="flex items-center rounded border">
+                                <button type="button" on:click={()=>doc.users = [...doc.users, user.user]} class="m-1 truncate hover:text-primary">{user.name}</button>
+                                <Icon icon="cancel" classes="h-4 w-4 hover:text-white m-1" on:clicked={()=>deleteData(user)}/>
                             </div>
-                        </div>
+                        {/each}
                     </div>
                 {/if}
+                <div class="flex justify-between">
+                    <label>
+                        Project:
+                        <select bind:value={doc.project} on:change={()=>doc.milestone=null}>
+                            <option value=""></option>
+                            {#each data.filter(el => {return el.type === 'project'}) as p}
+                                <option value="{p.id}">{p.name}</option>
+                            {/each}
+                        </select>
+                    </label>
+                    {#if doc.project}
+                        <label>
+                            Milestone:
+                            <select bind:value={doc.milestone}>
+                                <option value=""></option>
+                                {#each data.filter(el => {return el.project === doc.project && el.type === 'milestone'}) as m}
+                                    <option value="{m.id}">{m.name}</option>
+                                {/each}
+                            </select>
+                        </label>
+                    {/if}
+                </div>
             {/if}
             <div class="flex justify-between mt-8">
                 {#if doc.id && user?.uid === doc.users[0]}

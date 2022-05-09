@@ -23,7 +23,12 @@ export const listenDataFor = (path, entity, callback) => {
 }
 export const getData = path => {return getDoc(doc(FIRESTORE, path))}
 
-const table = (type) => {return collection(FIRESTORE,['milestone', 'task', 'project'].includes(type) ? 'PM' : 'MM')}
+const table = (type) => {
+    let table = 'PM'; // ['milestone', 'task', 'project']
+    if (['transaction'].includes(type)) table = 'MM'
+    if (['user'].includes(type)) table = 'UM'
+    return collection(FIRESTORE, table)
+}
 
 /** func Save Data
  * Milestone - group your tasks together

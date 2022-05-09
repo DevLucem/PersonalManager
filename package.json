@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host",
     "build": "vite build && firebase deploy --only hosting && git push origin splitz",
     "preview": "vite preview"
   },

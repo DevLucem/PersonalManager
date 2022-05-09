@@ -33,8 +33,12 @@
                 users: [],
             })
         })
-        data = data.sort((a, b) => b.ending - a.ending)
+        let priority = data.filter(doc => {return doc.ending}).sort((a, b) => a.ending - b.ending)
+        data = [...priority, ...data.filter(doc => {return !doc.ending})]
     })
+
+    let users = [];
+    listenData('UM', res => {users = []; res.forEach(snap => users.push(snap.data()))})
 
     function refresh(){
         setTimeout(()=> {
@@ -45,15 +49,22 @@
 
     let doc;
     let calendar;
+    let pins = [];
 </script>
 
 <div class="w-full p-4 lg:flex overflow-auto pb-12">
     <div class="lg:max-w-prose">
         <QuickTask on:data={e => doc=e.detail}/>
         <Tasks on:data={e => doc=e.detail} tasks={data.filter(doc => {return doc.type==='task' && !doc.project && !doc.repeat})}/>
+        <Tasks on:data={e => doc=e.detail} tasks={data.filter(doc => {return doc.type==='task' && doc.ending && !doc.repeat && doc.ending<new Date()})}/>
     </div>
     <div>
-        <Projects on:data={e => doc=e.detail} data={data.filter(doc => {return (doc.type!=='task' || doc.project) && !doc.repeat})}/>
+        <div class="ml-4 flex flex-wrap">
+            {#each pins as pin}
+                <Tasks on:data={e => doc=e.detail} tasks={data.filter(doc => {return doc.type==='task' && doc.milestone === pin})}/>
+            {/each}
+        </div>
+        <Projects on:data={e => e.detail.pin ? pins = [...pins, e.detail.pin] : doc=e.detail} data={data.filter(doc => {return (doc.type!=='task' || doc.project) && !doc.repeat})}/>
     </div>
 </div>
 
@@ -83,5 +94,5 @@
 {/if}
 
 {#if doc}
-    <Form {doc} {user} on:close={()=>doc=null} users={data.filter(doc => {return doc.type === 'user'})}/>
+    <Form {doc} {user} on:close={()=>doc=null} {users} {data}/>
 {/if}

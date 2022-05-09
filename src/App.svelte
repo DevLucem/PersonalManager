@@ -12,21 +12,21 @@
   import router from "page"
   import PM from "./pages/project/Home.svelte";
   import MM from "./pages/money/Home.svelte";
+  import SM from "./pages/About.svelte";
   import Loader from "./components/Loader.svelte";
 
-  let current;
-  let params;
-  [
-    ["/pm", PM],
-    ["/mm", MM],
-  ].forEach(route => router(route[0], context => {
+  let current, params, managers = [
+    ["/pm", PM, "Project"],
+    ["/mm", MM, "Money"],
+    ["/sm", SM, "System"],
+  ]
+  managers.forEach(route => router(route[0], context => {
     params = context.params;
     current = route[1]
+    router.current = router.current;
   }))
   router.redirect("**", "/pm")
   router.start();
-  $: manager = router.current;
-  $: console.log(manager)
 
   async function checkUser() {
     return await new Promise((resolve, reject) => listenUser(res => resolve( res || {'uid': '_public'}) ))
@@ -38,16 +38,16 @@
   <nav class="flex items-center justify-between px-4 border-b font-bold absolute w-full h-16 text-fade z-10 backdrop-blur-sm bg-white/30">
     <h1>{moment().format("Do MMM")}</h1>
     <label>
-      <select class="bg-transparent highlight border-none focus:ring-0" name="Manager" id="manager" bind:value={manager}  on:change={()=>router(manager)}>
-        <option value="/pm">Project</option>
-        <option value="/mm">Money</option>
-        <option value="/user">Social</option>
+      <select class="bg-transparent highlight border-none focus:ring-0" name="Manager" id="manager" bind:value={router.current}  on:change={e=>router(router.current)}>
+        {#each managers as manager}
+          <option value="{manager[0]}">{manager[2]}</option>
+        {/each}
       </select>
       <span class="hidden md:inline">Manager</span>
     </label>
   </nav>
 
-  <section class="flex-1 overflow-auto w-full pt-16 bg-back">
+  <section class="flex-1 overflow-auto w-full pt-16 bg-back dark:bg-fade">
     {#await checkUser()}
       <Loader/>
     {:then user}
