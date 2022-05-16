@@ -62,7 +62,7 @@
             let project = data.find(el => el.id===doc.project)
             if (valid) schedule.push({ // check attendees, recurrence rule
                 id: doc.id,
-                title: doc.name + (doc.type === 'task' ? '' : ' - ' + project?.name || ''),
+                title: doc.name + (doc.type === 'task' && (!doc.project || doc.milestone) ? '' : ' - ' + project?.name || ''),
                 calendarId: doc.project,
                 category: doc.type === 'task' ? 'time' : 'allday',
                 isPending: ending && new Date()>ending,

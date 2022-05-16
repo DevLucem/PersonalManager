@@ -70,12 +70,12 @@
 </script>
 
 <div class="w-full p-4 lg:flex overflow-auto pb-12">
-    <div class="min-w-lg">
+    <div>
         <QuickTask on:data={e => doc=e.detail}/>
         <Tasks on:data={e => doc=e.detail} tasks={data.filter(doc => {return doc.type==='task' && !doc.project && !doc.repeat && (!doc.ending || doc.ending>=new Date())})}/>
         <Tasks on:data={e => doc=e.detail} tasks={data.filter(doc => {return doc.type==='task' && doc.ending && !doc.repeat && doc.ending<new Date()})}/>
     </div>
-    <div>
+    <div class="flex-1">
         <div class="ml-4 flex flex-wrap">
             {#each pins as pin}
                 <Tasks on:data={e => doc=e.detail} tasks={data.filter(doc => {return doc.type==='task' && doc.milestone === pin})}/>

@@ -16,14 +16,14 @@
     $: tasks = data.filter(doc => {return doc.type === 'task' && doc.milestone === milestone.id})
 </script>
 
-<div class="card mt-4 mb-2 {contract ? '' : 'pb-1'} {milestone.milestone ? 'ml-2' : ''}" style="background-color: {milestone.color}">
+<div class="card mt-4 mb-2 opacity-95 transform hover:opacity-100 duration-300 {contract ? '' : 'pb-1'} {milestone.milestone ? 'ml-2' : ''}" style="background-color: {milestone.color}">
     <div class="m-2">
         <div class="group relative flex justify-between">
             <h2 class="text-lg font-bold flex items-center">
                 {#if milestone.created}
                     <Icon on:clicked={()=>dispatch('data', {type: 'milestone', milestone: milestone.id, starting: milestone.starting})} icon="add" classes="h-6 w-6 my-1 ml-1 mr-3 text-primary bg-white p-0.5 rounded-full"/>
                 {/if}
-                <span on:click={()=>contract=!contract} class="cursor-pointer">{milestone.name}</span> {milestone.id}
+                <span on:click={()=>contract=!contract} class="cursor-pointer">{milestone.name}</span>
                 {#if milestone.ending && milestone.ending < new Date()}
                     <span class="tag uppercase font-bold bg-secondary">late</span>
                 {/if}
@@ -41,7 +41,7 @@
                 {#if milestone.created}
                     <Icon icon="edit" classes="h-5 w-5 group-hover:visible invisible" on:clicked={()=>dispatch('data', milestone)}/>
                 {/if}
-                {#if tasks.length<1}
+                {#if data.filter(doc => {return doc.milestone === milestone.id}).length<1}
                     <Icon icon="check" classes='h-5 w-5 m-1 icon' on:clicked={()=>deleteData(milestone)}/>
                 {/if}
             </div>

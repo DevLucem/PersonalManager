@@ -9,7 +9,7 @@
 
 <div class="flex justify-between items-center bg-white p-2 my-2 hover:bg-back rounded group" in:fade>
     <div class="group relative flex-1" style="color: {transaction.color}">
-        {transaction.name} - {transaction.id}
+        {transaction.name}
         <div class="tag-line -mt-0.5">{moment(transaction.created).fromNow()}</div>
     </div>
     <div class="flex items-center">
