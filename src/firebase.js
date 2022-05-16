@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut } from "firebase/auth"
-import {getFirestore, enableIndexedDbPersistence, onSnapshot, collection, query, where, serverTimestamp, doc, setDoc, deleteDoc, getDoc, orderBy} from 'firebase/firestore'
+import {getFirestore, enableIndexedDbPersistence, onSnapshot, collection, query, where, serverTimestamp, doc, setDoc, deleteDoc, getDoc, orderBy, getDocs} from 'firebase/firestore'
 import { FIREBASE_CONFIG } from "./KEYS";
 
 initializeApp(FIREBASE_CONFIG);
@@ -15,11 +15,9 @@ enableIndexedDbPersistence(FIRESTORE).catch(e => console.log(e.code  === 'failed
 
 export const listenData = (path, callback) => {return onSnapshot(query(collection(FIRESTORE, path),
     where("users", "array-contains", AUTH.currentUser?.uid || "_public"), orderBy('created')), callback)}
-export const listenDataFor = (path, entity, callback) => {
+export const getDataFor = (path, entity) => {
     let user = AUTH.currentUser?.uid || "_public";
-    if (entity.users[0] !== user && entity.users.includes(user))
-        return onSnapshot(query(collection(FIRESTORE, path), where(entity.type, "==", entity.id), orderBy('created')), callback)
-    return null;
+    return getDocs(query(collection(FIRESTORE, path), where(entity.type, "==", entity.id), orderBy('created')))
 }
 export const getData = path => {return getDoc(doc(FIRESTORE, path))}
 

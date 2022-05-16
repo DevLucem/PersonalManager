@@ -7,32 +7,23 @@
     import QuickTask from "./task/QuickTask.svelte";
     import Milestone from "./Milestone.svelte";
 
-    import {deleteData, listenDataFor} from "../../firebase";
+    import {deleteData} from "../../firebase";
 
     export let milestone;
     export let data = [];
-    listenDataFor('PM', milestone, res => {
-        data = [];
-        res.forEach(snapshot => {
-            let doc = snapshot.data();
-            ['starting', 'ending', 'done'].forEach(val => {
-                if (doc[val]) doc[val] = doc[val].toDate();
-            })
-            data.push(doc)
-        })
-    })
+    export let contract = false;
 
     $: tasks = data.filter(doc => {return doc.type === 'task' && doc.milestone === milestone.id})
 </script>
 
-<div class="card mt-4 mb-2 pb-1 {milestone.milestone ? 'ml-2' : ''}" style="background-color: {milestone.color}">
+<div class="card mt-4 mb-2 {contract ? '' : 'pb-1'} {milestone.milestone ? 'ml-2' : ''}" style="background-color: {milestone.color}">
     <div class="m-2">
         <div class="group relative flex justify-between">
             <h2 class="text-lg font-bold flex items-center">
                 {#if milestone.created}
                     <Icon on:clicked={()=>dispatch('data', {type: 'milestone', milestone: milestone.id, starting: milestone.starting})} icon="add" classes="h-6 w-6 my-1 ml-1 mr-3 text-primary bg-white p-0.5 rounded-full"/>
                 {/if}
-                {milestone.name}
+                <span on:click={()=>contract=!contract} class="cursor-pointer">{milestone.name}</span> {milestone.id}
                 {#if milestone.ending && milestone.ending < new Date()}
                     <span class="tag uppercase font-bold bg-secondary">late</span>
                 {/if}
@@ -46,7 +37,7 @@
                 </div>
             {/if}
             <div class="flex items-center">
-                <Icon icon="pin" classes="h-5 w-5 tag" on:clicked={()=>dispatch('data', {pin: milestone.id})}/>
+                <Icon icon="pin" classes="h-5 w-5" on:clicked={()=>dispatch('data', {pin: milestone.id})}/>
                 {#if milestone.created}
                     <Icon icon="edit" classes="h-5 w-5 group-hover:visible invisible" on:clicked={()=>dispatch('data', milestone)}/>
                 {/if}
@@ -55,10 +46,14 @@
                 {/if}
             </div>
         </div>
-        <QuickTask on:data={e=>dispatch('data', {...e.detail, milestone: milestone.id, starting: milestone.starting})} />
-        <Tasks on:data={e=>dispatch('data', e.detail)} {tasks}/>
+        {#if !contract}
+            <QuickTask on:data={e=>dispatch('data', {...e.detail, milestone: milestone.id, starting: milestone.starting})} />
+            <Tasks on:data={e=>dispatch('data', e.detail)} {tasks}/>
+        {/if}
     </div>
-    {#each data.filter(doc => {return doc.type === 'milestone' && doc.milestone === milestone.id}) as milestone}
-        <Milestone on:data={e=>dispatch('data', {...e.detail})} {milestone} {data}/>
-    {/each}
+    {#if !contract}
+        {#each data.filter(doc => {return doc.type === 'milestone' && doc.milestone === milestone.id}) as milestone}
+            <Milestone on:data={e=>dispatch('data', {...e.detail})} {milestone} {data}/>
+        {/each}
+    {/if}
 </div>

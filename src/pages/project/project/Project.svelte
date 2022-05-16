@@ -6,20 +6,9 @@
     import Icon from "../../../components/Icon.svelte";
     import QuickTask from "../task/QuickTask.svelte";
     import Tasks from "../task/Tasks.svelte";
-    import {listenDataFor} from "../../../firebase";
     export let project;
     export let data = [];
-
-    listenDataFor('PM', project, res => {
-        data = [];
-        res.forEach(snapshot => {
-            let doc = snapshot.data();
-            ['starting', 'ending', 'done'].forEach(val => {
-                if (doc[val]) doc[val] = doc[val].toDate();
-            })
-            data.push(doc)
-        })
-    })
+    $: console.log(data.filter(el => {return el.id === '7WuuWO2c86N1x3VTCIjG'}))
 
 </script>
 

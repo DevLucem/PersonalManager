@@ -32,7 +32,7 @@
             </div>
             <ul class="m-1">
                 {#each data.filter(doc => {return doc.type==='task' && doc.project === p.id}).slice(0, 5) as task}
-                    <li class="text-xs">{task.name}</li>
+                    <li class="text-xs truncate">{task.name}</li>
                 {/each}
             </ul>
         </div>

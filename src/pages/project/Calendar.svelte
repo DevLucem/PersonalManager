@@ -49,20 +49,24 @@
                 valid = !(!doc.starting && !doc.ending && !milestone?.starting && !milestone?.ending)
                 if (valid && doc.repeat){
                     let current = new Date().getDate();
-                    if (doc.starting) doc.starting.setDate(current)
-                    if (doc.ending) doc.ending.setDate(current)
-                    valid = doc.ending > new Date()
+                    doc.starting.setDate(current)
+                    doc.ending.setDate(current)
+                    if (doc.ending < new Date()) {
+                        doc.starting.setDate(current+1)
+                        doc.ending.setDate(current+1)
+                    }
                 }
             }
 
 
+            let project = data.find(el => el.id===doc.project)
             if (valid) schedule.push({ // check attendees, recurrence rule
                 id: doc.id,
-                title: doc.name + (doc.type === 'task' ? '' : ' - ' + data.find(el => el.id===doc.project)?.name),
+                title: doc.name + (doc.type === 'task' ? '' : ' - ' + project?.name || ''),
                 calendarId: doc.project,
                 category: doc.type === 'task' ? 'time' : 'allday',
                 isPending: ending && new Date()>ending,
-                body: doc.description,
+                body: project?.name || '' + '<br>' + doc.description || '',
                 start: starting,
                 end: ending,
                 bgColor: doc.type === 'task' ? data.find(el => el.id===doc.milestone)?.color || (doc.repeat ? '#00c97e' : '#f8f8f8') : doc.color,

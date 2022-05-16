@@ -37,6 +37,7 @@
     if (!doc.color) setColor();
     if (doc.description) doc.description = new showdown.Converter().makeMarkdown(doc.description)
     if (!doc.users) doc.users = [];
+    if (!doc.tags) doc.tags = [];
 
     function save() {
         if (doc.name && doc.name.length > 3) {
@@ -51,8 +52,8 @@
             timeUpdate('starting', starting)
             timeUpdate('ending', ending)
 
-            if (!doc.project) delete doc.project
-            if (!doc.milestone) delete doc.milestone
+            if (!doc.project) doc.project = null;
+            if (!doc.milestone) doc.milestone = null;
 
             saveData(doc).catch(e => console.error('ERROR:', e))
                 .then(() => console.log('saved doc'))
@@ -111,6 +112,14 @@
         <form on:submit|preventDefault={save}>
             <input bind:value={doc.name} class="input mb-2 w-full" aria-label="Name" type="text" placeholder="Name" required>
             <textarea bind:value={doc.description} aria-label="Description" cols="30" rows="5" placeholder="A little more optional details" class="w-full input"></textarea>
+            <div class="flex flex-wrap items-center my-2">
+                {#each doc.tags as tag}
+                    <span class="tag uppercase font-bold bg-primary flex items-center p-1" style="background-color: {tag.split('#')[1]}">
+                        {tag.split('#')[0]}
+                        <Icon icon="cancel" classes="h-4 w-4 ml-1 hover:text-white" on:clicked={()=>doc.tags = doc.tags.filter(el => el !== tag)}/>
+                    </span>
+                {/each}
+            </div>
             {#if doc.type !== 'user'}
                 {#if isTask}
                     <div class="flex flex-col sm:flex-row items-center justify-between">
@@ -147,28 +156,30 @@
                         {/each}
                     </div>
                 {/if}
-                <div class="flex justify-between">
-                    <label>
-                        Project:
-                        <select bind:value={doc.project} on:change={()=>doc.milestone=null}>
-                            <option value=""></option>
-                            {#each data.filter(el => {return el.type === 'project'}) as p}
-                                <option value="{p.id}">{p.name}</option>
-                            {/each}
-                        </select>
-                    </label>
-                    {#if doc.project}
+                {#if doc.type !== 'project'}
+                    <div class="flex justify-between">
                         <label>
-                            Milestone:
-                            <select bind:value={doc.milestone}>
+                            Project:
+                            <select bind:value={doc.project} on:change={()=>doc.milestone=null}>
                                 <option value=""></option>
-                                {#each data.filter(el => {return el.project === doc.project && el.type === 'milestone'}) as m}
-                                    <option value="{m.id}">{m.name}</option>
+                                {#each data.filter(el => {return el.type === 'project'}) as p}
+                                    <option value="{p.id}">{p.name}</option>
                                 {/each}
                             </select>
                         </label>
-                    {/if}
-                </div>
+                        {#if doc.project}
+                            <label>
+                                Milestone:
+                                <select bind:value={doc.milestone}>
+                                    <option value=""></option>
+                                    {#each data.filter(el => {return el.project === doc.project && el.type === 'milestone'}) as m}
+                                        <option value="{m.id}">{m.name}</option>
+                                    {/each}
+                                </select>
+                            </label>
+                        {/if}
+                    </div>
+                {/if}
             {/if}
             <div class="flex justify-between mt-8">
                 {#if doc.id && user?.uid === doc.users[0]}
