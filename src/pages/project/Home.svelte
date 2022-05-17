@@ -5,6 +5,7 @@
     import {listenData, getDataFor} from "../../firebase";
     import Form from "./Form.svelte";
     import QuickTask from "./task/QuickTask.svelte";
+    import Icon from "../../components/Icon.svelte";
 
     export let user;
 
@@ -15,18 +16,22 @@
             ['starting', 'ending', 'done'].forEach(val => {
                 if (doc[val]) doc[val] = doc[val].toDate();
             })
-            let last = data.filter(el => {return el.id === doc.id});
-            if (last.length<1) data.push(doc)
-            else if (last[0].users.length<1){
-                data = data.filter(el => {return el.di !== doc.id})
+            let last = data.filter(el => {
+                return el.id === doc.id
+            });
+            if (last.length < 1) data.push(doc)
+            else if (last[0].users.length < 1) {
+                data = data.filter(el => {
+                    return el.di !== doc.id
+                })
                 data.push(doc)
             }
         }
         res.forEach(snapshot => {
             let doc = snapshot.data();
             addData(doc);
-            if (doc.users[0]!==user.uid && doc.type !== 'task'){
-                getDataFor('PM', doc).then( res1 => {
+            if (doc.users[0] !== user.uid && doc.type !== 'task') {
+                getDataFor('PM', doc).then(res1 => {
                     res1.forEach(snapshot1 => {
                         let doc1 = snapshot1.data();
                         addData(doc1)
@@ -35,14 +40,16 @@
                 })
             }
         })
-        data.filter(el => {return el.users[0] !== user.uid && el.type !== 'project' && el.project}).forEach(doc => {
-            if (!data.find(el => el.id===doc.project)) data.push({
+        data.filter(el => {
+            return el.users[0] !== user.uid && el.type !== 'project' && el.project
+        }).forEach(doc => {
+            if (!data.find(el => el.id === doc.project)) data.push({
                 name: "Shared Project",
                 id: doc.project,
                 type: "project",
                 users: [], tags: []
             })
-            if (doc.milestone && !data.find(el => el.id===doc.milestone)) data.push({
+            if (doc.milestone && !data.find(el => el.id === doc.milestone)) data.push({
                 name: "Shared Milestone",
                 id: doc.milestone,
                 project: doc.project,
@@ -50,19 +57,28 @@
                 users: [], tags: []
             })
         })
-        let priority = data.filter(doc => {return doc.ending}).sort((a, b) => a.ending - b.ending)
-        data = [...priority, ...data.filter(doc => {return !doc.ending})]
+        let priority = data.filter(doc => {
+            return doc.ending
+        }).sort((a, b) => a.ending - b.ending)
+        data = [...priority, ...data.filter(doc => {
+            return !doc.ending
+        })]
     })
 
     let users = [];
-    listenData('UM', res => {users = []; res.forEach(snap => users.push(snap.data()))})
+    listenData('UM', res => {
+        users = [];
+        res.forEach(snap => users.push(snap.data()))
+    })
 
-    function refresh(){
-        setTimeout(()=> {
+    function refresh() {
+        setTimeout(() => {
             data = data;
             refresh();
         }, 60000)
-    } refresh()
+    }
+
+    refresh()
 
     let doc;
     let calendar;
@@ -78,7 +94,13 @@
     <div class="flex-1">
         <div class="ml-4 flex flex-wrap">
             {#each pins as pin}
-                <Tasks on:data={e => doc=e.detail} tasks={data.filter(doc => {return doc.type==='task' && doc.milestone === pin})}/>
+                <div>
+                    <p class="flex items-center text-sm bg-white mt-1">
+                        <Icon icon="cancel" classes="h-4 w-4 ml-1 hover:text-secondary" on:clicked={()=>pins = pins.filter(p => p!==pin)}/>
+                        {data.find(el => el.id===pin)?.name}
+                    </p>
+                    <Tasks on:data={e => doc=e.detail} tasks={data.filter(doc => {return doc.type==='task' && doc.milestone === pin})}/>
+                </div>
             {/each}
         </div>
         <Projects on:data={e => e.detail.pin ? (!pins.includes(e.detail.pin) ? pins = [...pins, e.detail.pin] : '') : doc=e.detail} data={data.filter(doc => {return (doc.type!=='task' || doc.project) && !doc.repeat})}/>

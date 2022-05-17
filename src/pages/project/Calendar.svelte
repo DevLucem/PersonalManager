@@ -69,7 +69,7 @@
                 body: project?.name || '' + '<br>' + doc.description || '',
                 start: starting,
                 end: ending,
-                bgColor: doc.type === 'task' ? data.find(el => el.id===doc.milestone)?.color || (doc.repeat ? '#00c97e' : '#f8f8f8') : doc.color,
+                bgColor: doc.type === 'task' ? milestone?.color || project?.color || (doc.repeat ? '#00c97e' : '#f8f8f8') : doc.color,
                 color: doc.type === 'task' ? doc.color : '#10162A',
                 dragBgColor: "#FF5964",
                 borderColor: doc.repeat ? '#FF5964' : doc.color
