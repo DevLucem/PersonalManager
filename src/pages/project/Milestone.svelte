@@ -16,7 +16,7 @@
     $: tasks = data.filter(doc => {return doc.type === 'task' && doc.milestone === milestone.id})
 </script>
 
-<div class="card mt-4 mb-2 opacity-95 transform hover:opacity-100 duration-300 {contract ? '' : 'pb-1'} {milestone.milestone ? 'ml-2' : ''}" style="background-color: {milestone.color}">
+<div class="card mt-4 mb-2 transform duration-300 {contract ? '' : 'pb-1'} {milestone.milestone ? 'ml-2 sm:hover:ml-5' : ''}" style="background-color: {milestone.color}">
     <div class="m-2">
         <div class="group relative flex justify-between">
             <h2 class="text-lg font-bold flex items-center">
