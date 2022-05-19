@@ -29,8 +29,8 @@
                     let starters = tasks.filter(el => {return el.starting}).sort((a, b) => {return a.starting - b.starting})
                     let endings = tasks.filter(el => {return el.ending}).sort((a, b) => {return a.ending - b.ending})
                     if (!starting) {
-                        starting = starters[0].starting
-                        let ender = endings[0].ending
+                        starting = starters[0]?.starting
+                        let ender = endings[0]?.ending
                         if (!starting || starting>ender) starting = ender
                         if (!starting) starting = new Date();
                     }
@@ -56,6 +56,16 @@
                         doc.ending.setDate(current+1)
                     }
                 }
+                if (!doc.starting && !doc.ending)
+                    if (milestone?.ending) {
+                        doc.ending = milestone.ending;
+                        doc.ending.setHours(new Date().getHours())
+                        doc.starting = doc.ending;
+                    } else if (milestone?.starting) {
+                        doc.ending = milestone.starting;
+                        doc.starting.setHours(new Date().getHours())
+                        doc.starting = doc.ending;
+                    }
             }
 
 
