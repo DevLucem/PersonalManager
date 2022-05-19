@@ -1,4 +1,7 @@
 <script>
+    import {logOut} from "../firebase"
+
+    export let user;
     const tips = [
         {
             name: 'Add custom tags by typing :tag#color',
@@ -6,6 +9,14 @@
         }
     ]
 </script>
+
+
+
+{#if user.uid !== '_public'}
+    <div class="text-center m-4">
+        <button class="button" on:click={()=>logOut().then(()=>location.reload())}>Sign Out</button>
+    </div>
+{/if}
 
 <div class="m-4">
     <div class="card mt-4 mb-2 pb-1">

@@ -54,7 +54,7 @@
       {#if user.uid === '_public'}
         <div class="text-center m-4">
           <button class="button" on:click={()=>logIn().then(()=>location.reload())}>Sign In</button>
-          <p class="text-secondary m-2">Sign In For Private Use</p>
+          <p class="text-secondary m-2">Secure your data by signing in for private use</p>
         </div>
       {/if}
       <svelte:component this={current} {params} {user}/>
