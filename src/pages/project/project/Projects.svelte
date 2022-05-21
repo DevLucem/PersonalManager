@@ -6,12 +6,12 @@
     import Project from "./Project.svelte";
     import Icon from "../../../components/Icon.svelte";
 
+    export let user;
     export let data = [];
 
     let project;
     let calendar;
 </script>
-
 
 <div class="mt-4 mb-6 lg:mt-2 flex-1 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 -m-2 lg:ml-2">
     {#each data.filter(doc => {return doc.type==='project'}) as p}
@@ -26,7 +26,7 @@
                         <span class="tag uppercase font-bold bg-primary" style="background-color: {tag.split('#')[1]}">{tag.split('#')[0]}</span>
                     {/each}
                 </h2>
-                {#if p.created}
+                {#if p.created && p.users[user?.uid]<4}
                     <Icon icon="edit" classes="h-5 w-5 invisible group-hover:visible" on:clicked={()=>dispatch('data', p)}/>
                 {/if}
             </div>
@@ -41,6 +41,6 @@
 
 {#if project}
     <Pop on:close={()=>project=null}>
-        <Project on:data={e=>dispatch('data', e.detail)} {project} data={data.filter(doc => {return doc.project===project.id})}/>
+        <Project {user} on:data={e=>dispatch('data', e.detail)} {project} data={data.filter(doc => {return doc.project===project.id})}/>
     </Pop>
 {/if}

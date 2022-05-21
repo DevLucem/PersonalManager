@@ -59,6 +59,9 @@
       {/if}
       <svelte:component this={current} {params} {user}/>
     {/await}
+    <!--<div class="flex justify-center items-center mt-32">
+      Hold tight, Site is upgrading
+    </div>-->
   </section>
 
   <button class="absolute icon p-4 right-0 bottom-0 m-8 text-primary hidden">

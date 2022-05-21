@@ -36,7 +36,14 @@
 
     if (!doc.color) setColor();
     if (doc.description) doc.description = new showdown.Converter().makeMarkdown(doc.description)
-    if (!doc.users) doc.users = [];
+    if (!doc.users) {
+        if (doc.milestone || doc.project){
+            doc.users = data.find(el => el.id===(doc.milestone || doc.project))?.users
+            doc.users[user?.uid] = 1;
+        }
+        if (!doc.users)
+            doc.users = {};
+    }
     if (!doc.tags) doc.tags = [];
 
     function save() {
@@ -55,6 +62,7 @@
             if (!doc.project) doc.project = null;
             if (!doc.milestone) doc.milestone = null;
 
+            console.log(doc.users)
             saveData(doc).catch(e => console.error('ERROR:', e))
                 .then(() => console.log('saved doc'))
             dispatch('close')
@@ -139,18 +147,18 @@
                         <input type="date" aria-label="Ending" bind:value={ending}>
                     </div>
                 {/if}
-                {#if (!doc.id || user?.uid === doc.users[0])}
+                {#if (!doc.id || doc.users[user?.uid]<3)}
                     <div class="flex flex-wrap items-center my-2">
-                        {#each doc.users.slice(doc.id?1:0) as user}
+                        {#each Object.keys(doc.users).filter(el => {return el!==user.uid && doc.users[el]}) as user}
                             <span class="px-2 py-1 bg-primary rounded flex items-center" style="background-color: {users.find(el => el.user===user)?.color}">
                                 {users.find(el => el.user===user)?.name}
-                                <Icon icon="cancel" classes="h-4 w-4 hover:text-white" on:clicked={()=>doc.users = doc.users.filter(el => el !== user)}/>
+                                <Icon icon="cancel" classes="h-4 w-4 hover:text-white" on:clicked={()=>doc.users[user]=null}/>
                             </span>
                         {/each}
                         <Icon icon="add" classes="h-6 w-6 m-2 icon group-hover:border-primary" on:clicked={findUser}/>
-                        {#each users.filter(el => {return !doc.users.includes(el.user)}) as user}
+                        {#each users.filter(el => {return !doc.users[el.user]}) as user}
                             <div class="flex items-center rounded border">
-                                <button type="button" on:click={()=>doc.users = [...doc.users, user.user]} class="m-1 truncate hover:text-primary">{user.name}</button>
+                                <button type="button" on:click={()=>doc.users[user.user]=3} class="m-1 truncate hover:text-primary">{user.name}</button>
                                 <Icon icon="cancel" classes="h-4 w-4 hover:text-white m-1" on:clicked={()=>deleteData(user)}/>
                             </div>
                         {/each}
@@ -182,7 +190,7 @@
                 {/if}
             {/if}
             <div class="flex justify-between mt-8">
-                {#if doc.id && user?.uid === doc.users[0]}
+                {#if doc.id && doc.users[user?.uid]<3}
                     <button type="button" class="button-s" on:click={remove}>Delete</button>
                 {/if}
                 <div class="flex items-center">

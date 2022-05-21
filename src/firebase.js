@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut } from "firebase/auth"
-import {getFirestore, enableIndexedDbPersistence, onSnapshot, collection, query, where, serverTimestamp, doc, setDoc, deleteDoc, getDoc, orderBy, getDocs} from 'firebase/firestore'
+import {getFirestore, enableIndexedDbPersistence, onSnapshot, collection, query, where, serverTimestamp, doc, setDoc, deleteDoc, getDoc, orderBy, getDocs, deleteField} from 'firebase/firestore'
 import { FIREBASE_CONFIG } from "./KEYS";
 
 initializeApp(FIREBASE_CONFIG);
@@ -13,8 +13,7 @@ export const logOut = () => {return signOut(AUTH)}
 const FIRESTORE = getFirestore()
 enableIndexedDbPersistence(FIRESTORE).catch(e => console.log(e.code  === 'failed-precondition' ? 'Multiple Tabs Open' : 'Cant Cache ', e))
 
-export const listenData = (path, callback) => {return onSnapshot(query(collection(FIRESTORE, path),
-    where("users", "array-contains", AUTH.currentUser?.uid || "_public"), orderBy('created')), callback)}
+export const listenData = (path, callback) => {return onSnapshot(query(collection(FIRESTORE, path), orderBy(`users.${AUTH.currentUser?.uid || "_public"}`)), callback)}
 export const getDataFor = (path, entity) => {
     let user = AUTH.currentUser?.uid || "_public";
     return getDocs(query(collection(FIRESTORE, path), where(entity.type, "==", entity.id), orderBy('created')))
@@ -48,7 +47,7 @@ export const saveData = (data) => {
     const DATA = table(data.type)
     assign('created', serverTimestamp());
     assign('id', doc(DATA).id);
-    assign('users', []);
+    assign('users', {});
     assign('tags', []);
     ['starting', 'ending'].forEach(value => {
         if (data[value])
@@ -63,7 +62,11 @@ export const saveData = (data) => {
     })
 
     let user = AUTH?.currentUser?.uid || '_public';
-    if (!data.users.includes(user)) data.users = [user, ...data.users]
+    if (!data.users[user]) data.users[user] = 1
+    Object.keys(data.users).forEach(el => {
+        if (!data.users[el]) data.users[el] = deleteField();
+    })
+    console.log(data.users)
     return setDoc(doc(DATA, data.id), data, {merge: true})
 }
 export const deleteData = data => {return deleteDoc(doc(table(data.type), data.id))}

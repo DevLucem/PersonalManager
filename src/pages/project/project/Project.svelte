@@ -7,8 +7,8 @@
     import QuickTask from "../task/QuickTask.svelte";
     import Tasks from "../task/Tasks.svelte";
     export let project;
+    export let user;
     export let data = [];
-    $: console.log(data.filter(el => {return el.id === '7WuuWO2c86N1x3VTCIjG'}))
 
 </script>
 
@@ -19,7 +19,7 @@
             {#if project.created}
                 <Icon on:clicked={()=>dispatch('data', {type: 'milestone', project: project.id, color: project.color, starting: project.starting})} icon="add" classes="h-6 w-6 text-white bg-primary p-0.5 rounded-full m-2"/>
             {/if}
-            {project.name}
+            {project.name} - {project.id}
         </h1>
         {#if project.description}
             <div class="absolute bg-back rounded p-2 hidden group-hover:inline mt-8">
@@ -29,10 +29,10 @@
     </div>
 
     <QuickTask on:data={e=>dispatch('data', {...e.detail, project: project.id})} />
-    <Tasks on:data={e=>dispatch('data', e.detail)} tasks={data.filter(doc => {return doc.type === 'task' && !doc.milestone})}/>
+    <Tasks {user} on:data={e=>dispatch('data', e.detail)} tasks={data.filter(doc => {return doc.type === 'task' && !doc.milestone})}/>
 
     {#each data.filter(doc => {return doc.type==='milestone' && !doc.milestone}) as milestone}
-        <Milestone on:data={e=>dispatch('data', {...e.detail, project: project.id})} {milestone} {data}/>
+        <Milestone {user} on:data={e=>dispatch('data', {...e.detail, project: project.id})} {milestone} {data}/>
     {/each}
 
     <div class="h-8 text-center">

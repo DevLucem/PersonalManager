@@ -17,7 +17,36 @@ exports.userCreated = functions.auth.user().onCreate(user => {
 })
 
 const PM = FIRESTORE.collection('PM')
-exports.projectDeleted = functions.firestore.document("PM/{project}").onDelete( (snapshot, context) => {
+exports.projectUpdated = functions.firestore.document('PM/{project}').onUpdate( snapshot => {
+
+    let doc = snapshot.after.data();
+    let before = snapshot.before.get('users');
+    let after = snapshot.after.get('users');
+
+    console.log(before, after, doc)
+    if (doc.type === 'task' || before===after ) return null;
+    let updates = {};
+
+    Object.keys(after).forEach(el => {
+        updates['users.' + el] = after[el]
+    })
+    Object.keys(before).forEach(el => {
+        if (!after[el]) {
+            updates['users.' + el] = FIELD_VALUE.delete()
+        }
+    })
+
+    console.log(updates)
+    return PM.where(doc.type, '==', snapshot.after.id).get().then(docs => {
+        if (docs.size>0){
+            let batch = FIRESTORE.batch();
+            docs.forEach(doc => batch.update(PM.doc(doc.id), updates))
+            console.log(docs.size, docs.docs)
+            return batch.commit().catch(e => console.error('Error Cleaning Project Data', e))
+        } return null
+    })
+})
+exports.projectDeleted = functions.firestore.document("PM/{project}").onDelete( (snapshot) => {
     let doc = snapshot.data();
     if (doc.type === 'task') return null;
     console.log('cleaning up', doc.type, doc.id)

@@ -16,29 +16,11 @@
             ['starting', 'ending', 'done'].forEach(val => {
                 if (doc[val]) doc[val] = doc[val].toDate();
             })
-            let last = data.filter(el => {
-                return el.id === doc.id
-            });
-            if (last.length < 1) data.push(doc)
-            else if (last[0].users.length < 1) {
-                data = data.filter(el => {
-                    return el.di !== doc.id
-                })
-                data.push(doc)
-            }
+            data.push(doc)
         }
         res.forEach(snapshot => {
             let doc = snapshot.data();
             addData(doc);
-            if (doc.users[0] !== user.uid && doc.type !== 'task') {
-                getDataFor('PM', doc).then(res1 => {
-                    res1.forEach(snapshot1 => {
-                        let doc1 = snapshot1.data();
-                        addData(doc1)
-                    })
-                    data = data;
-                })
-            }
         })
         data.filter(el => {
             return el.users[0] !== user.uid && el.type !== 'project' && el.project
@@ -88,8 +70,8 @@
 <div class="w-full p-4 lg:flex overflow-auto pb-12">
     <div>
         <QuickTask on:data={e => doc=e.detail}/>
-        <Tasks on:data={e => doc=e.detail} tasks={data.filter(doc => {return doc.type==='task' && !doc.project && !doc.repeat && (!doc.ending || doc.ending>=new Date())})}/>
-        <Tasks on:data={e => doc=e.detail} tasks={data.filter(doc => {return doc.type==='task' && doc.ending && !doc.repeat && doc.ending<new Date()})}/>
+        <Tasks {user} on:data={e => doc=e.detail} tasks={data.filter(doc => {return doc.type==='task' && !doc.project && !doc.repeat && (!doc.ending || doc.ending>=new Date())})}/>
+        <Tasks {user} on:data={e => doc=e.detail} tasks={data.filter(doc => {return doc.type==='task' && doc.ending && !doc.repeat && doc.ending<new Date()})}/>
     </div>
     <div class="flex-1">
         <div class="ml-4 flex flex-wrap">
@@ -103,7 +85,7 @@
                 </div>
             {/each}
         </div>
-        <Projects on:data={e => e.detail.pin ? (!pins.includes(e.detail.pin) ? pins = [...pins, e.detail.pin] : '') : doc=e.detail} data={data.filter(doc => {return (doc.type!=='task' || doc.project) && !doc.repeat})}/>
+        <Projects {user} on:data={e => e.detail.pin ? (!pins.includes(e.detail.pin) ? pins = [...pins, e.detail.pin] : '') : doc=e.detail} data={data.filter(doc => {return (doc.type!=='task' || doc.project) && !doc.repeat})}/>
     </div>
 </div>
 

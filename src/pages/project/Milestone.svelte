@@ -9,6 +9,7 @@
 
     import {deleteData} from "../../firebase";
 
+    export let user;
     export let milestone;
     export let data = [];
     export let contract = false;
@@ -41,19 +42,19 @@
                 {#if milestone.created}
                     <Icon icon="edit" classes="h-5 w-5 group-hover:visible invisible" on:clicked={()=>dispatch('data', milestone)}/>
                 {/if}
-                {#if data.filter(doc => {return doc.milestone === milestone.id}).length<1}
+                {#if data.filter(doc => {return doc.milestone === milestone.id}).length<1 && milestone.users[user?.uid]<3}
                     <Icon icon="check" classes='h-5 w-5 m-1 icon' on:clicked={()=>deleteData(milestone)}/>
                 {/if}
             </div>
         </div>
         {#if !contract}
             <QuickTask on:data={e=>dispatch('data', {...e.detail, milestone: milestone.id, starting: milestone.starting})} />
-            <Tasks on:data={e=>dispatch('data', e.detail)} {tasks}/>
+            <Tasks {user} on:data={e=>dispatch('data', e.detail)} {tasks}/>
         {/if}
     </div>
     {#if !contract}
         {#each data.filter(doc => {return doc.type === 'milestone' && doc.milestone === milestone.id}) as milestone}
-            <Milestone on:data={e=>dispatch('data', {...e.detail})} {milestone} {data}/>
+            <Milestone {user} on:data={e=>dispatch('data', {...e.detail})} {milestone} {data}/>
         {/each}
     {/if}
 </div>

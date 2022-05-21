@@ -6,13 +6,14 @@
     import Icon from "../../../components/Icon.svelte";
     import {deleteData} from "../../../firebase";
     export let task;
+    export let user;
 </script>
 
 <div class="flex justify-between items-center hover:bg-back rounded group" in:fade>
     <div class="flex items-center group relative flex-1">
         <div class="py-1">
             <p style="color: {task.color}">
-                {task.name}
+                {task.name} - {task.id}
                 {#if task.ending && task.ending < new Date()}
                     <span class="tag uppercase font-bold bg-secondary">late</span>
                 {/if}
@@ -34,6 +35,8 @@
             <div class="tag-line -mt-0.5">{moment(task.ending).fromNow()}</div>
         {/if}
         <Icon icon="edit" classes={'h-4 w-4 invisible group-hover:visible hover:text-primary'} on:clicked={()=>dispatch('data', task)}/>
-        <Icon icon="check" classes='h-5 w-5 m-1 icon' on:clicked={()=>deleteData(task)}/>
+        {#if task.users[user?.uid]<3}
+            <Icon icon="check" classes='h-5 w-5 m-1 icon' on:clicked={()=>deleteData(task)}/>
+        {/if}
     </div>
 </div>
