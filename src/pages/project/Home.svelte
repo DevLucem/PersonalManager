@@ -26,13 +26,13 @@
             return el.users[0] !== user.uid && el.type !== 'project' && el.project
         }).forEach(doc => {
             if (!data.find(el => el.id === doc.project)) data.push({
-                name: "Shared Project",
+                name: "Project",
                 id: doc.project,
                 type: "project",
                 users: [], tags: []
             })
             if (doc.milestone && !data.find(el => el.id === doc.milestone)) data.push({
-                name: "Shared Milestone",
+                name: "Milestone",
                 id: doc.milestone,
                 project: doc.project,
                 type: "milestone",
@@ -49,6 +49,7 @@
 
     let users = [];
     listenData('UM', res => {
+        console.log(res.size)
         users = [];
         res.forEach(snap => users.push(snap.data()))
     })
@@ -68,7 +69,7 @@
 </script>
 
 <div class="w-full p-4 lg:flex overflow-auto pb-12">
-    <div>
+    <div class="lg:w-1/2 xl:w-1/3">
         <QuickTask on:data={e => doc=e.detail}/>
         <Tasks {user} on:data={e => doc=e.detail} tasks={data.filter(doc => {return doc.type==='task' && !doc.project && !doc.repeat && (!doc.ending || doc.ending>=new Date())})}/>
         <Tasks {user} on:data={e => doc=e.detail} tasks={data.filter(doc => {return doc.type==='task' && doc.ending && !doc.repeat && doc.ending<new Date()})}/>
@@ -85,7 +86,7 @@
                 </div>
             {/each}
         </div>
-        <Projects {user} on:data={e => e.detail.pin ? (!pins.includes(e.detail.pin) ? pins = [...pins, e.detail.pin] : '') : doc=e.detail} data={data.filter(doc => {return (doc.type!=='task' || doc.project) && !doc.repeat})}/>
+        <Projects {user} on:data={e => e.detail.pin? (!pins.includes(e.detail.pin) ? pins = [...pins, e.detail.pin] : pins = pins.filter(el => {return el !== e.detail.pin})): e.detail.calendar? calendar=e.detail.calendar :doc=e.detail} data={data.filter(doc => {return (doc.type!=='task' || doc.project) && !doc.repeat})}/>
     </div>
 </div>
 
@@ -102,7 +103,7 @@
         </svg>
     </button>
 
-    <button on:click={()=>calendar=true} class="hover:text-primary text-fade">
+    <button on:click={()=>calendar='all'} class="hover:text-primary text-fade">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 20 20" fill="currentColor">
             <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" />
         </svg>
@@ -111,7 +112,7 @@
 </div>
 
 {#if calendar}
-    <Calendar on:data={e => doc=e.detail} {data} on:close={()=>calendar=false}/>
+    <Calendar on:data={e => doc=e.detail} {data} filter={calendar} on:close={()=>calendar=''}/>
 {/if}
 
 {#if doc}

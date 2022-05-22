@@ -23,18 +23,20 @@
                         <span class="tag uppercase font-bold bg-secondary">late</span>
                     {/if}
                     {#each p.tags as tag}
-                        <span class="tag uppercase font-bold bg-primary" style="background-color: {tag.split('#')[1]}">{tag.split('#')[0]}</span>
+                        <span class="tag uppercase font-bold bg-primary" style="background-color: {tag.substring(tag.indexOf('#')+1)}">{tag.split('#')[0]}</span>
                     {/each}
                 </h2>
                 {#if p.created && p.users[user?.uid]<4}
                     <Icon icon="edit" classes="h-5 w-5 invisible group-hover:visible" on:clicked={()=>dispatch('data', p)}/>
                 {/if}
+                {#if p.created}
+                    <Icon icon="calendar" classes="h-5 w-5" on:clicked={()=>dispatch('data', {calendar: p.id})}/>
+                {/if}
             </div>
-            <ul class="m-1">
-                {#each data.filter(doc => {return doc.type==='task' && doc.project === p.id}).slice(0, 5) as task}
-                    <li class="text-xs truncate">{task.name}</li>
-                {/each}
-            </ul>
+            <div class="m-1">
+                <p>{data.filter(doc => {return doc.type==='milestone' && doc.project === p.id}).length } Milestones</p>
+                <p>{data.filter(doc => {return doc.type==='task' && doc.project === p.id}).length } Tasks</p>
+            </div>
         </div>
     {/each}
 </div>

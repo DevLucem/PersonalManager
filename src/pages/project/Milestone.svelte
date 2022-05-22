@@ -29,14 +29,9 @@
                     <span class="tag uppercase font-bold bg-secondary">late</span>
                 {/if}
                 {#each milestone.tags as tag}
-                    <span class="tag uppercase font-bold bg-primary" style="background-color: {tag.split('#')[1]}">{tag.split('#')[0]}</span>
+                    <span class="tag uppercase font-bold bg-primary" style="background-color: {tag.substring(tag.indexOf('#')+1)}">{tag.split('#')[0]}</span>
                 {/each}
             </h2>
-            {#if milestone.description}
-                <div class="absolute top-0 left-0 mt-8 bg-back rounded p-2 hidden group-hover:inline">
-                    {@html milestone.description}
-                </div>
-            {/if}
             <div class="flex items-center">
                 <Icon icon="pin" classes="h-5 w-5" on:clicked={()=>dispatch('data', {pin: milestone.id})}/>
                 {#if milestone.created}

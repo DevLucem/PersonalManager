@@ -6,10 +6,5 @@ service cloud.firestore {
       allow read, write: if true;
     }
 
-    match /PM/{entity} {
-      allow create, read, update: if true;
-      allow delete: if (request.auth!=null && request.auth.uid==resource.data.users[0]) || resource.data.users[0]=='_public';
-    }
-
   }
 }

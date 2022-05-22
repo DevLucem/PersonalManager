@@ -122,7 +122,7 @@
             <textarea bind:value={doc.description} aria-label="Description" cols="30" rows="5" placeholder="A little more optional details" class="w-full input"></textarea>
             <div class="flex flex-wrap items-center my-2">
                 {#each doc.tags as tag}
-                    <span class="tag uppercase font-bold bg-primary flex items-center p-1" style="background-color: {tag.split('#')[1]}">
+                    <span class="tag uppercase font-bold bg-primary flex items-center p-1" style="background-color: {tag.substring(tag.indexOf('#')+1)}">
                         {tag.split('#')[0]}
                         <Icon icon="cancel" classes="h-4 w-4 ml-1 hover:text-white" on:clicked={()=>doc.tags = doc.tags.filter(el => el !== tag)}/>
                     </span>

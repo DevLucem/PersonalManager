@@ -47,7 +47,7 @@
     <div>
         <div class="flex flex-wrap flex-none">
             {#each Object.keys(balances.total) as currency}
-                <span class="uppercase font-bold tag bg-back">{balances.total[currency]}{currency}</span>
+                <span class="uppercase font-bold tag bg-fade p-1">{balances.total[currency]}{currency}</span>
             {/each}
         </div>
 
@@ -56,7 +56,7 @@
                 <div class="card p-2 cursor-pointer hover:shadow-none duration-300 hover:bg-white m-2" in:scale>
                     {balance}
                     {#each Object.keys(balances[balance]) as currency}
-                        <span class="uppercase font-bold tag bg-back">{balances[balance][currency]}{currency}</span>
+                        <span class="uppercase font-bold tag bg-primary">{balances[balance][currency]}{currency}</span>
                     {/each}
                 </div>
             {/each}

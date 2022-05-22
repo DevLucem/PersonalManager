@@ -10,26 +10,15 @@
 </script>
 
 <div class="flex justify-between items-center hover:bg-back rounded group" in:fade>
-    <div class="flex items-center group relative flex-1">
-        <div class="py-1">
-            <p style="color: {task.color}">
-                {task.name} - {task.id}
-                {#if task.ending && task.ending < new Date()}
-                    <span class="tag uppercase font-bold bg-secondary">late</span>
-                {/if}
-                {#each task.tags as tag}
-                    <span class="tag uppercase font-bold bg-primary" style="background-color: {tag.split('#')[1]}">{tag.split('#')[0]}</span>
-                {/each}
-            </p>
-        </div>
-        <div>
-            {#if task.description}
-                <div class="absolute z-10 left-0 bg-back rounded p-2 hidden group-hover:inline mt-4">
-                    {@html task.description}
-                </div>
-            {/if}
-        </div>
-    </div>
+    <p style="color: {task.color}">
+        {task.name}
+        {#if task.ending && task.ending < new Date()}
+            <span class="tag uppercase font-bold bg-secondary">late</span>
+        {/if}
+        {#each task.tags as tag}
+            <span class="tag uppercase font-bold bg-primary" style="background-color: {tag.substring(tag.indexOf('#')+1)}">{tag.split('#')[0]}</span>
+        {/each}
+    </p>
     <div class="flex items-center">
         {#if task.ending}
             <div class="tag-line -mt-0.5">{moment(task.ending).fromNow()}</div>

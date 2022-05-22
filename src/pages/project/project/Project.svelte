@@ -14,19 +14,12 @@
 
 <div class="full-overlay">
 
-    <div class="flex justify-between group">
-        <h1 class="text-lg font-bold flex items-center" style="color: {project.color}">
-            {#if project.created}
-                <Icon on:clicked={()=>dispatch('data', {type: 'milestone', project: project.id, color: project.color, starting: project.starting})} icon="add" classes="h-6 w-6 text-white bg-primary p-0.5 rounded-full m-2"/>
-            {/if}
-            {project.name} - {project.id}
-        </h1>
-        {#if project.description}
-            <div class="absolute bg-back rounded p-2 hidden group-hover:inline mt-8">
-                {@html project.description}
-            </div>
+    <h1 class="text-lg font-bold flex items-center" style="color: {project.color}">
+        {#if project.created}
+            <Icon on:clicked={()=>dispatch('data', {type: 'milestone', project: project.id, color: project.color, starting: project.starting})} icon="add" classes="h-6 w-6 text-white bg-primary p-0.5 rounded-full m-2"/>
         {/if}
-    </div>
+        {project.name}
+    </h1>
 
     <QuickTask on:data={e=>dispatch('data', {...e.detail, project: project.id})} />
     <Tasks {user} on:data={e=>dispatch('data', e.detail)} tasks={data.filter(doc => {return doc.type === 'task' && !doc.milestone})}/>
