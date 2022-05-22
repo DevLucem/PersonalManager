@@ -151,7 +151,7 @@
             },
             'beforeCreateSchedule': function(event) {
                 if (!event.isAllDay)
-                    dispatch('data', {type: 'task', starting: new Date(event.start), ending: new Date(event.end), repeat: true})
+                    dispatch('data', {type: 'task', starting: new Date(event.start), ending: new Date(event.end), project: filter})
             },
             'beforeDeleteSchedule': function(event) {
                 let schedule = event.schedule;

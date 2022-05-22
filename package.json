@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "vite --host",
-    "build": "vite build && firebase deploy && push",
+    "build": "vite build && firebase deploy --only hosting && push",
     "preview": "vite preview"
   },
   "devDependencies": {
