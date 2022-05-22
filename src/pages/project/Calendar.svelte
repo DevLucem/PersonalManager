@@ -87,7 +87,6 @@
 
 
                 let project = data.find(el => el.id===doc.project)
-                if (doc.id === 'W8UyfktGsiiqJ0gfcKQO') console.log(valid, doc.name)
                 if (valid) schedule.push({ // check attendees, recurrence rule
                     id: doc.id,
                     title: doc.name + (doc.type === 'task' && (!doc.project || doc.milestone) ? '' : ' - ' + project?.name || ''),
@@ -151,7 +150,7 @@
             },
             'beforeCreateSchedule': function(event) {
                 if (!event.isAllDay)
-                    dispatch('data', {type: 'task', starting: new Date(event.start), ending: new Date(event.end), project: filter})
+                    dispatch('data', {type: 'task', starting: new Date(event.start), ending: new Date(event.end), project: filter!=='all'? filter: null})
             },
             'beforeDeleteSchedule': function(event) {
                 let schedule = event.schedule;

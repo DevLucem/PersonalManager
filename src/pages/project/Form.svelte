@@ -12,6 +12,7 @@
     export let data;
 
     export let doc;
+    console.log(doc)
     let isTask = doc.type === 'task';
     export let users = [];
     export let user;
