@@ -65,7 +65,7 @@
 
                     const setTime = (input, offset) => {
                         let date = new Date(input)
-                        date.setHours(offset!==0? date.getHours()+offset: new Date().getHours())
+                        date.setHours(date.getHours()+offset)
                         return date;
                     }
 

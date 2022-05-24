@@ -4,7 +4,7 @@
             .then(() => console.log("Service worker registered!"))
             .catch(err => console.error("Failed to register service worker", err))
 
-  import {listenUser, logIn} from "./firebase";
+  import {listenData, listenUser, logIn} from "./firebase";
   import moment from "moment";
 
   import "./lib/Tailwind.svelte"
@@ -27,6 +27,14 @@
   }))
   router.redirect("**", "/pm")
   router.start();
+
+
+  let users = [];
+  listenData('UM', res => {
+    console.log(res.size)
+    users = [];
+    res.forEach(snap => users.push(snap.data()))
+  })
 
   async function checkUser() {
     return await new Promise((resolve, reject) => listenUser(res => resolve( res || {'uid': '_public'}) ))
@@ -57,7 +65,7 @@
           <p class="text-secondary m-2">Secure your data by signing in for private use</p>
         </div>
       {/if}
-      <svelte:component this={current} {params} {user}/>
+      <svelte:component this={current} {params} {user} {users}/>
     {/await}
     <!--<div class="flex justify-center items-center mt-32">
       Hold tight, Site is upgrading

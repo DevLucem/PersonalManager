@@ -14,6 +14,7 @@
     export let doc;
     console.log(doc)
     let isTask = doc.type === 'task';
+    let timeExpiry = ['milestone', 'task'].includes(doc.type);
     export let users = [];
     export let user;
 
@@ -29,9 +30,9 @@
     }
     const structureDate = () => {
         let start = starting ? new Date(starting) : doc.starting;
-        if (start) starting = new Date(start.getTime() - start.getTimezoneOffset() * 60000).toISOString().substring(0, isTask ? 19 : 10);
+        if (start) starting = new Date(start.getTime() - start.getTimezoneOffset() * 60000).toISOString().substring(0, timeExpiry ? 19 : 10);
         let end = ending ? new Date(ending) : doc.ending;
-        if (end) ending = new Date(end.getTime() - end.getTimezoneOffset() * 60000).toISOString().substring(0, isTask ? 19 : 10);
+        if (end) ending = new Date(end.getTime() - end.getTimezoneOffset() * 60000).toISOString().substring(0, timeExpiry ? 19 : 10);
     }
     structureDate();
 
@@ -130,7 +131,7 @@
                 {/each}
             </div>
             {#if doc.type !== 'user'}
-                {#if isTask}
+                {#if timeExpiry}
                     <div class="flex flex-col sm:flex-row items-center justify-between">
                         <input type="datetime-local" aria-label="Starting" bind:value={starting}>
                         <span class="m-4 font-bold">to</span>

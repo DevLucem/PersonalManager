@@ -14,10 +14,6 @@ const FIRESTORE = getFirestore()
 enableIndexedDbPersistence(FIRESTORE).catch(e => console.log(e.code  === 'failed-precondition' ? 'Multiple Tabs Open' : 'Cant Cache ', e))
 
 export const listenData = (path, callback) => {return onSnapshot(query(collection(FIRESTORE, path), orderBy(`users.${AUTH.currentUser?.uid || "_public"}`)), callback)}
-export const getDataFor = (path, entity) => {
-    let user = AUTH.currentUser?.uid || "_public";
-    return getDocs(query(collection(FIRESTORE, path), where(entity.type, "==", entity.id), orderBy('created')))
-}
 export const getData = path => {return getDoc(doc(FIRESTORE, path))}
 
 const table = (type) => {
