@@ -9,6 +9,7 @@
 
     export let user;
     export let users;
+    $: console.log(users, 'users')
 
     let data = [];
     listenData('PM', res => {

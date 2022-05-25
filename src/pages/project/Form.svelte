@@ -49,7 +49,7 @@
     if (!doc.tags) doc.tags = [];
 
     function save() {
-        if (doc.name && doc.name.length > 3) {
+        if (doc.name && doc.name.length > 2) {
 
             if (doc.description) doc.description = new showdown.Converter().makeHtml(doc.description.trim())
             const timeUpdate = (field, value) => {

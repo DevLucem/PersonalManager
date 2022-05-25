@@ -39,7 +39,7 @@
                         }
                         if (!ending || ending < new Date()) {
                             ending = endings[endings.length-1]?.ending
-                            let starter = starters[starters.length-1].starting
+                            let starter = starters[starters.length-1]?.starting
                             if (!ending || ending<starter) ending = starter;
                             if (!ending || ending<new Date()) ending = new Date();
                         }

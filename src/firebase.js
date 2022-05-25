@@ -13,7 +13,11 @@ export const logOut = () => {return signOut(AUTH)}
 const FIRESTORE = getFirestore()
 enableIndexedDbPersistence(FIRESTORE).catch(e => console.log(e.code  === 'failed-precondition' ? 'Multiple Tabs Open' : 'Cant Cache ', e))
 
-export const listenData = (path, callback) => {return onSnapshot(query(collection(FIRESTORE, path), orderBy(`users.${AUTH.currentUser?.uid || "_public"}`)), callback)}
+export const listenData = (path, callback) => {
+    return onAuthStateChanged(AUTH, user => {
+        return onSnapshot(query(collection(FIRESTORE, path), orderBy(`users.${user.uid || "_public"}`)), callback)
+    })
+}
 export const getData = path => {return getDoc(doc(FIRESTORE, path))}
 
 const table = (type) => {
