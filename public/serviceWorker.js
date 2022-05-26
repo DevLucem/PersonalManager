@@ -1,4 +1,4 @@
-let store = 'cache1'
+let store = 'cache2'
 
 const assets = [
     "/pm",

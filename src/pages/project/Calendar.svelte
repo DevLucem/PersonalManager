@@ -27,7 +27,7 @@
 
                 let tasks = data.filter(el => {return el.milestone === doc.id && el.type === 'task'})
                 if (doc.type === 'milestone') {
-                    valid = !(((!doc.starting && !doc.ending) || tasks.length<1) && tasks.filter(el => {return el.starting || el.ending}).length<1 )
+                    valid = !(((!starting && !ending) || tasks.length<1) && tasks.filter(el => {return el.starting || el.ending}).length<1 )
                     if (valid) {
                         let starters = tasks.filter(el => {return el.starting}).sort((a, b) => {return a.starting - b.starting})
                         let endings = tasks.filter(el => {return el.ending}).sort((a, b) => {return a.ending - b.ending})
@@ -49,16 +49,17 @@
 
                 let milestone = data.find(el => el.id===doc.milestone)
                 if (doc.type === 'task') {
-                    valid = !(!doc.starting && !doc.ending && !milestone?.starting && !milestone?.ending)
+
+                    valid = !(!starting && !ending && !milestone?.starting && !milestone?.ending)
                     if (valid){
 
                         if (doc.repeat){
                             let current = new Date().getDate();
-                            doc.starting.setDate(current)
-                            doc.ending.setDate(current)
-                            if (doc.ending < new Date()) {
-                                doc.starting.setDate(current+1)
-                                doc.ending.setDate(current+1)
+                            starting.setDate(current)
+                            ending.setDate(current)
+                            if (ending < new Date()) {
+                                starting.setDate(current+1)
+                                ending.setDate(current+1)
                             }
                         }
                     }
@@ -69,31 +70,34 @@
                         return date;
                     }
 
-                    if (valid && !doc.starting && !doc.ending)
+                    if (valid && !starting && !ending)
                         if (milestone?.ending) {
-                            doc.ending = setTime(milestone.ending, 0)
-                            doc.starting = setTime(doc.ending, -1)
+                            ending = setTime(milestone.ending, 0)
+                            starting = setTime(ending, -1)
                         } else if (milestone?.starting) {
-                            doc.starting = setTime(milestone.starting, 0)
-                            doc.ending = setTime(doc.starting, 1)
+                            starting = setTime(milestone.starting, 0)
+                            ending = setTime(starting, 1)
                         }
 
-                    if (valid && !doc.starting)
-                        doc.starting = setTime(doc.ending, -1)
-                    if (valid && !doc.ending)
-                        doc.ending = setTime(doc.starting, 1)
+                    if (valid && !starting)
+                        starting = setTime(ending, -1)
+                    if (valid && !ending)
+                        ending = setTime(starting, 1)
 
                 }
 
 
                 let project = data.find(el => el.id===doc.project)
+                let tags = '';
+                doc.tags.forEach(tag => tags += '<span class="tag uppercase font-bold bg-primary" style="background-color: '+ tag.substring(tag.indexOf('#')+1) +'">' + tag.split('#')[0] + '</span>')
+                if (ending<new Date()) tags += '<span class="tag uppercase font-bold bg-secondary">late</span>'
                 if (valid) schedule.push({ // check attendees, recurrence rule
                     id: doc.id,
                     title: doc.name + (doc.type === 'task' && (!doc.project || doc.milestone) ? '' : ' - ' + project?.name || ''),
                     calendarId: doc.project,
                     category: doc.type === 'task' ? 'time' : 'allday',
                     isPending: ending && new Date()>ending,
-                    body: '<span class="text-primary">' + (project?.name || '') + '</span>' + (milestone?.name ? '<br>'+milestone.name: '') + (doc?.description? '<br>' + doc.description: ''),
+                    body: (tags? tags + '<br>' : '') + '<span class="text-primary">' + (project?.name || '') + '</span>' + (milestone?.name ? '<br>'+milestone.name: '') + (doc?.description? '<br>' + doc.description: ''),
                     start: starting,
                     end: ending,
                     bgColor: doc.type === 'task' ? milestone?.color || project?.color || (doc.repeat ? '#00c97e' : '#f8f8f8') : doc.color,

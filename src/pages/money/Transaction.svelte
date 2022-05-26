@@ -7,8 +7,8 @@
     export let transaction;
 </script>
 
-<div class="flex justify-between items-center bg-white p-2 my-2 hover:bg-back rounded group" in:fade>
-    <div class="group relative flex-1" style="color: {transaction.color}">
+<div class="flex justify-between items-center bg-white p-2 my-2 hover:bg-back rounded group" in:fade style="background-color: {transaction.color}">
+    <div class="group relative flex-1">
         {transaction.name}
         <div class="tag-line -mt-0.5">{moment(transaction.created).fromNow()}</div>
     </div>

@@ -31,7 +31,6 @@
 
   let users = [];
   listenData('UM', res => {
-    console.log(res.size)
     users = [];
     res.forEach(snap => users.push(snap.data()))
   })

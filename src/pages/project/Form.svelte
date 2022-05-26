@@ -12,7 +12,6 @@
     export let data;
 
     export let doc;
-    console.log(doc)
     let isTask = doc.type === 'task';
     let timeExpiry = ['milestone', 'task'].includes(doc.type);
     export let users = [];
@@ -64,9 +63,8 @@
             if (!doc.project) doc.project = null;
             if (!doc.milestone) doc.milestone = null;
 
-            console.log(doc.users)
             saveData(doc).catch(e => console.error('ERROR:', e))
-                .then(() => console.log('saved doc'))
+                .then(() => console.log('saved doc', doc.name))
             dispatch('close')
 
         } else edit = true;

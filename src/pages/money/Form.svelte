@@ -1,42 +1,118 @@
 <script>
     import {createEventDispatcher} from 'svelte';
-    import {deleteData, saveData} from "../../firebase";
+
     let dispatch = createEventDispatcher();
 
-    const _default = {type: 'transaction', source: 'MPesa', amount: 2000, currency: 'KES'};
-    export let doc = _default;
+    import showdown from "showdown";
+    import Icon from "../../components/Icon.svelte";
+    import {deleteData, saveData} from "../../firebase";
+    import Pop from "../../components/Pop.svelte";
+
+    export let doc;
+    export let data = [];
+    let sources = {};
+    data.forEach(el => {
+        if (!sources[el.source])
+            sources[el.source] = el.color;
+    })
+    let currencies = [];
+    data.forEach(el => {
+        if (!currencies.includes(el.currency))
+            currencies.push(el.currency)
+        else console.log('not adding', el.currency, currencies)
+    })
+    currencies = currencies;
+    export let users = [];
+    export let user;
+
+    const setColor = () => {
+        doc.color = '#';
+        for (let i = 0; i < 3; i++)
+            doc.color += ("0" + Math.floor(((1 + Math.random()) * Math.pow(16, 2)) / 2).toString(16)).slice(-2)
+    }
+
+    if (!doc.color) setColor();
+    if (doc.description) doc.description = new showdown.Converter().makeMarkdown(doc.description)
+    if (!doc.users) doc.users = {};
+    if (!doc.tags) doc.tags = [];
 
     function save() {
-        if (doc.name && doc.name.length > 3 && doc.amount !== 0) {
+        if (!doc.description) delete doc.description;
+        if (doc.name && doc.name.length > 2 && doc.amount !== 0) {
             if (doc.currency.trim().length<2) doc.currency = 'USD'
             else doc.currency = doc.currency.trim().toUpperCase();
+            if (doc.description) doc.description = new showdown.Converter().makeHtml(doc.description.trim())
             saveData(doc).catch(e => console.error('ERROR:', e))
-                .then(() => console.log('saved doc'))
-            doc =  Object.assign({}, _default)
-            console.log(doc)
+                .then(() => console.log('saved doc', doc.name))
+            dispatch('close')
         }
     }
 
     function remove() {
         deleteData(doc).then(() => console.log('deleted doc'))
-        doc =  Object.assign({}, _default);
+        dispatch('close')
     }
+
 </script>
 
-<form on:submit|preventDefault={save}>
-    <div class="flex">
-        <input required bind:value={doc.name} class="input w-full flex-1" aria-label="Transact" type="text" placeholder="Transaction Name">
-        <input required bind:value={doc.amount} class="w-24 input" type="number" step="any" aria-label="Amount" placeholder="Amount">
-    </div>
-    <div class="flex items-center justify-between mt-2">
-        <input required bind:value={doc.source} class="w-24 input" type="text" aria-label="Amount" placeholder="Platform">
-        <input required bind:value={doc.currency} class="w-24 input" type="text" aria-label="Amount" placeholder="Currency">
-        <div>
-            {#if doc.id}
-                <button type="button" class="button-s" on:click={remove}>Delete</button>
-                <button type="button" class="button-o" on:click={()=>doc = Object.assign({}, _default)}>Cancel</button>
-            {/if}
-            <button type="submit" class="button h-full">Save</button>
+<Pop on:close={()=>dispatch('close')}>
+    <form on:submit|preventDefault={save}>
+        <div class="flex overflow-auto">
+            {#each data.filter(el => {return el.repeat}) as d}
+                <button type="button" on:click={() => doc = (({ name, description, type, amount, color, currency, source, users, tags }) => ({ name, description, type, amount, color, currency, source, users, tags }))(d)} class="rounded px-4 py-2 m-2" style="background-color: {d.color}">{d.name}</button>
+            {/each}
         </div>
-    </div>
-</form>
+        <input bind:value={doc.name} class="input mb-2 w-full" aria-label="Name" type="text" placeholder="Name" required>
+        <textarea bind:value={doc.description} aria-label="Description" cols="30" rows="5" placeholder="A little more optional details" class="w-full input"></textarea>
+        <div class="flex flex-wrap items-center my-2">
+            {#each doc.tags as tag}
+                    <span class="tag uppercase font-bold bg-primary flex items-center p-1" style="background-color: {tag.substring(tag.indexOf('#')+1)}">
+                        {tag.split('#')[0]}
+                        <Icon icon="cancel" classes="h-4 w-4 ml-1 hover:text-white" on:clicked={()=>doc.tags = doc.tags.filter(el => el !== tag)}/>
+                    </span>
+            {/each}
+        </div>
+        <div class="flex justify-between items-center">
+            <select name="Source" bind:value={doc.source} on:change={()=>doc.color = sources[doc.source]}>
+                {#each Object.keys(sources) as source}
+                    <option value={source}>{source}</option>
+                {/each}
+            </select>
+
+            <select name="Source" bind:value={doc.currency}>
+                {#each currencies as currency}
+                    <option value={currency}>{currency}</option>
+                {/each}
+            </select>
+            <input required bind:value={doc.amount} class="w-24 input" type="number" step="any" aria-label="Amount" placeholder="Amount">
+            <label>Repeat Daily: <input type="checkbox" bind:checked={doc.repeat}></label>
+        </div>
+        {#if (!doc.id || doc.users[user?.uid]<3)}
+            <div class="flex flex-wrap items-center my-2">
+                {#each Object.keys(doc.users).filter(el => {return el!==user.uid && doc.users[el]}) as user}
+                            <span class="px-2 py-1 bg-primary rounded flex items-center" style="background-color: {users.find(el => el.user===user)?.color}">
+                                {users.find(el => el.user===user)?.name}
+                                <Icon icon="cancel" classes="h-4 w-4 hover:text-white" on:clicked={()=>doc.users[user]=null}/>
+                            </span>
+                {/each}
+                {#each users.filter(el => {return !doc.users[el.user]}) as user}
+                    <div class="flex items-center rounded border">
+                        <button type="button" on:click={()=>doc.users[user.user]=3} class="m-1 truncate hover:text-primary">{user.name}</button>
+                        <Icon icon="cancel" classes="h-4 w-4 hover:text-white m-1" on:clicked={()=>deleteData(user)}/>
+                    </div>
+                {/each}
+            </div>
+        {/if}
+
+        <div class="flex justify-between mt-8">
+            {#if doc.id && doc.users[user?.uid]<3}
+                <button type="button" class="button-s" on:click={remove}>Delete</button>
+            {/if}
+            <div class="flex items-center">
+                <input aria-label="Color" type="color" bind:value={doc.color} placeholder="Color">
+                <Icon icon="refresh" classes="w-6 h-6 ml-4" on:clicked={setColor}/>
+            </div>
+            <button type="submit" class="button" on:click={save}>Save</button>
+        </div>
+    </form>
+</Pop>

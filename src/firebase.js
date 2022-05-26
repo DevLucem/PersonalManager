@@ -15,7 +15,7 @@ enableIndexedDbPersistence(FIRESTORE).catch(e => console.log(e.code  === 'failed
 
 export const listenData = (path, callback) => {
     return onAuthStateChanged(AUTH, user => {
-        return onSnapshot(query(collection(FIRESTORE, path), orderBy(`users.${user.uid || "_public"}`)), callback)
+        return onSnapshot(query(collection(FIRESTORE, path), orderBy(`users.${user?.uid || "_public"}`)), callback)
     })
 }
 export const getData = path => {return getDoc(doc(FIRESTORE, path))}
@@ -66,7 +66,6 @@ export const saveData = (data) => {
     Object.keys(data.users).forEach(el => {
         if (!data.users[el]) data.users[el] = deleteField();
     })
-    console.log(data.users)
     return setDoc(doc(DATA, data.id), data, {merge: true})
 }
 export const deleteData = data => {return deleteDoc(doc(table(data.type), data.id))}

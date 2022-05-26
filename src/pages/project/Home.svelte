@@ -9,7 +9,6 @@
 
     export let user;
     export let users;
-    $: console.log(users, 'users')
 
     let data = [];
     listenData('PM', res => {
@@ -41,6 +40,7 @@
                 users: [], tags: []
             })
         })
+        data.sort((a, b) => a.created - b.created)
         let priority = data.filter(doc => {
             return doc.ending
         }).sort((a, b) => a.ending - b.ending)

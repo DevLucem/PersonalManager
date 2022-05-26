@@ -44,7 +44,7 @@
 
     <div class="flex overflow-auto flex-none pb-3">
         {#each Object.keys(balances.total) as currency}
-            <div class="uppercase font-bold bg-fade p-2 mr-2 border">{ Math.round(balances.total[currency]*100)/100 } {currency}</div>
+            <div class="uppercase font-bold bg-fade p-2 mr-2 border rounded rounded-lg text-primary text-lg">{ Math.round(balances.total[currency]*100)/100 } {currency}</div>
         {/each}
     </div>
 
@@ -59,11 +59,11 @@
         <div class="flex-1">
             <div class="mt-4 mb-6 lg:mt-2 grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
                 {#each Object.keys(balances).filter(el => {return el !== 'total'}) as balance}
-                    <div class="card text-2xl p-2 cursor-pointer hover:shadow-none duration-300 hover:bg-white m-2 flex-wrap" in:scale>
-                        <p>{balance}</p>
+                    <div class="card bg-primary text-back text-2xl p-2 cursor-pointer m-2 flex-wrap" in:scale>
+                        <p class="pb-2">{balance}</p>
                         <p class="flex flex-wrap items-center">
                             {#each Object.keys(balances[balance]) as currency}
-                                <span class="uppercase font-bold tag bg-primary">{balances[balance][currency]}{currency}</span>
+                                <span class="uppercase font-bold tag bg-fade text-primary rounded">{Math.round(balances[balance][currency]*1e6)/1e6} {currency}</span>
                             {/each}
                         </p>
                     </div>
@@ -80,6 +80,6 @@
 </div>
 
 {#if doc}
-    <Form {doc} {user} on:close={()=>doc=null} {users}/>
+    <Form {doc} {user} on:close={()=>doc=null} {users} {data}/>
 {/if}
 
