@@ -60,8 +60,8 @@
                         current.setMinutes(ending.getMinutes());
                         ending = new Date(current);
                         if (ending < new Date()) {
-                            starting.setDate(current+1)
-                            ending.setDate(current+1)
+                            starting.setDate(starting.getDate()+1)
+                            ending.setDate(ending.getDate()+1)
                         }
                     }
 
