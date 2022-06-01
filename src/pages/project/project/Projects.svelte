@@ -15,9 +15,9 @@
 
 <div class="mt-4 mb-6 lg:mt-2 flex-1 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 -m-2 lg:ml-2">
     {#each data.filter(doc => {return doc.type==='project'}) as p}
-        <div class="card p-2 cursor-pointer hover:shadow-none duration-300 hover:bg-white m-2" style="background-color: {p.color}" in:scale on:click={()=>project=p}>
+        <div class="card p-2 cursor-pointer hover:shadow-none duration-300 hover:bg-white m-2 bg-primary" style="background-color: {p.color}" in:scale on:click={()=>project=p}>
             <div class="group flex pb-2 font-bold">
-                <h2 class="flex-1">
+                <h2 class="flex-1 flex items-center">
                     {p.name}
                     {#if p.ending && p.ending < new Date()}
                         <span class="tag uppercase font-bold bg-secondary">late</span>

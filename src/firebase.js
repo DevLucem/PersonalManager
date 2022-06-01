@@ -54,7 +54,7 @@ export const saveData = (data) => {
             data[value] = new Date(data[value])
     })
 
-    let tags = data.name.split(" ").filter(n => /:/.test(n));
+    let tags = data.name.split(" ").filter(n => /^:/.test(n));
     tags.forEach(sep => {
         data.name = data.name.replace(sep, "")
         let tag = sep.replace(":", "")

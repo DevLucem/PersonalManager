@@ -131,14 +131,16 @@
             {#if doc.type !== 'user'}
                 {#if timeExpiry}
                     <div class="flex flex-col sm:flex-row items-center justify-between">
-                        <input type="datetime-local" aria-label="Starting" bind:value={starting}>
+                        <input class="w-full" type="datetime-local" aria-label="Starting" bind:value={starting} on:change={() => {if(!starting) doc.repeat = false}}>
                         <span class="m-4 font-bold">to</span>
-                        <input type="datetime-local" aria-label="Ending" bind:value={ending}>
+                        <input class="w-full" type="datetime-local" aria-label="Ending" bind:value={ending} on:change={() => {if(!ending) doc.repeat = false}}>
                     </div>
-                    <div class="flex justify-between my-4">
+                    <div class="flex justify-between mt-4 mb-8">
                         <button type="button" class="tag bg-primary" on:click={()=>duration(1, 0)}>+1Hr</button>
                         <button type="button" class="tag bg-primary" on:click={()=>duration(-1, 0)}>-1hr</button>
-                        <label>Repeat Daily: <input type="checkbox" bind:checked={doc.repeat}></label>
+                        {#if starting && ending}
+                            <label>Repeat Daily: <input type="checkbox" bind:checked={doc.repeat}></label>
+                        {/if}
                     </div>
                 {:else}
                     <div class="flex items-center justify-between">
@@ -165,26 +167,20 @@
                     </div>
                 {/if}
                 {#if doc.type !== 'project'}
-                    <div class="flex justify-between">
-                        <label>
-                            Project:
-                            <select bind:value={doc.project} on:change={()=>doc.milestone=null}>
-                                <option value=""></option>
-                                {#each data.filter(el => {return el.type === 'project'}) as p}
-                                    <option value="{p.id}">{p.name}</option>
+                    <div class="flex justify-between flex-col md:flex-row">
+                        <select aria-label="Project" class="flex-1" bind:value={doc.project} on:change={()=>doc.milestone=null}>
+                            <option value="">Select Project</option>
+                            {#each data.filter(el => {return el.type === 'project'}) as p}
+                                <option value="{p.id}">{p.name}</option>
+                            {/each}
+                        </select>
+                        {#if doc.project}
+                            <select aria-label="Milestone" class="flex-1" bind:value={doc.milestone}>
+                                <option value="">Select Milestone</option>
+                                {#each data.filter(el => {return el.project === doc.project && el.type === 'milestone'}) as m}
+                                    <option value="{m.id}">{m.name}</option>
                                 {/each}
                             </select>
-                        </label>
-                        {#if doc.project}
-                            <label>
-                                Milestone:
-                                <select bind:value={doc.milestone}>
-                                    <option value=""></option>
-                                    {#each data.filter(el => {return el.project === doc.project && el.type === 'milestone'}) as m}
-                                        <option value="{m.id}">{m.name}</option>
-                                    {/each}
-                                </select>
-                            </label>
                         {/if}
                     </div>
                 {/if}

@@ -19,6 +19,12 @@
             <Icon on:clicked={()=>dispatch('data', {type: 'milestone', project: project.id, color: project.color, starting: project.starting})} icon="add" classes="h-6 w-6 text-white bg-primary p-0.5 rounded-full m-2"/>
         {/if}
         {project.name}
+        {#if project.ending && project.ending < new Date()}
+            <span class="tag uppercase font-bold bg-secondary">late</span>
+        {/if}
+        {#each project.tags as tag}
+            <span class="tag uppercase font-bold bg-primary" style="background-color: {tag.substring(tag.indexOf('#')+1)}">{tag.split('#')[0]}</span>
+        {/each}
     </h1>
 
     <QuickTask on:data={e=>dispatch('data', {...e.detail, project: project.id})} />

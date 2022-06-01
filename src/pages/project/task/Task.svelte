@@ -10,7 +10,7 @@
 </script>
 
 <div class="flex justify-between items-center hover:bg-back rounded group" in:fade>
-    <p style="color: {task.color}">
+    <p class="flex items-center" style="color: {task.color}">
         {task.name}
         {#if task.ending && task.ending < new Date()}
             <span class="tag uppercase font-bold bg-secondary">late</span>

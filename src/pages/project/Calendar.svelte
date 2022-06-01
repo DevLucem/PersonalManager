@@ -51,16 +51,17 @@
                 if (doc.type === 'task') {
 
                     valid = !(!starting && !ending && !milestone?.starting && !milestone?.ending)
-                    if (valid){
-
-                        if (doc.repeat){
-                            let current = new Date().getDate();
-                            starting.setDate(current)
-                            ending.setDate(current)
-                            if (ending < new Date()) {
-                                starting.setDate(current+1)
-                                ending.setDate(current+1)
-                            }
+                    if (doc.repeat){
+                        let current = new Date();
+                        current.setHours(starting.getHours());
+                        current.setMinutes(starting.getMinutes());
+                        starting = new Date(current);
+                        current.setHours(ending.getHours());
+                        current.setMinutes(ending.getMinutes());
+                        ending = new Date(current);
+                        if (ending < new Date()) {
+                            starting.setDate(current+1)
+                            ending.setDate(current+1)
                         }
                     }
 
@@ -84,6 +85,11 @@
                     if (valid && !ending)
                         ending = setTime(starting, 1)
 
+                }
+
+                if (doc.repeat){
+
+                    console.log(doc.name, valid, starting, ending)
                 }
 
 

@@ -30,14 +30,14 @@
                 name: "Project",
                 id: doc.project,
                 type: "project",
-                users: [], tags: []
+                users: {}, tags: []
             })
             if (doc.milestone && !data.find(el => el.id === doc.milestone)) data.push({
                 name: "Milestone",
                 id: doc.milestone,
                 project: doc.project,
                 type: "milestone",
-                users: [], tags: []
+                users: {}, tags: []
             })
         })
         data.sort((a, b) => a.created - b.created)
