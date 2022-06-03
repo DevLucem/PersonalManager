@@ -35,13 +35,14 @@
     }
     structureDate();
 
+    const setUsers = () => {
+        doc.users = data.find(el => el.id===(doc.milestone || doc.project))?.users
+        doc.users[user?.uid] = 1;
+    }
     if (!doc.color) setColor();
     if (doc.description) doc.description = new showdown.Converter().makeMarkdown(doc.description)
     if (!doc.users) {
-        if (doc.milestone || doc.project){
-            doc.users = data.find(el => el.id===(doc.milestone || doc.project))?.users
-            doc.users[user?.uid] = 1;
-        }
+        if (doc.milestone || doc.project) setUsers();
         if (!doc.users)
             doc.users = {};
     }
@@ -168,15 +169,15 @@
                 {/if}
                 {#if doc.type !== 'project'}
                     <div class="flex justify-between flex-col md:flex-row">
-                        <select aria-label="Project" class="flex-1" bind:value={doc.project} on:change={()=>doc.milestone=null}>
-                            <option value="">Select Project</option>
+                        <select aria-label="Project" class="flex-1" bind:value={doc.project} on:change={()=>{doc.milestone=null; setUsers()}}>
+                            <option class="text-primary" value="">Select Project</option>
                             {#each data.filter(el => {return el.type === 'project'}) as p}
                                 <option value="{p.id}">{p.name}</option>
                             {/each}
                         </select>
                         {#if doc.project}
-                            <select aria-label="Milestone" class="flex-1" bind:value={doc.milestone}>
-                                <option value="">Select Milestone</option>
+                            <select aria-label="Milestone" class="flex-1" bind:value={doc.milestone} on:change={()=>setUsers()}>
+                                <option class="text-primary" value="">Select Milestone</option>
                                 {#each data.filter(el => {return el.project === doc.project && el.type === 'milestone'}) as m}
                                     <option value="{m.id}">{m.name}</option>
                                 {/each}
