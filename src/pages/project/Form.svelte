@@ -132,9 +132,9 @@
             {#if doc.type !== 'user'}
                 {#if timeExpiry}
                     <div class="flex flex-col sm:flex-row items-center justify-between">
-                        <input class="w-full" type="datetime-local" aria-label="Starting" bind:value={starting} on:change={() => {if(!starting) doc.repeat = false}}>
+                        <input class="w-full" type="datetime-local" aria-label="Starting" bind:value={starting} on:change={() => {if(!starting) doc.repeat = false}} max={ending}>
                         <span class="m-4 font-bold">to</span>
-                        <input class="w-full" type="datetime-local" aria-label="Ending" bind:value={ending} on:change={() => {if(!ending) doc.repeat = false}}>
+                        <input class="w-full" type="datetime-local" aria-label="Ending" bind:value={ending} on:change={() => {if(!ending) doc.repeat = false}} min={starting}>
                     </div>
                     <div class="flex justify-between mt-4 mb-8">
                         <button type="button" class="tag bg-primary" on:click={()=>duration(1, 0)}>+1Hr</button>
