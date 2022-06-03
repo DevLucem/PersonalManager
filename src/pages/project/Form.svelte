@@ -144,9 +144,9 @@
                     </div>
                 {:else}
                     <div class="flex items-center justify-between">
-                        <input type="date" aria-label="Starting" bind:value={starting}>
+                        <input type="date" aria-label="Starting" bind:value={starting} max={ending}>
                         <span class="m-4 font-bold">to</span>
-                        <input type="date" aria-label="Ending" bind:value={ending}>
+                        <input type="date" aria-label="Ending" bind:value={ending} min={starting}>
                     </div>
                 {/if}
                 {#if (!doc.id || doc.users[user?.uid]<3)}
