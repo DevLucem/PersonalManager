@@ -19,19 +19,22 @@
     data.forEach(el => {
         if (!currencies.includes(el.currency))
             currencies.push(el.currency)
-        else console.log('not adding', el.currency, currencies)
     })
     currencies = currencies;
     export let users = [];
     export let user;
 
     const setColor = () => {
-        doc.color = '#';
-        for (let i = 0; i < 3; i++)
-            doc.color += ("0" + Math.floor(((1 + Math.random()) * Math.pow(16, 2)) / 2).toString(16)).slice(-2)
+        if (!doc.color && sources[doc.source])
+            doc.color = sources[doc.source];
+        else{
+            doc.color = '#';
+            for (let i = 0; i < 3; i++)
+                doc.color += ("0" + Math.floor(((1 + Math.random()) * Math.pow(16, 2)) / 2).toString(16)).slice(-2)
+        }
     }
 
-    if (!doc.color) setColor();
+    if (!doc.color) setTimeout(setColor, 50)
     if (doc.description) doc.description = new showdown.Converter().makeMarkdown(doc.description)
     if (!doc.users) doc.users = {};
     if (!doc.tags) doc.tags = [];
@@ -57,11 +60,15 @@
 
 <Pop on:close={()=>dispatch('close')}>
     <form on:submit|preventDefault={save}>
-        <div class="flex overflow-auto">
-            {#each data.filter(el => {return el.repeat}) as d}
-                <button type="button" on:click={() => doc = (({ name, description, type, amount, color, currency, source, users, tags }) => ({ name, description, type, amount, color, currency, source, users, tags }))(d)} class="rounded px-4 py-2 m-2" style="background-color: {d.color}">{d.name}</button>
-            {/each}
-        </div>
+
+        {#if !doc.id}
+            <div class="flex overflow-auto">
+                {#each data.filter(el => {return el.repeat}) as d}
+                    <button type="button" on:click={() => doc = (({ name, description, type, amount, color, currency, source, users, tags }) => ({ name, description, type, amount, color, currency, source, users, tags }))(d)} class="rounded px-4 py-2 m-2" style="background-color: {d.color}">{d.name}</button>
+                {/each}
+            </div>
+        {/if}
+
         <input bind:value={doc.name} class="input mb-2 w-full" aria-label="Name" type="text" placeholder="Name" required>
         <textarea bind:value={doc.description} aria-label="Description" cols="30" rows="5" placeholder="A little more optional details" class="w-full input"></textarea>
         <div class="flex flex-wrap items-center my-2">
@@ -72,20 +79,28 @@
                     </span>
             {/each}
         </div>
-        <div class="flex justify-between items-center">
-            <select name="Source" bind:value={doc.source} on:change={()=>doc.color = sources[doc.source]}>
-                {#each Object.keys(sources) as source}
-                    <option value={source}>{source}</option>
-                {/each}
-            </select>
+        <div class="flex flex-col justify-between items-center">
+            <div class="flex items-center">
+                <select aria-label="Source" name="Source" bind:value={doc.source} on:change={()=>{doc.color = sources[doc.source]; if (!doc.color) setColor();}}>
+                    {#each Object.keys(sources) as source}
+                        <option value={source}>{source}</option>
+                    {/each}
+                </select>
+                <Icon icon="add" classes="w-6" on:clicked={()=>{doc.source=prompt('Enter New Custom Source'); sources[doc.source] = doc.color}}/>
+            </div>
 
-            <select name="Source" bind:value={doc.currency}>
-                {#each currencies as currency}
-                    <option value={currency}>{currency}</option>
-                {/each}
-            </select>
-            <input required bind:value={doc.amount} class="w-24 input" type="number" step="any" aria-label="Amount" placeholder="Amount">
-            <label>Repeat Daily: <input type="checkbox" bind:checked={doc.repeat}></label>
+            <div class="flex items-center">
+                <select aria-label="Currency" name="Currency" bind:value={doc.currency}>
+                    {#each currencies as currency}
+                        <option value={currency}>{currency}</option>
+                    {/each}
+                </select>
+                <Icon icon="add" classes="w-6" on:clicked={()=>{doc.currency=prompt('Enter New Currency'); currencies = [...currencies, doc.currency]}}/>
+            </div>
+            <div class="flex justify-between items-center">
+                <input required bind:value={doc.amount} class="w-24 input" type="number" step="any" aria-label="Amount" placeholder="Amount">
+                <label>Recur: <input type="checkbox" bind:checked={doc.repeat}></label>
+            </div>
         </div>
         {#if (!doc.id || doc.users[user?.uid]<3)}
             <div class="flex flex-wrap items-center my-2">

@@ -99,7 +99,7 @@
 </div>
 
 {#if calendar}
-    <Calendar on:data={e => doc=e.detail} {data} filter={calendar} on:close={()=>calendar=''}/>
+    <Calendar on:data={e => doc=e.detail} {data} {users} {user} filter={calendar} on:close={()=>calendar=''}/>
 {/if}
 
 {#if doc}

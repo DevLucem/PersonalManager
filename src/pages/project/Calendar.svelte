@@ -9,6 +9,8 @@
     import {deleteData, saveData} from "../../firebase";
 
     export let data = [];
+    export let users;
+    export let user;
     export let filter;
 
     let calendar;
@@ -94,9 +96,14 @@
 
 
                 let project = data.find(el => el.id===doc.project)
+
                 let tags = '';
                 doc.tags.forEach(tag => tags += '<span class="tag uppercase font-bold bg-primary" style="background-color: '+ tag.substring(tag.indexOf('#')+1) +'">' + tag.split('#')[0] + '</span>')
                 if (ending<new Date()) tags += '<span class="tag uppercase font-bold bg-secondary">late</span>'
+
+                let shared = [];
+                Object.keys(doc.users).forEach(u => {if (u !== user.uid) shared.push(users.find(el => el.user === u)?.name)} )
+
                 if (valid) schedule.push({ // check attendees, recurrence rule
                     id: doc.id,
                     title: doc.name + (doc.type === 'task' && (!doc.project || doc.milestone) ? '' : ' - ' + project?.name || ''),
@@ -109,7 +116,8 @@
                     bgColor: doc.type === 'task' ? milestone?.color || project?.color || (doc.repeat ? '#00c97e' : '#f8f8f8') : doc.color,
                     color: doc.type === 'task' ? doc.color : '#10162A',
                     dragBgColor: "#FF5964",
-                    borderColor: doc.repeat ? '#FF5964' : doc.color
+                    borderColor: doc.repeat ? '#FF5964' : doc.color,
+                    attendees: shared
                 })
 
             }

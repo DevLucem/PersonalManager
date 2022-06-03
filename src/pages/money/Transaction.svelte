@@ -9,7 +9,12 @@
 
 <div class="flex justify-between items-center bg-white p-2 my-2 hover:bg-back rounded group" in:fade style="background-color: {transaction.color}">
     <div class="group relative flex-1">
-        {transaction.name}
+        <p>
+            {transaction.name}
+            {#each transaction.tags as tag}
+                <span class="tag uppercase font-bold bg-primary" style="background-color: {tag.substring(tag.indexOf('#')+1)}">{tag.split('#')[0]}</span>
+            {/each}
+        </p>
         <div class="tag-line -mt-0.5">{moment(transaction.created).fromNow()}</div>
     </div>
     <div class="flex items-center">

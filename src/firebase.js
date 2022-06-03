@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut } from "firebase/auth"
-import {getFirestore, enableIndexedDbPersistence, onSnapshot, collection, query, where, serverTimestamp, doc, setDoc, deleteDoc, getDoc, orderBy, getDocs, deleteField} from 'firebase/firestore'
+import {getFirestore, enableIndexedDbPersistence, onSnapshot, collection, query, where, serverTimestamp, doc, setDoc, deleteDoc, getDoc, orderBy, deleteField} from 'firebase/firestore'
 import { FIREBASE_CONFIG } from "./KEYS";
 
 initializeApp(FIREBASE_CONFIG);

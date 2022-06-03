@@ -22,6 +22,7 @@
             if (!balances[doc.source][doc.currency]) balances[doc.source][doc.currency] = 0
             if (!balances.total[doc.currency]) balances.total[doc.currency] = 0
             balances[doc.source][doc.currency] = balances[doc.source][doc.currency] + doc.amount
+            balances[doc.source].color = doc.color;
             balances.total[doc.currency] = balances.total[doc.currency] + doc.amount
             data.push(doc)
         })
@@ -44,14 +45,14 @@
 
     <div class="flex overflow-auto flex-none pb-3">
         {#each Object.keys(balances.total) as currency}
-            <div class="uppercase font-bold bg-fade p-2 mr-2 border rounded rounded-lg text-primary text-lg">{ Math.round(balances.total[currency]*100)/100 } {currency}</div>
+            <p class="uppercase font-bold bg-fade p-2 mr-2 border rounded rounded-lg text-primary md:text-lg">{ Math.floor(balances.total[currency]*1e4)/1e4 } {currency}</p>
         {/each}
     </div>
 
     <div class="md:flex">
 
         <div class="w-full md:w-1/2 lg:w-1/3">
-            {#each data as transaction}
+            {#each data.splice(0, 10) as transaction}
                 <Transaction {transaction} on:data={e => doc = e.detail}/>
             {/each}
         </div>
@@ -59,10 +60,10 @@
         <div class="flex-1">
             <div class="mt-4 mb-6 lg:mt-2 grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
                 {#each Object.keys(balances).filter(el => {return el !== 'total'}) as balance}
-                    <div class="card bg-primary text-back text-2xl p-2 cursor-pointer m-2 flex-wrap" in:scale>
+                    <div class="card bg-primary text-2xl p-2 cursor-pointer m-2 flex-wrap" style="background-color: {balances[balance].color}" in:scale>
                         <p class="pb-2">{balance}</p>
                         <p class="flex flex-wrap items-center">
-                            {#each Object.keys(balances[balance]) as currency}
+                            {#each Object.keys(balances[balance]).filter(el => {return !['color'].includes(el)}) as currency}
                                 <span class="uppercase font-bold tag bg-fade text-primary rounded">{Math.round(balances[balance][currency]*1e6)/1e6} {currency}</span>
                             {/each}
                         </p>
