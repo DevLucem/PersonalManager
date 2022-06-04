@@ -30,9 +30,11 @@
     <QuickTask on:data={e=>dispatch('data', {...e.detail, project: project.id})} />
     <Tasks {user} on:data={e=>dispatch('data', e.detail)} tasks={data.filter(doc => {return doc.type === 'task' && !doc.milestone})}/>
 
-    {#each data.filter(doc => {return doc.type==='milestone' && !doc.milestone}) as milestone}
-        <Milestone {user} on:data={e=>dispatch('data', {...e.detail, project: project.id})} {milestone} {data}/>
-    {/each}
+    <div>
+        {#each data.filter(doc => {return doc.type==='milestone' && !doc.milestone}) as milestone}
+            <Milestone {user} on:data={e=>dispatch('data', {...e.detail, project: project.id})} {milestone} {data}/>
+        {/each}
+    </div>
 
     <div class="h-8 text-center">
     </div>

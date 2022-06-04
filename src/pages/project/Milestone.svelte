@@ -17,7 +17,7 @@
     $: tasks = data.filter(doc => {return doc.type === 'task' && doc.milestone === milestone.id})
 </script>
 
-<div class="card mt-4 mb-2 bg-primary transform duration-300 {contract ? '' : 'pb-1'} {milestone.milestone ? 'ml-2 sm:hover:ml-5' : ''}" style="background-color: {milestone.color}">
+<div class="card my-2 bg-primary transform duration-300 min-w-[24rem] flex-1 {contract ? '' : 'pb-1'} {milestone.milestone ? 'm-1' : ''}" style="background-color: {milestone.color}">
     <div class="m-2">
         <div class="group relative flex justify-between">
             <h2 class="text-lg font-bold flex items-center">
@@ -48,8 +48,10 @@
         {/if}
     </div>
     {#if !contract}
-        {#each data.filter(doc => {return doc.type === 'milestone' && doc.milestone === milestone.id}) as milestone}
-            <Milestone {user} on:data={e=>dispatch('data', {...e.detail})} {milestone} {data}/>
-        {/each}
+        <div class="flex flex-wrap p-2">
+            {#each data.filter(doc => {return doc.type === 'milestone' && doc.milestone === milestone.id}) as milestone}
+                <Milestone {user} on:data={e=>dispatch('data', {...e.detail})} {milestone} {data}/>
+            {/each}
+        </div>
     {/if}
 </div>

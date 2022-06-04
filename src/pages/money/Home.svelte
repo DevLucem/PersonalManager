@@ -50,13 +50,6 @@
     </div>
 
     <div class="md:flex">
-
-        <div class="w-full md:w-1/2 lg:w-1/3">
-            {#each data.splice(0, 10) as transaction}
-                <Transaction {transaction} on:data={e => doc = e.detail}/>
-            {/each}
-        </div>
-
         <div class="flex-1">
             <div class="mt-4 mb-6 lg:mt-2 grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
                 {#each Object.keys(balances).filter(el => {return el !== 'total'}) as balance}
@@ -70,6 +63,11 @@
                     </div>
                 {/each}
             </div>
+        </div>
+        <div class="w-full md:w-1/2 lg:w-1/3">
+            {#each data as transaction}
+                <Transaction {transaction} on:data={e => doc = e.detail}/>
+            {/each}
         </div>
     </div>
 

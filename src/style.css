@@ -11,7 +11,7 @@
 }
 
 .input {
-    @apply rounded p-2 focus:ring-primary focus:outline-none focus:border-primary border-back dark:bg-accent dark:border-accent;
+    @apply rounded p-2 focus:ring-primary focus:outline-none focus:border-primary border-back dark:bg-accent dark:border-accent dark:text-back;
 }
 
 .tag {
