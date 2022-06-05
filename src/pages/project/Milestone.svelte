@@ -17,7 +17,7 @@
     $: tasks = data.filter(doc => {return doc.type === 'task' && doc.milestone === milestone.id})
 </script>
 
-<div class="card my-2 bg-primary transform duration-300 min-w-[24rem] flex-1 {contract ? '' : 'pb-1'} {milestone.milestone ? 'm-1' : ''}" style="background-color: {milestone.color}">
+<div class="card my-2 bg-primary transform duration-300 min-w-fit flex-1 {contract ? '' : 'pb-1'} {milestone.milestone ? 'm-1' : ''}" style="background-color: {milestone.color}">
     <div class="m-2">
         <div class="group relative flex justify-between">
             <h2 class="text-lg font-bold flex items-center">
