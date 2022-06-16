@@ -3,7 +3,6 @@
 
     let dispatch = createEventDispatcher();
 
-    import showdown from "showdown";
     import Icon from "../../components/Icon.svelte";
     import {deleteData, getData, saveData} from "../../firebase";
     import Pop from "../../components/Pop.svelte";
@@ -40,7 +39,6 @@
         doc.users[user?.uid] = 1;
     }
     if (!doc.color) setColor();
-    if (doc.description) doc.description = new showdown.Converter().makeMarkdown(doc.description)
     if (!doc.users) {
         if (doc.milestone || doc.project) setUsers();
         if (!doc.users)
@@ -51,7 +49,6 @@
     function save() {
         if (doc.name && doc.name.length > 2) {
 
-            if (doc.description) doc.description = new showdown.Converter().makeHtml(doc.description.trim())
             const timeUpdate = (field, value) => {
                 if (value) {
                     doc[field] = new Date(value);

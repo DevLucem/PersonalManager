@@ -3,14 +3,15 @@
 
     let dispatch = createEventDispatcher();
 
-    import showdown from "showdown";
     import Icon from "../../components/Icon.svelte";
     import {deleteData, saveData} from "../../firebase";
     import Pop from "../../components/Pop.svelte";
 
     export let doc;
+    if (doc) doc = Object.assign({}, doc)
     export let data = [];
     let sources = {};
+
     data.forEach(el => {
         if (!sources[el.source])
             sources[el.source] = el.color;
@@ -35,7 +36,6 @@
     }
 
     if (!doc.color) setTimeout(setColor, 50)
-    if (doc.description) doc.description = new showdown.Converter().makeMarkdown(doc.description)
     if (!doc.users) doc.users = {};
     if (!doc.tags) doc.tags = [];
 
@@ -44,7 +44,6 @@
         if (doc.name && doc.name.length > 2 && doc.amount !== 0) {
             if (doc.currency.trim().length<2) doc.currency = 'USD'
             else doc.currency = doc.currency.trim().toUpperCase();
-            if (doc.description) doc.description = new showdown.Converter().makeHtml(doc.description.trim())
             saveData(doc).catch(e => console.error('ERROR:', e))
                 .then(() => console.log('saved doc', doc.name))
             dispatch('close')

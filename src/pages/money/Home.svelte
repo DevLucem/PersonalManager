@@ -27,6 +27,7 @@
             data.push(doc)
         })
         data.sort((a, b) => b.created - a.created)
+        data = data.slice(0, 10)
     })
 
     function refresh() {

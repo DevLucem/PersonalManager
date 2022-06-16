@@ -33,7 +33,7 @@
                     if (valid) {
                         let starters = tasks.filter(el => {return el.starting}).sort((a, b) => {return a.starting - b.starting})
                         let endings = tasks.filter(el => {return el.ending}).sort((a, b) => {return a.ending - b.ending})
-                        if (!starting) {
+                        if (!starting || (starters[0]?.starting && starting>starters[0].starting) ) {
                             starting = starters[0]?.starting
                             let ender = endings[0]?.ending
                             if (!starting || starting>ender) starting = ender
@@ -73,14 +73,16 @@
                         return date;
                     }
 
-                    if (valid && !starting && !ending)
+                    if (valid && !starting && !ending){
                         if (milestone?.ending) {
                             ending = setTime(milestone.ending, 0)
-                            starting = setTime(ending, -1)
-                        } else if (milestone?.starting) {
-                            starting = setTime(milestone.starting, 0)
-                            ending = setTime(starting, 1)
+                            if (!milestone.starting) starting = setTime(ending, -1)
                         }
+                        if (milestone?.starting) {
+                            starting = setTime(milestone.starting, 0)
+                            if (!milestone.ending) ending = setTime(starting, 1)
+                        }
+                    }
 
                     if (valid && !starting)
                         starting = setTime(ending, -1)

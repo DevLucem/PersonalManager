@@ -1,4 +1,4 @@
-let store = 'cache2'
+let store = 'june16'
 
 const assets = [
     "/pm",
