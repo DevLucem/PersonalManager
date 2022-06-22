@@ -18,7 +18,7 @@
     <div class="absolute h-full w-full blur"></div>
     <div class="absolute h-full w-full bg-accent opacity-20" in:fade out:fade="{{duration: 50}}" on:click={()=>dispatch('close')}></div>
     <div class="absolute">
-        <div bind:this={content} class="card bg-back p-4 overflow-auto" in:scale="{{duration: 50}}" out:scale="{{duration: 150}}">
+        <div bind:this={content} class="card bg-back dark:bg-fade p-4 overflow-auto" in:scale="{{duration: 50}}" out:scale="{{duration: 150}}">
             <slot></slot>
             {#if close}
                 <Icon icon={"cancel"} classes="absolute top-0 right-0 w-12 h-12 rounded-tr shadow p-2 text-white bg-primary" on:clicked={()=>dispatch('close')}/>

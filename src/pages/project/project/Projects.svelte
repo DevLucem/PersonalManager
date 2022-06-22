@@ -13,7 +13,7 @@
     let calendar;
 </script>
 
-<div class="mt-4 mb-6 lg:mt-2 flex-1 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 -m-2 lg:ml-2">
+<div class="mt-4 mb-6 lg:-mt-2 flex-1 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 -m-2 lg:ml-2">
 
     <div class="card p-2 cursor-pointer hover:shadow-none duration-300 hover:bg-white m-2 bg-primary flex flex-col items-center justify-center" in:scale on:click={()=>dispatch('data', {type: 'project'})}>
         <Icon icon="add" classes="h-8 w-8" on:clicked={()=>dispatch('data', {type: 'project'})}/>

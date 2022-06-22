@@ -60,7 +60,7 @@
 
     let doc;
     let calendar;
-    let pins = [];
+    let pins = ['yIhEiMxoJZxJ5A8XSYqG'];
 </script>
 
 <div class="w-full p-4 lg:flex overflow-auto pb-12">
@@ -70,10 +70,10 @@
         <Tasks {user} on:data={e => doc=e.detail} tasks={data.filter(doc => {return doc.type==='task' && doc.ending && !doc.repeat && doc.ending<new Date()})}/>
     </div>
     <div class="flex-1">
-        <div class="ml-4 flex flex-wrap">
+        <div class="mt-2 lg:mt-0 lg:ml-4 flex flex-wrap">
             {#each pins as pin}
-                <div>
-                    <p class="flex items-center text-sm bg-white mt-1">
+                <div class="border border-4 rounded rounded-lg mb-2" style="border-color: {data.find(el => el.id===data.find(el => el.id===pin)?.project)?.color}">
+                    <p class="flex items-center text-sm font-bold rounded" style="background-color: {data.find(el => el.id===pin)?.color }">
                         <Icon icon="cancel" classes="h-4 w-4 ml-1 hover:text-secondary" on:clicked={()=>pins = pins.filter(p => p!==pin)}/>
                         {data.find(el => el.id===pin)?.name}
                     </p>
@@ -87,14 +87,14 @@
 
 <div class="absolute bottom-0 left-0 right-0 flex items-end justify-around py-2 bg-transparent">
 
-    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 hover:text-primary text-fade hover:cursor-pointer dark:text-accent" viewBox="0 0 20 20" fill="currentColor">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 hover:text-primary text-fade hover:cursor-pointer dark:text-back" viewBox="0 0 20 20" fill="currentColor">
         <title>Manage Account</title>
         <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd" />
     </svg>
 
-    <Icon icon="home" classes="w-12 h-12 -mt-8 text-primary bg-transparent text-fade dark:text-accent"/>
+    <Icon icon="home" classes="w-12 h-12 -mt-8 text-primary bg-transparent"/>
 
-    <Icon icon="calendar" classes="w-8 h-8 hover:text-primary text-fade  dark:text-accent" on:clicked={()=>calendar='all'}/>
+    <Icon icon="calendar" classes="w-8 h-8 hover:text-primary text-fade  dark:text-back" on:clicked={()=>calendar='all'}/>
 
 </div>
 
