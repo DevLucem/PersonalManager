@@ -60,7 +60,7 @@
 
     let doc;
     let calendar;
-    let pins = ['yIhEiMxoJZxJ5A8XSYqG'];
+    let pins = [];
 </script>
 
 <div class="w-full p-4 lg:flex overflow-auto pb-12">
