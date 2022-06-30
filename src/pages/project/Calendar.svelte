@@ -170,7 +170,7 @@
             },
             'beforeCreateSchedule': function(event) {
                 if (!event.isAllDay)
-                    dispatch('data', {type: 'task', starting: new Date(event.start), ending: new Date(event.end), project: filter!=='all'? filter: null})
+                    dispatch('data', {type: 'task', starting: new Date(event.start), project: filter!=='all'? filter: null})
             },
             'beforeDeleteSchedule': function(event) {
                 let schedule = event.schedule;
