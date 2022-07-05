@@ -27,7 +27,7 @@
 
             if (valid){
 
-                let tasks = data.filter(el => {return el.milestone === doc.id && el.type === 'task'})
+                let tasks = data.filter(el => {return el.milestone === (doc.type==='task'? doc.milestone: doc.id) && el.type === 'task'})
                 if (doc.type === 'milestone') {
                     valid = !(((!starting && !ending) || tasks.length<1) && tasks.filter(el => {return el.starting || el.ending}).length<1 )
                     if (valid) {
@@ -74,13 +74,16 @@
                     }
 
                     if (valid && !starting && !ending){
+                        let index = tasks.indexOf(doc)
                         if (milestone?.ending) {
-                            ending = setTime(milestone.ending, 0)
+                            ending = setTime(milestone.starting, index+1)
                             if (!milestone.starting) starting = setTime(ending, -1)
+                            if (ending > milestone.ending) ending = setTime(milestone.ending, 0)
                         }
                         if (milestone?.starting) {
-                            starting = setTime(milestone.starting, 0)
+                            starting = setTime(milestone.starting, index)
                             if (!milestone.ending) ending = setTime(starting, 1)
+                            if (starting >= ending) starting = setTime(ending, -1)
                         }
                     }
 
@@ -90,12 +93,6 @@
                         ending = setTime(starting, 1)
 
                 }
-
-                if (doc.repeat){
-
-                    console.log(doc.name, valid, starting, ending)
-                }
-
 
                 let project = data.find(el => el.id===doc.project)
 
