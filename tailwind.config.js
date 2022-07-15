@@ -8,6 +8,7 @@ module.exports = {
         back: "#f8f8f8",
         fade: "#333859",
         accent: "#10162A",
+        danger: "#bf8a8e",
         transparent: "transparent"
       }
     },

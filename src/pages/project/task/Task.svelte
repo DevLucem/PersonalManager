@@ -7,12 +7,13 @@
     import {deleteData} from "../../../firebase";
     export let task;
     export let user;
+    export let late;
 </script>
 
 <div class="flex justify-between items-center hover:bg-back rounded group" in:fade>
     <p class="flex items-center" style="color: {task.color}">
         {task.name}
-        {#if task.ending && task.ending < new Date()}
+        {#if !late && task.ending && task.ending < new Date()}
             <span class="tag uppercase font-bold bg-secondary">late</span>
         {/if}
         {#each task.tags as tag}
