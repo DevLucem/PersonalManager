@@ -67,7 +67,7 @@
     <div class="lg:w-1/2 xl:w-1/3">
         <QuickTask on:data={e => doc=e.detail}/>
         <Tasks {user} on:data={e => doc=e.detail} tasks={data.filter(doc => {return doc.type==='task' && !doc.project && !doc.repeat && (!doc.ending || doc.ending>=new Date())})}/>
-        <Tasks late={true} {user} on:data={e => doc=e.detail} tasks={data.filter(doc => {return doc.type==='task' && doc.ending && !doc.repeat && doc.ending<new Date()})}/>
+        <Tasks {user} on:data={e => doc=e.detail} tasks={data.filter(doc => {return doc.type==='task' && doc.ending && !doc.repeat && doc.ending<new Date()})}/>
     </div>
     <div class="flex-1">
         <div class="mt-2 lg:mt-0 lg:ml-4 flex flex-wrap">
@@ -81,7 +81,7 @@
                 </div>
             {/each}
         </div>
-        <Projects {user} on:data={e => e.detail.pin? (!pins.includes(e.detail.pin) ? pins = [...pins, e.detail.pin] : pins = pins.filter(el => {return el !== e.detail.pin})): e.detail.calendar? calendar=e.detail.calendar :doc=e.detail} data={data.filter(doc => {return (doc.type!=='task' || doc.project) && !doc.repeat})}/>
+        <Projects {user} on:data={e => e.detail.pin? (!pins.includes(e.detail.pin) ? pins = [...pins, e.detail.pin] : pins = pins.filter(el => {return el !== e.detail.pin})): e.detail.calendar? calendar=e.detail.calendar :doc=e.detail} data={data.filter(doc => {return (doc.type!=='task' || doc.project)})}/>
     </div>
 </div>
 

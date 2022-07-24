@@ -24,6 +24,12 @@
             balances[doc.source][doc.currency] = balances[doc.source][doc.currency] + doc.amount
             balances[doc.source].color = doc.color;
             balances.total[doc.currency] = balances.total[doc.currency] + doc.amount
+
+            if (doc.transfer){
+                if (!balances[doc.transfer]) balances[doc.transfer] = {}
+                if (!balances[doc.transfer][doc.currency]) balances[doc.transfer][doc.currency] = 0
+                balances[doc.transfer][doc.currency] = balances[doc.transfer][doc.currency] - doc.amount
+            }
             data.push(doc)
         })
         data.sort((a, b) => b.created - a.created)

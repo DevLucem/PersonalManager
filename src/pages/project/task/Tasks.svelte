@@ -13,9 +13,9 @@
         showing = tasks.length;
 </script>
 
-<div class="card mt-1 p-1 md:p-2 {tasks.length<1?'hidden':late?'bg-danger': 'bg-white'}">
+<div class="card mt-1 p-1 md:p-2 {tasks.length<1?'hidden': 'bg-white'}">
     {#each tasks.slice(0, showing) as task}
-        <Task {late} {task} {user} on:data={e=>dispatch('data', e.detail)}/>
+        <Task {task} {user} on:data={e=>dispatch('data', e.detail)}/>
     {/each}
     {#if tasks.length>showing || showing !== show}
         <div class="flex justify-center mx-4 md:mx-8">

@@ -35,8 +35,8 @@
     structureDate();
 
     const setUsers = () => {
-        doc.users = data.find(el => el.id===(doc.milestone || doc.project))?.users
-        doc.users[user?.uid] = 1;
+        doc.users = data.find(el => el.id===(doc.milestone || doc.project))?.users || {}
+        if (doc.users) doc.users[user?.uid] = 1;
     }
     if (!doc.color) setColor();
     if (!doc.users) {
@@ -166,7 +166,7 @@
                 {/if}
                 {#if doc.type !== 'project'}
                     <div class="flex justify-between flex-col md:flex-row">
-                        <select aria-label="Project" class="flex-1" bind:value={doc.project} on:change={()=>{doc.milestone=null; setUsers()}}>
+                        <select aria-label="Project" class="flex-1" bind:value={doc.project} on:change={()=>{doc.milestone=null; setTimeout(setUsers, 50)}}>
                             <option class="text-primary" value="">Select Project</option>
                             {#each data.filter(el => {return el.type === 'project'}) as p}
                                 <option value="{p.id}">{p.name}</option>

@@ -80,7 +80,7 @@
         </div>
         <div class="flex flex-col justify-between items-center">
             <div class="flex items-center">
-                <select aria-label="Source" name="Source" bind:value={doc.source} on:change={()=>{doc.color = sources[doc.source]; if (!doc.color) setColor();}}>
+                <select aria-label="Source" name="Source" bind:value={doc.source} on:change={()=>{doc.color = sources[doc.source]; if (!doc.color) setColor(); doc.transfer = null}}>
                     {#each Object.keys(sources) as source}
                         <option value={source}>{source}</option>
                     {/each}
@@ -100,6 +100,15 @@
                 <input required bind:value={doc.amount} class="w-24 input" type="number" step="any" aria-label="Amount" placeholder="Amount">
                 <label>Recur: <input type="checkbox" bind:checked={doc.repeat}></label>
             </div>
+            <label>
+                Transfer Source?
+                <select aria-label="Source" name="Source" bind:value={doc.transfer}>
+                    <option value=""></option>
+                    {#each Object.keys(sources).filter(el => el!==doc.source) as source}
+                        <option value={source}>{source}</option>
+                    {/each}
+                </select>
+            </label>
         </div>
         {#if (!doc.id || doc.users[user?.uid]<3)}
             <div class="flex flex-wrap items-center my-2">

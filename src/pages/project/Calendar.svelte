@@ -27,7 +27,7 @@
 
             if (valid){
 
-                let tasks = data.filter(el => {return el.milestone === (doc.type==='task'? doc.milestone: doc.id) && el.type === 'task'})
+                let tasks = data.filter(el => {return el.milestone === (doc.type==='task'? doc.milestone: doc.id) && el.type === 'task' && !el.repeat})
                 if (doc.type === 'milestone') {
                     valid = !(((!starting && !ending) || tasks.length<1) && tasks.filter(el => {return el.starting || el.ending}).length<1 )
                     if (valid) {
