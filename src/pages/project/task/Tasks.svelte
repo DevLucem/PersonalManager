@@ -3,7 +3,6 @@
     let dispatch = createEventDispatcher();
 
     export let user;
-    export let late;
 
     import Task from "./Task.svelte";
     export let tasks = [];
@@ -13,7 +12,7 @@
         showing = tasks.length;
 </script>
 
-<div class="card mt-1 p-1 md:p-2 {tasks.length<1?'hidden': 'bg-white'}">
+<div class="card mt-1 p-1 md:p-2 {tasks.length<1?'hidden': 'bg-white dark:opacity-80'}">
     {#each tasks.slice(0, showing) as task}
         <Task {task} {user} on:data={e=>dispatch('data', e.detail)}/>
     {/each}

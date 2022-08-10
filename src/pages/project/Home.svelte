@@ -49,15 +49,6 @@
         })]
     })
 
-    function refresh() {
-        setTimeout(() => {
-            data = data;
-            refresh();
-        }, 60000)
-    }
-
-    refresh()
-
     let doc;
     let calendar;
     let pins = [];
@@ -85,18 +76,7 @@
     </div>
 </div>
 
-<div class="absolute bottom-0 left-0 right-0 flex items-end justify-around py-2 bg-transparent">
-
-    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 hover:text-primary text-fade hover:cursor-pointer dark:text-back" viewBox="0 0 20 20" fill="currentColor">
-        <title>Manage Account</title>
-        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd" />
-    </svg>
-
-    <Icon icon="home" classes="w-12 h-12 -mt-8 text-primary bg-transparent"/>
-
-    <Icon icon="calendar" classes="w-8 h-8 hover:text-primary text-fade  dark:text-back" on:clicked={()=>calendar='all'}/>
-
-</div>
+<Icon icon="calendar" classes="w-16 h-16 p-2 hover:text-primary absolute right-0 bottom-0 m-12 text-fade dark:text-back" on:clicked={()=>calendar='all'}/>
 
 {#if calendar}
     <Calendar on:data={e => doc=e.detail} {data} {users} {user} filter={calendar} on:close={()=>calendar=''}/>

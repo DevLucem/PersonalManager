@@ -6,6 +6,7 @@ import { FIREBASE_CONFIG } from "./KEYS";
 initializeApp(FIREBASE_CONFIG);
 
 const AUTH = getAuth()
+export const getUser = () => {return AUTH.currentUser}
 export const listenUser = (callback) => onAuthStateChanged(AUTH, callback)
 export const logIn = () => {return signInWithPopup(AUTH, new GoogleAuthProvider())}
 export const logOut = () => {return signOut(AUTH)}

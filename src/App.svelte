@@ -12,16 +12,17 @@
   import router from "page"
   import PM from "./pages/project/Home.svelte";
   import MM from "./pages/money/Home.svelte";
+  import CM from "./pages/contact/Home.svelte";
   import SM from "./pages/About.svelte";
   import Loader from "./components/Loader.svelte";
 
-  let current, params, managers = [
+  let current, managers = [
     ["/pm", PM, "Project"],
     ["/mm", MM, "Money"],
+    ["/cm", CM, "Contact"],
     ["/sm", SM, "System"],
   ]
   managers.forEach(route => router(route[0], context => {
-    params = context.params;
     current = route[1]
     router.current = router.current;
   }))
@@ -35,6 +36,9 @@
     res.forEach(snap => users.push(snap.data()))
   })
 
+  function refresh() {setTimeout(() => {users = users; refresh();}, 60000)}
+  refresh();
+  
   async function checkUser() {
     return await new Promise((resolve, reject) => listenUser(res => resolve( res || {'uid': '_public'}) ))
   }
@@ -44,14 +48,19 @@
 
   <nav class="flex items-center justify-between px-4 border-b font-bold absolute w-full h-16 text-fade z-10 backdrop-blur-sm bg-white/30">
     <h1>{moment().format("Do MMM")}</h1>
+    <div class="flex items-center ">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+      </svg>
     <label>
       <select class="bg-transparent highlight border-none focus:ring-0" name="Manager" id="manager" bind:value={router.current}  on:change={e=>router(router.current)}>
         {#each managers as manager}
           <option value="{manager[0]}">{manager[2]}</option>
         {/each}
       </select>
-      <span class="hidden md:inline">Manager</span>
     </label>
+
+    </div>
   </nav>
 
   <section class="flex-1 overflow-auto w-full pt-16 bg-back dark:bg-fade">
@@ -64,19 +73,11 @@
           <p class="text-secondary m-2">Secure your data by signing in for private use</p>
         </div>
       {/if}
-      <svelte:component this={current} {params} {user} {users}/>
+      <svelte:component this={current} {user} {users}/>
     {/await}
     <!--<div class="flex justify-center items-center mt-32">
       Hold tight, Site is upgrading
     </div>-->
   </section>
-
-  <button class="absolute icon p-4 right-0 bottom-0 m-8 text-primary hidden">
-    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 20 20" fill="currentColor">
-      <title>Notes</title>
-      <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
-      <path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd" />
-    </svg>
-  </button>
 
 </main>
