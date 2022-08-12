@@ -4,21 +4,19 @@
     import Calendar from 'tui-calendar';
     import "tui-calendar/dist/tui-calendar.css";
     import {onMount} from "svelte";
+    import Transaction from "./Transaction.svelte";
 
     export let user;
     export let users;
+    export let search;
+    $: console.log(search)
 
-    let data = []; let transactions = [];
+    let data = [];
+    let transactions = [];
     let balances = {'total': {}};
-    listenData('MM', res => {
-        data = []; transactions = [];
-        balances = {'total': {}};
-        res.forEach(snapshot => {
-            let doc = snapshot.data();
-            ['created', 'done'].forEach(val => {
-                if (doc[val]) doc[val] = doc[val].toDate();
-            })
 
+    const listTransaction = doc => {
+        if (!search || (doc.name + doc.description).toLowerCase().includes(search.toLowerCase())){
             if (!balances[doc.source]) balances[doc.source] = {}
             if (!balances[doc.source][doc.currency]) balances[doc.source][doc.currency] = 0
             if (!balances.total[doc.currency]) balances.total[doc.currency] = 0
@@ -27,23 +25,27 @@
             balances[doc.source].color = doc.color;
             balances.total[doc.currency] = balances.total[doc.currency] + doc.amount
 
-            if (doc.transfer){
+            if (doc.transfer) {
                 if (!balances[doc.transfer]) balances[doc.transfer] = {}
                 if (!balances[doc.transfer][doc.currency]) balances[doc.transfer][doc.currency] = 0
                 balances[doc.transfer][doc.currency] = balances[doc.transfer][doc.currency] - doc.amount
             }
 
-            data.push(doc)
 
             let shared = [];
-            Object.keys(doc.users).forEach(u => {if (u !== user.uid) shared.push(users.find(el => el.user === u)?.name)} )
+            Object.keys(doc.users).forEach(u => {
+                if (u !== user.uid) shared.push(users.find(el => el.user === u)?.name)
+            })
 
             transactions.push({ // check attendees, recurrence rule
                 id: doc.id,
                 title: doc.name,
+                tags: doc.tags,
+                amount: doc.amount,
+                currency: doc.currency,
                 calendarId: 'calendar',
                 category: 'allday',
-                isPending: new Date()<doc.done,
+                isPending: new Date() < doc.done,
                 body: doc.amount,
                 start: doc.done || doc.created,
                 end: doc.done || doc.created,
@@ -53,7 +55,31 @@
                 borderColor: doc.color,
                 attendees: shared
             })
+        }
+    }
+    $: {
+        console.log(search)
+        transactions = [];
+        balances = {'total': {}};
+        data.forEach(doc => listTransaction(doc))
+        transactions =  transactions;
+        if (calendar) {
+            calendar.clear();
+            calendar.createSchedules(transactions)
+        }
+    }
 
+    listenData('MM', res => {
+        data = [];
+        transactions = [];
+        balances = {'total': {}};
+        res.forEach(snapshot => {
+            let doc = snapshot.data();
+            ['created', 'done'].forEach(val => {
+                if (doc[val]) doc[val] = doc[val].toDate();
+            })
+            listTransaction(doc)
+            data.push(doc)
         })
         data.sort((a, b) => b.created - a.created)
 
@@ -63,12 +89,15 @@
         }
 
     })
+
     function refresh() {
         setTimeout(() => {
             data = data;
             refresh();
         }, 60000)
-    } refresh()
+    }
+
+    refresh()
 
     let doc;
 
@@ -85,15 +114,15 @@
         });
         calendar.createSchedules(transactions);
         calendar.on({
-            'beforeUpdateSchedule': function(event) {
+            'beforeUpdateSchedule': function (event) {
                 console.log('editing')
                 doc = data.find(el => el.id === event.schedule.id)
             },
-            'beforeCreateSchedule': function(event) {
+            'beforeCreateSchedule': function (event) {
                 doc = {type: 'transaction', done: new Date(event.start)}
                 return true;
             },
-            'beforeDeleteSchedule': function(event) {
+            'beforeDeleteSchedule': function (event) {
                 let schedule = event.schedule;
                 let doc = data.find(el => el.id === schedule.id)
                 calendar.deleteSchedule(schedule.id, schedule.calendarId);
@@ -101,6 +130,8 @@
             }
         });
     })
+
+    let list = false;
 </script>
 
 <div class="w-full p-4 pb-12">
@@ -130,12 +161,20 @@
         {/each}
     </div>
 
+    <button class="button ml-2" on:click={()=>list=!list}>List</button>
+    {#if list}
+        <div class="grid grid-cols-1 md:grid-cols-2">
+            {#each transactions as transaction}
+                <Transaction {transaction}/>
+            {/each}
+        </div>
+    {/if}
+
 </div>
 
 {#if doc}
     <Form {doc} {user} on:close={()=>doc=null} {users} {data}/>
 {/if}
-
 
 <style>
     .nav_buttons button {
