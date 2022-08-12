@@ -76,7 +76,7 @@
     </div>
 </div>
 
-<Icon icon="calendar" classes="w-16 h-16 p-2 hover:text-primary absolute right-0 bottom-0 m-12 text-fade dark:text-back" on:clicked={()=>calendar='all'}/>
+<Icon icon="calendar" classes="w-12 h-12 p-1 hover:text-primary absolute right-0 bottom-0 m-12 text-fade dark:text-back" on:clicked={()=>calendar='all'}/>
 
 {#if calendar}
     <Calendar on:data={e => doc=e.detail} {data} {users} {user} filter={calendar} on:close={()=>calendar=''}/>

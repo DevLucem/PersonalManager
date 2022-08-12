@@ -1,12 +1,16 @@
-let store = 'june16'
+let store = 'aug12'
 
 const assets = [
-    "/pm",
+    // "/pm",
     "/index.html",
     "/index.css",
     "/index.js",
     "/vendor.js",
-    "/svelte.jpg",
+    "/manifest.json",
+    "/favicon.ico",
+    "/apple-touch-icon.png",
+    "/icon-192.png",
+    "/logo.png",
 ]
 
 self.addEventListener("install", installEvent => {
