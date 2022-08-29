@@ -1,22 +1,21 @@
-## [My-Progressive.Web.App](https://my-progressive.web.app) Starter Template
-#### ...with all the good stuff
+## [SPLITZ.Web.App](https://splitz.web.app) 
+#### ...Simply Plan Life In TaskZ
 
-![Demo](https://user-images.githubusercontent.com/22216995/159932666-65ad3861-7123-4187-88af-662fbf2a32db.png)
+![Demo](https://user-images.githubusercontent.com/22216995/187179502-039bbfbb-d437-4771-8d3c-01d988439804.png)
 
 ### Features
-- Created with [Svelte](https://svelte.dev/) for easy development
-- JIT development with [Vite](https://vitejs.dev/) for fast builds!
-- Preset [Tailwind CSS](https://tailwindcss.com/) no hassle UI
-- Initialized [Firebase Hosting](https://firebase.google.com/docs/hosting) for testing
-- Preset [PageJS Router](https://www.npmjs.com/package/page) on your pages
+- Task Manager - a redefined way to be organized
+- Money Manager - a simpler way to track your expenses
+- Contacts Manager - build your social profiles while collaborating
+- Inverstment Manager - see your investments and manage them easily
+- Assets Manager - never forget where and how many assets you have
+- Business Manager - have an overview of your business
 
 ---
 ### Getting Started
-```
-npx degit devlucem/pwa my-app
-cd my-app
-npm install
-```
+Clone the repo then,
+Install Dependancies
+
 ### Configure
 - Create a firebase project or get the firebase config files of the one you already have
     ```
@@ -24,10 +23,8 @@ npm install
     authDomain: "",
     projectId: ""
    ```
-- Update the [src/firebase](./src/firebase.js) config files with your above keys
-- To customize your app, go to [public/serviceWorker](./public/serviceWorker.js) and [public/manifest](./public/manifest.json) files and add any files not included in the `assets` and `icons`.
-- More customization is available by searching lines with `TODO`
-- You can use [Icons Builder](https://www.pwabuilder.com/imageGenerator) to generate your icons
+- Update the [src/KEYS](./src/KEYS.js) config files with your above keys
+
 #### Test Locally
 `npm run dev`
 
@@ -39,7 +36,7 @@ npm install
 Your files will be available in the [dist](./dist) folder.
 To push the files to your firebase hosting, run the commands below. Make sure to fill the dist folder as your hosting one.
 
-`firebase init hosting && firebase deploy`
+`firebase init hosting,functions && firebase deploy`
 
 # Made With ♥
 ```
