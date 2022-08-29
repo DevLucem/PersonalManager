@@ -9,7 +9,6 @@
     export let user;
     export let users;
     export let search;
-    $: console.log(search)
 
     let data = [];
     let transactions = [];

@@ -109,7 +109,7 @@
                     calendarId: doc.project,
                     category: doc.type === 'task' ? 'time' : 'allday',
                     isPending: ending && new Date()>ending,
-                    body: (tags? tags + '<br>' : '') + '<span class="text-primary">' + (project?.name || '') + '</span>' + (milestone?.name ? '<br>'+milestone.name: '') + (doc?.description? '<br>' + doc.description: ''),
+                    body: (tags? tags + '<br>' : '') + '<span class="text-primary">' + (project?.name || '') + '</span>' + (milestone?.name ? ' - '+milestone.name: '') + (doc?.description? '<br>' + doc.description: ''),
                     start: starting,
                     end: ending,
                     bgColor: doc.type === 'task' ? milestone?.color || project?.color || (doc.repeat ? '#00c97e' : '#f8f8f8') : doc.color,

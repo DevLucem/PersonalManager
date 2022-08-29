@@ -58,7 +58,7 @@
   <nav class="flex items-center justify-between px-4 border-b font-bold absolute w-full h-16 text-fade z-10 backdrop-blur-sm bg-white/30">
     <h1>{moment().format("Do MMM")}</h1>
     {#if search || search === ''}
-      <input bind:this={SEARCH} bind:value={search} type="search" class="input flex-1 outline-primary outline mx-4" aria-label="Search">
+      <input bind:this={SEARCH} bind:value={search} type="search" class="input flex-1 outline-primary outline-1 outline mx-4" aria-label="Search">
     {/if}
     <div class="flex items-center ">
       <button on:click={changeSearch}>
