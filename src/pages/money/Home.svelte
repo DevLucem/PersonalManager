@@ -12,10 +12,11 @@
 
     let data = [];
     let transactions = [];
-    let balances = {'total': {}};
+    let balances = {total: {}};
 
     const listTransaction = doc => {
         if (!search || (doc.name + doc.description).toLowerCase().includes(search.toLowerCase())){
+
             if (!balances[doc.source]) balances[doc.source] = {}
             if (!balances[doc.source][doc.currency]) balances[doc.source][doc.currency] = 0
             if (!balances.total[doc.currency]) balances.total[doc.currency] = 0
@@ -28,6 +29,7 @@
                 if (!balances[doc.transfer]) balances[doc.transfer] = {}
                 if (!balances[doc.transfer][doc.currency]) balances[doc.transfer][doc.currency] = 0
                 balances[doc.transfer][doc.currency] = balances[doc.transfer][doc.currency] - doc.amount
+                balances.total[doc.currency] = balances.total[doc.currency] - doc.amount
             }
 
 

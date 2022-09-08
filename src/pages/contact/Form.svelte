@@ -10,29 +10,14 @@
     export let doc;
     if (doc) doc = Object.assign({}, doc)
     export let data = [];
-    let sources = {};
 
-    data.forEach(el => {
-        if (!sources[el.source])
-            sources[el.source] = el.color;
-    })
-    let currencies = [];
-    data.forEach(el => {
-        if (!currencies.includes(el.currency))
-            currencies.push(el.currency)
-    })
-    currencies = currencies;
     export let users = [];
     export let user;
 
     const setColor = () => {
-        if (!doc.color && sources[doc.source])
-            doc.color = sources[doc.source];
-        else{
-            doc.color = '#';
-            for (let i = 0; i < 3; i++)
-                doc.color += ("0" + Math.floor(((1 + Math.random()) * Math.pow(16, 2)) / 2).toString(16)).slice(-2)
-        }
+        doc.color = '#';
+        for (let i = 0; i < 3; i++)
+            doc.color += ("0" + Math.floor(((1 + Math.random()) * Math.pow(16, 2)) / 2).toString(16)).slice(-2)
     }
 
     if (!doc.color) setTimeout(setColor, 50)
@@ -41,9 +26,7 @@
 
     function save() {
         if (!doc.description) delete doc.description;
-        if (doc.name && doc.name.length > 2 && doc.amount !== 0) {
-            if (doc.currency.trim().length<2) doc.currency = 'USD'
-            else doc.currency = doc.currency.trim().toUpperCase();
+        if (doc.name && doc.name.length > 2 && doc.email) {
             saveData(doc).catch(e => console.error('ERROR:', e))
                 .then(() => console.log('saved doc', doc.name))
             dispatch('close')
@@ -59,14 +42,6 @@
 
 <Pop on:close={()=>dispatch('close')}>
     <form on:submit|preventDefault={save}>
-
-        {#if !doc.id}
-            <div class="flex overflow-auto">
-                {#each data.filter(el => {return el.repeat}) as d}
-                    <button type="button" on:click={() => doc = (({ name, description, type, amount, color, currency, source, users, tags }) => ({ name, description, type, amount, color, currency, source, users, tags }))(d)} class="rounded px-4 py-2 m-2" style="background-color: {d.color}">{d.name}</button>
-                {/each}
-            </div>
-        {/if}
 
         <input bind:value={doc.email} class="input mb-2 w-full" aria-label="Email" type="email" placeholder="Email" required>
         <input bind:value={doc.name} class="input mb-2 w-full" aria-label="Name" type="text" placeholder="Name" required>
