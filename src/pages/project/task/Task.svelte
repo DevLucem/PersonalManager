@@ -11,7 +11,7 @@
 
 <div class="flex justify-between items-center hover:bg-back rounded group" in:fade>
     <p class="flex items-center" style="color: {task.color}">
-        {task.name} - <span>{task.id}</span>
+        {task.name}
         {#if task.ending && task.ending < new Date() && !task.repeat}
             <span class="tag uppercase bg-secondary opacity-75">late</span>
         {/if}
