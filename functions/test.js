@@ -7,21 +7,27 @@ admin.initializeApp({
 })
 
 const FIRESTORE = admin.firestore();
-const PM = FIRESTORE.collection('MM')
+const PM = FIRESTORE.collection('PM')
+const MM = FIRESTORE.collection('MM')
+const UM = FIRESTORE.collection('UM')
 
-PM.get().then(docs => {
-    console.log(docs.size)
+let user = {
+    id: '19dFdFq6dFagcvAMZwIK',
+    user: 'ZAarVUKOWtZM3zUgn51oLaqE9SM2'
+
+}
+
+
+UM.orderBy(`users.${user.user}`).get().then(docs => console.log('Users Shared', docs.size))
+/*
+
+return Promise.all([PM.where('users', 'array-contains', user.user).get(), MM.where('users', 'array-contains', user.user).get(), UM.where('users', 'array-contains', user.user).get()]).then(results => {
     let batch = FIRESTORE.batch();
-    docs.forEach(doc => {
-        let data = doc.data();
-        if (data.users[0]){
-            let users = {
-                [data.users[0]]: 1
-            }
-            data.users.splice(1).forEach(user => users[user] = 3)
-            console.log(data.id, data.name, users)
-            batch.update(PM.doc(data.id), {users: users})
-        }
+    results.forEach((docs, i) => {
+        console.log(i, 'found', docs.docs)
+        // if (docs.size>0){ // todo fix this issue
+        //     docs.forEach(doc => batch.update((i<1? PM: i<2? MM: UM).doc(doc.id), FIELD_VALUE.arrayRemove(user.user)))
+        // }
     })
-    batch.commit().catch(e => console.error(e))
-})
+    return batch.commit().catch(e => console.error('Error Cleaning Project Data', e))
+})*/

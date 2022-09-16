@@ -9,30 +9,66 @@
 
     export let user;
     export let users;
+    export let search;
 
     let data = [];
-    listenData('PM', res => {
+    let allData = [];
+
+    const filterData = () => {
         data = [];
+        if (!search) data = allData;
+        else allData.forEach(doc => {
+            if ((doc.name + " " + doc.description).toLowerCase().includes(search.toLowerCase()) && (doc.type === 'task' || data.filter(el => {return el.id === doc.id}).length<1)) {
+                data.push(doc);
+
+                const getRoots = child => {
+
+                    if (child.milestone) {
+                        allData.filter(el => {return el.id === child.milestone}).forEach(add => {
+                            if (data.filter(el => {return el.id === add.id}).length<1)
+                                data.push(add)
+                            getRoots(add)
+                        })
+                    }else if (child.project){
+                        allData.filter(el => {return el.id === child.project}).forEach(add => {
+                            if (data.filter(el => {return el.id === add.id}).length<1)
+                                data.push(add)
+                            getRoots(add)
+                        })
+                    }
+
+                }
+
+                getRoots(doc)
+            }
+        })
+        data = data;
+        console.log(data.length)
+    }
+
+    listenData('PM', res => {
+        allData = [];
         const addData = (doc) => {
             ['starting', 'ending', 'done'].forEach(val => {
                 if (doc[val]) doc[val] = doc[val].toDate();
             })
-            data.push(doc)
+            allData.push(doc)
         }
         res.forEach(snapshot => {
             let doc = snapshot.data();
             addData(doc);
         })
-        data.filter(el => {
+        // todo check what this line does
+        allData.filter(el => {
             return el.users[0] !== user.uid && el.type !== 'project' && el.project
         }).forEach(doc => {
-            if (!data.find(el => el.id === doc.project)) data.push({
+            if (!allData.find(el => el.id === doc.project)) allData.push({
                 name: "Project",
                 id: doc.project,
                 type: "project",
                 users: {}, tags: []
             })
-            if (doc.milestone && !data.find(el => el.id === doc.milestone)) data.push({
+            if (doc.milestone && !allData.find(el => el.id === doc.milestone)) allData.push({
                 name: "Milestone",
                 id: doc.milestone,
                 project: doc.project,
@@ -40,14 +76,20 @@
                 users: {}, tags: []
             })
         })
-        data.sort((a, b) => a.created - b.created)
-        let priority = data.filter(doc => {
+        allData.sort((a, b) => a.created - b.created)
+        let priority = allData.filter(doc => {
             return doc.ending
         }).sort((a, b) => a.ending - b.ending)
-        data = [...priority, ...data.filter(doc => {
+        allData = [...priority, ...allData.filter(doc => {
             return !doc.ending
         })]
+        filterData()
     })
+
+    $: {
+        console.log(search)
+        filterData()
+    }
 
     let doc;
     let calendar;

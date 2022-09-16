@@ -60,25 +60,29 @@ exports.projectDeleted = functions.firestore.document("PM/{project}").onDelete( 
 })
 
 const UM = FIRESTORE.collection('UM')
-// exports.userCreated = functions.firestore.document("UM/{user}").onDelete( (snapshot, context) => {
-//     let doc = snapshot.data();
-//     console.log('cleaning up', doc.type, doc.id)
-//     return PM.where('users', 'array-contains', doc.user).get().then(docs => {
-//         if (docs.size>0){
-//             let batch = FIRESTORE.batch();
-//             docs.forEach(doc => batch.update(PM.doc(doc.id), FIELD_VALUE.arrayRemove(doc.user)))
-//             return batch.commit().catch(e => console.error('Error Cleaning Project Data', e))
-//         } return null
-//     })
-// })
-exports.userDeleted = functions.firestore.document("UM/{user}").onDelete( (snapshot, context) => {
-    let doc = snapshot.data();
-    console.log('cleaning up', doc.type, doc.id)
-    return PM.where('users', 'array-contains', doc.user).get().then(docs => {
+const MM = FIRESTORE.collection('MM')
+
+exports.userCreated = functions.firestore.document("UM/{user}").onCreate( (snapshot, context) => {
+    let user = snapshot.data();
+    if (user.email) return USERS.where('email', '==', user.email).get().then(docs => {
         if (docs.size>0){
-            let batch = FIRESTORE.batch();
-            docs.forEach(doc => batch.update(PM.doc(doc.id), FIELD_VALUE.arrayRemove(doc.user)))
-            return batch.commit().catch(e => console.error('Error Cleaning Project Data', e))
-        } return null
+            let id = docs.docs[0].data().id
+            return UM.doc(user.id).update({user: id}).then(_ => console.log('Updated New User')).catch(e => console.error('Error Updating New User ID'))
+        }
+        return null;
+    })
+    return null;
+})
+
+exports.userDeleted = functions.firestore.document("UM/{user}").onDelete( (snapshot, context) => {
+    let user = "users." + snapshot.data().user;
+    return Promise.all([PM.orderBy(user).get(), MM.orderBy(user).get(), UM.orderBy(user).get()]).then(results => {
+        let batch = FIRESTORE.batch();
+        results.forEach((docs, i) => {
+            if (docs.size>0){
+                docs.forEach(doc => batch.update((i<1? PM: i<2? MM: UM).doc(doc.id), {[user]: FIELD_VALUE.delete()}))
+            }
+        })
+        return batch.commit().catch(e => console.error('Error Cleaning Project Data', e))
     })
 })
