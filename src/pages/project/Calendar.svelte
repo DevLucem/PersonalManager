@@ -8,6 +8,8 @@
     import Pop from "../../components/Pop.svelte";
     import {deleteData, saveData} from "../../firebase";
 
+    import { RRule, RRuleSet, rrulestr } from 'rrule'
+
     export let data = [];
     export let users;
     export let user;
@@ -54,17 +56,17 @@
 
                     valid = !(!starting && !ending && !milestone?.starting && !milestone?.ending)
                     if (doc.repeat){
-                        let current = new Date();
-                        current.setHours(starting.getHours());
-                        current.setMinutes(starting.getMinutes());
-                        starting = new Date(current);
-                        current.setHours(ending.getHours());
-                        current.setMinutes(ending.getMinutes());
-                        ending = new Date(current);
-                        if (ending < new Date()) {
-                            starting.setDate(starting.getDate()+1)
-                            ending.setDate(ending.getDate()+1)
-                        }
+                        let duration = ending - starting;
+                        const rule = new RRule({
+                            freq: RRule.DAILY,
+                            dtstart: starting
+                        })
+                        starting = new Date(rule.between(new Date(), new Date(new Date().setMonth(new Date().getMonth() + 1)))[0])
+                        const rule1 = new RRule({
+                            freq: RRule.DAILY,
+                            dtstart: ending
+                        })
+                        ending = new Date(rule1.between(new Date(), new Date(new Date().setMonth(new Date().getMonth() + 1)))[0])
                     }
 
                     const setTime = (input, offset) => {
@@ -102,6 +104,8 @@
 
                 let shared = [];
                 Object.keys(doc.users).forEach(u => {if (u !== user.uid) shared.push(users.find(el => el.user === u)?.name)} )
+
+
 
                 if (valid) schedule.push({ // check attendees, recurrence rule
                     id: doc.id,

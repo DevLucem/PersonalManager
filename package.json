@@ -21,6 +21,7 @@
     "firebase": "^9.6.8",
     "moment": "^2.29.3",
     "momentjs": "^2.0.0",
+    "rrule": "^2.7.1",
     "tui-calendar": "^1.15.3"
   }
 }
