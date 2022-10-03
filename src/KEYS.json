@@ -1,0 +1,12 @@
+{
+
+  "FIREBASE_CONFIG" : {
+    "apiKey": "AIzaSyDRtz2aBwnDGFq8t0yTR4yH4YjpGif-3S4",
+    "authDomain": "prowealthmanager.firebaseapp.com",
+    "projectId": "prowealthmanager",
+    "storageBucket": "prowealthmanager.appspot.com",
+    "messagingSenderId": "136296616343",
+    "appId": "1:136296616343:web:621b3b8bee456d5f3c74d2"
+  }
+
+}

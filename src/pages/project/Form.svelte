@@ -19,6 +19,7 @@
     let edit;
     let starting;
     let ending;
+    let repeat = [];
 
     const setColor = () => {
         doc.color = '#';
@@ -57,6 +58,7 @@
             }
             timeUpdate('starting', starting)
             timeUpdate('ending', ending)
+            doc.repeat = repeat.join(' ');
 
             if (!doc.project) doc.project = null;
             if (!doc.milestone) doc.milestone = null;
@@ -133,13 +135,18 @@
                         <span class="m-4 font-bold">to</span>
                         <input class="w-full" type="datetime-local" aria-label="Ending" bind:value={ending} on:change={() => {if(!ending) doc.repeat = false}} min={starting}>
                     </div>
-                    <div class="flex justify-between mt-4 mb-8">
+                    <div class="flex justify-between my-4">
                         <button type="button" class="tag bg-primary" on:click={()=>duration(1, 0)}>+1Hr</button>
                         <button type="button" class="tag bg-primary" on:click={()=>duration(-1, 0)}>-1hr</button>
-                        {#if starting && ending}
-                            <label>Repeat Daily: <input type="checkbox" bind:checked={doc.repeat}></label>
-                        {/if}
                     </div>
+                    {#if true || starting && ending}
+                        <label>Repeat:
+                            {#each [ 'S', 'M', 'T', 'W', 'T', 'F', 'S' ] as day, index}
+                                {day}
+                                <input class="mr-3" type="checkbox" value="{index}" bind:group={repeat}>
+                            {/each}
+                        </label>
+                    {/if}
                 {:else}
                     <div class="flex items-center justify-between">
                         <input type="date" aria-label="Starting" bind:value={starting} max={ending}>

@@ -56,14 +56,26 @@
 
                     valid = !(!starting && !ending && !milestone?.starting && !milestone?.ending)
                     if (doc.repeat){
+
+                        let days = [];
+                        if (typeof doc.repeat === 'boolean' || doc.repeat.includes('0')) days.push(RRule.SU)
+                        if (typeof doc.repeat === 'boolean' || doc.repeat.includes('1')) days.push(RRule.MO)
+                        if (typeof doc.repeat === 'boolean' || doc.repeat.includes('2')) days.push(RRule.TU)
+                        if (typeof doc.repeat === 'boolean' || doc.repeat.includes('3')) days.push(RRule.WE)
+                        if (typeof doc.repeat === 'boolean' || doc.repeat.includes('4')) days.push(RRule.TH)
+                        if (typeof doc.repeat === 'boolean' || doc.repeat.includes('5')) days.push(RRule.FR)
+                        if (typeof doc.repeat === 'boolean' || doc.repeat.includes('6')) days.push(RRule.SA)
+
                         let duration = ending - starting;
                         const rule = new RRule({
                             freq: RRule.DAILY,
-                            dtstart: starting
+                            dtstart: starting,
+                            byweekday: days
                         })
                         starting = new Date(rule.between(new Date(), new Date(new Date().setMonth(new Date().getMonth() + 1)))[0])
                         const rule1 = new RRule({
                             freq: RRule.DAILY,
+                            byweekday: days,
                             dtstart: ending
                         })
                         ending = new Date(rule1.between(new Date(), new Date(new Date().setMonth(new Date().getMonth() + 1)))[0])
