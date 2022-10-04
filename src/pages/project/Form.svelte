@@ -139,7 +139,7 @@
                         <button type="button" class="tag bg-primary" on:click={()=>duration(1, 0)}>+1Hr</button>
                         <button type="button" class="tag bg-primary" on:click={()=>duration(-1, 0)}>-1hr</button>
                     </div>
-                    {#if true || starting && ending}
+                    {#if starting && ending}
                         <label>Repeat:
                             {#each [ 'S', 'M', 'T', 'W', 'T', 'F', 'S' ] as day, index}
                                 {day}
