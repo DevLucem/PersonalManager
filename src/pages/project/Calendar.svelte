@@ -67,18 +67,14 @@
                         if (typeof doc.repeat === 'boolean' || doc.repeat.includes('6')) days.push(RRule.SA)
 
                         let duration = ending - starting;
-                        const rule = new RRule({
-                            freq: RRule.DAILY,
-                            dtstart: starting,
-                            byweekday: days
-                        })
-                        starting = new Date(rule.between(new Date(), new Date(new Date().setMonth(new Date().getMonth() + 1)))[0])
                         const rule1 = new RRule({
                             freq: RRule.DAILY,
                             byweekday: days,
                             dtstart: ending
                         })
                         ending = new Date(rule1.between(new Date(), new Date(new Date().setMonth(new Date().getMonth() + 1)))[0])
+                        starting = ending - duration;
+
                     }
 
                     const setTime = (input, offset) => {
