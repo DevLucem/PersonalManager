@@ -56,7 +56,7 @@
         }
         res.forEach(snapshot => {
             let doc = snapshot.data();
-            addData(doc);
+            if (!doc.done) addData(doc);
         })
         // todo check what this line does
         allData.filter(el => {

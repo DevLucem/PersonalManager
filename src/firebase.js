@@ -69,4 +69,10 @@ export const saveData = (data) => {
     })
     return setDoc(doc(DATA, data.id), data, {merge: true})
 }
+
+export const done = data => {
+    data.done = serverTimestamp();
+    return saveData(data);
+}
+
 export const deleteData = data => {return deleteDoc(doc(table(data.type), data.id))}

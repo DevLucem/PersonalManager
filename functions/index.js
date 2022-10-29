@@ -20,6 +20,7 @@ const PM = FIRESTORE.collection('PM')
 exports.projectUpdated = functions.firestore.document('PM/{project}').onUpdate( snapshot => {
 
     let doc = snapshot.after.data();
+    // todo remember to show if milestone done or project archived, update all children
     let before = snapshot.before.get('users');
     let after = snapshot.after.get('users');
 

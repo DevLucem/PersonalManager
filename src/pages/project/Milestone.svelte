@@ -7,7 +7,7 @@
     import QuickTask from "./task/QuickTask.svelte";
     import Milestone from "./Milestone.svelte";
 
-    import {deleteData} from "../../firebase";
+    import {done} from "../../firebase";
 
     export let user;
     export let milestone;
@@ -38,7 +38,7 @@
                     <Icon icon="edit" classes="h-5 w-5 group-hover:visible invisible" on:clicked={()=>dispatch('data', milestone)}/>
                 {/if}
                 {#if data.filter(doc => {return doc.milestone === milestone.id}).length<1 && milestone.users[user?.uid]<3}
-                    <Icon icon="check" classes='h-5 w-5 m-1 icon' on:clicked={()=>deleteData(milestone)}/>
+                    <Icon icon="check" classes='h-5 w-5 m-1 icon' on:clicked={()=>done(milestone)}/>
                 {/if}
             </div>
         </div>
