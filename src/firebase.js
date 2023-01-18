@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut } from "firebase/auth"
-import {getFirestore, enableIndexedDbPersistence, onSnapshot, collection, query, where, serverTimestamp, doc, setDoc, deleteDoc, getDoc, orderBy, deleteField} from 'firebase/firestore'
+import {getFirestore, enableIndexedDbPersistence, onSnapshot, collection, query, where, serverTimestamp, doc, setDoc, deleteDoc, getDoc, orderBy, deleteField, getDocs, writeBatch} from 'firebase/firestore'
 import { FIREBASE_CONFIG } from "./KEYS";
 
 initializeApp(FIREBASE_CONFIG);
@@ -72,7 +72,8 @@ export const saveData = (data) => {
 
 export const done = data => {
     data.done = serverTimestamp();
-    return saveData(data);
+    // return saveData(data);
+    return deleteData(data)
 }
 
 export const deleteData = data => {return deleteDoc(doc(table(data.type), data.id))}
