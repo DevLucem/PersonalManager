@@ -38,6 +38,8 @@ To push the files to your firebase hosting, run the commands below. Make sure to
 
 `firebase init hosting,functions && firebase deploy`
 
+New version available!
+
 # Made With ♥
 ```
 (                   (                            
